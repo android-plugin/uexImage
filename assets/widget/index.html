@@ -1,0 +1,114 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="css/index.css">
+
+    <script type="text/javascript">
+    function openPicker(){
+        var params = {
+            min:"",
+            max:"",
+            quality:"",
+            usePng:"",
+            detailedInfo:""
+        };
+        var data = JSON.stringify(params);
+        uexImage.openPicker(data);
+    }
+
+    function openBrowser(){
+        var params = {
+            enableGrid:"",
+            startOnGrid:""
+        };
+        var data = JSON.stringify(params);
+        uexImage.openBrowser(data);
+    }
+
+    function openCropper(){
+        var params = {
+            src:"",
+            startOnGrid:"",
+            quality:"",
+            usePng:"",
+            detailedInfo:""
+        };
+        var data = JSON.stringify(params);
+        uexImage.openCropper(data);
+    }
+
+    function saveToPhotoAlbum(){
+        var params = {
+            localPath:"",
+            extraInfo:""
+        };
+        var data = JSON.stringify(params);
+        uexImage.saveToPhotoAlbum(data);
+    }
+
+    function clearOutputImages(){
+        var params = {
+            localPath:"",
+            extraInfo:""
+        };
+        var data = JSON.stringify(params);
+        uexImage.clearOutputImages(data);
+    }
+
+
+        window.uexOnload = function(type){
+            if(type == 0){
+            uexImage.cbOpenPicker = cbOpenPicker;
+            uexImage.cbOpenBrowser = cbOpenBrowser;
+            uexImage.cbOpenCropper = cbOpenCropper;
+            uexImage.cbSaveToPhotoAlbum = cbSaveToPhotoAlbum;
+            uexImage.cbClearOutputImages = cbClearOutputImages;
+
+            }
+        }
+    function cbOpenPicker(info){
+        alert(info);
+    }
+
+    function cbOpenBrowser(info){
+        alert(info);
+    }
+
+    function cbOpenCropper(info){
+        alert(info);
+    }
+
+    function cbSaveToPhotoAlbum(info){
+        alert(info);
+    }
+
+    function cbClearOutputImages(info){
+        alert(info);
+    }
+
+
+    </script>
+</head>
+
+<body>
+<div class="tit">uexImage</div>
+<div class="conbor">
+    <div class="consj">
+            <input class='btn' type='button' value='openPicker' onclick='openPicker()'>
+
+            <input class='btn' type='button' value='openBrowser' onclick='openBrowser()'>
+
+            <input class='btn' type='button' value='openCropper' onclick='openCropper()'>
+
+            <input class='btn' type='button' value='saveToPhotoAlbum' onclick='saveToPhotoAlbum()'>
+
+            <input class='btn' type='button' value='clearOutputImages' onclick='clearOutputImages()'>
+
+
+    </div>
+</div>
+</body>
+</html>
