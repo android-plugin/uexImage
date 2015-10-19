@@ -9,11 +9,11 @@
     <script type="text/javascript">
     function openPicker(){
         var params = {
-            min:"",
-            max:"",
-            quality:"",
-            usePng:"",
-            detailedInfo:""
+            min:"1",
+            max:"10",
+            quality:"0.5",
+            usePng:"false",
+            detailedInfo:"true"
         };
         var data = JSON.stringify(params);
         uexImage.openPicker(data);
@@ -21,8 +21,16 @@
 
     function openBrowser(){
         var params = {
-            enableGrid:"",
-            startOnGrid:""
+            "displayActionButton":true,
+            "displayNavArrows":true,
+            "enableGrid":true,
+            "startOnGrid":false,
+            "startIndex":2,
+            data:[{"src":"file:///storage/sdcard0/widgetone/widgets/A.png"},
+                  {"src":"http://img0.imgtn.bdimg.com/it/u=2416840456,1080513470&fm=21&gp=0.jpg"},
+                  {"src":"/storage/sdcard0/uex_image_temp/uex_image_to_share.jpg"},
+                  {"src":"res://1016.jpg"},
+                  {"src":"wgts://1016.jpg"}]
         };
         var data = JSON.stringify(params);
         uexImage.openBrowser(data);
@@ -30,11 +38,10 @@
 
     function openCropper(){
         var params = {
-            src:"",
-            startOnGrid:"",
-            quality:"",
-            usePng:"",
-            detailedInfo:""
+            src:"res://1016.jpg",   //file:///storage/sdcard0/widgetone/widgets/A.png
+            quality:"0.5",
+            usePng:"true",
+            mode:"1"
         };
         var data = JSON.stringify(params);
         uexImage.openCropper(data);
@@ -42,7 +49,7 @@
 
     function saveToPhotoAlbum(){
         var params = {
-            localPath:"",
+            localPath:"wgts://1016.jpg",
             extraInfo:""
         };
         var data = JSON.stringify(params);
@@ -58,28 +65,30 @@
         uexImage.clearOutputImages(data);
     }
 
-
-        window.uexOnload = function(type){
-            if(type == 0){
-            uexImage.cbOpenPicker = cbOpenPicker;
-            uexImage.cbOpenBrowser = cbOpenBrowser;
-            uexImage.cbOpenCropper = cbOpenCropper;
-            uexImage.cbSaveToPhotoAlbum = cbSaveToPhotoAlbum;
-            uexImage.cbClearOutputImages = cbClearOutputImages;
-
-            }
+    window.uexOnload = function(type){
+        if(type == 0){
+        uexImage.cbOpenPicker = cbOpenPicker;
+        uexImage.onPickerClosed = onPickerClosed;
+        uexImage.onBrowserClosed = onBrowserClosed;
+        uexImage.onCropperClosed = onCropperClosed;
+        uexImage.cbSaveToPhotoAlbum = cbSaveToPhotoAlbum;
+        uexImage.cbClearOutputImages = cbClearOutputImages;
         }
+    }
     function cbOpenPicker(info){
         alert(info);
     }
-
-    function cbOpenBrowser(info){
+    function onPickerClosed(info) {
+        alert(info);
+    }
+    function onBrowserClosed(info){
         alert(info);
     }
 
-    function cbOpenCropper(info){
+    function onCropperClosed(info){
         alert(info);
     }
+
 
     function cbSaveToPhotoAlbum(info){
         alert(info);

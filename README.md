@@ -1,3 +1,2 @@
-# uexImage
-uexImage图片浏览，选择插件
- 
+# appcan-plugin-demo-android
+Android插件基础工程

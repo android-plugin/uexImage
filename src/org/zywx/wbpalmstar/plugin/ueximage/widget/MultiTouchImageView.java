@@ -17,7 +17,7 @@
  *
  */
 
-package org.zywx.wbpalmstar.plugin.ueximage;
+package org.zywx.wbpalmstar.plugin.ueximage.widget;
 
 import android.content.Context;
 import android.graphics.Bitmap;

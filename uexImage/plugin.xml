@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<uexplugins>
+    <plugin
+        className="org.zywx.wbpalmstar.plugin.ueximage.EUExImage" uexName="uexImage" >
+        <method name="openPicker" />
+        <method name="onPickerClosed" />
+        <method name="openBrowser" />
+        <method name="openCropper" />
+        <method name="clearOutputImages" />
+        <method name="saveToPhotoAlbum" />
+    </plugin>
+</uexplugins>

@@ -1,0 +1,22 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
+    tools:context="org.zywx.wbpalmstar.plugin.ueximage.ShowPicsWithGrid">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="adfdfadfdsfasdfasdf"/>
+    <GridView
+        android:id="@+id/gv_pictures"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="10dip"
+        android:layout_marginTop="10dip"
+        android:horizontalSpacing="7.5dip"
+        android:numColumns="3"
+        android:verticalSpacing="7.5dip" />
+</LinearLayout>
