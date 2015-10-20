@@ -5,30 +5,16 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.ExifInterface;
-import android.net.Uri;
-import android.os.Environment;
 import android.provider.MediaStore;
-import android.text.TextUtils;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.ace.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.ace.universalimageloader.cache.memory.impl.LRULimitedMemoryCache;
-import com.ace.universalimageloader.core.DisplayImageOptions;
 import com.ace.universalimageloader.core.ImageLoader;
 import com.ace.universalimageloader.core.ImageLoaderConfiguration;
 import com.ace.universalimageloader.core.assist.QueueProcessingType;
-import com.ace.universalimageloader.core.display.SimpleBitmapDisplayer;
 import com.ace.universalimageloader.core.download.BaseImageDownloader;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.zywx.wbpalmstar.base.BUtility;
-import org.zywx.wbpalmstar.plugin.ueximage.EUExImage;
-import org.zywx.wbpalmstar.plugin.ueximage.R;
-import org.zywx.wbpalmstar.plugin.ueximage.model.PictureInfo;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -37,13 +23,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 通用的工具方法
@@ -144,6 +123,8 @@ public class CommonUtil {
     public static boolean saveBitmap2File (Bitmap bitmap, File file) {
         FileOutputStream fos = null;
         try {
+            file.deleteOnExit();
+            file.createNewFile();
             fos = new FileOutputStream(file);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
             fos.flush();

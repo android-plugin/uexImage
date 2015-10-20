@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,17 +23,14 @@ import com.ace.universalimageloader.core.DisplayImageOptions;
 import com.ace.universalimageloader.core.ImageLoader;
 
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.zywx.wbpalmstar.base.BUtility;
+import org.zywx.wbpalmstar.base.ResoureFinder;
+import org.zywx.wbpalmstar.plugin.ueximage.model.PictureInfo;
+import org.zywx.wbpalmstar.plugin.ueximage.util.CommonUtil;
 import org.zywx.wbpalmstar.plugin.ueximage.util.Constants;
 import org.zywx.wbpalmstar.plugin.ueximage.util.EUEXImageConfig;
-import org.zywx.wbpalmstar.plugin.ueximage.util.CommonUtil;
-import org.zywx.wbpalmstar.plugin.ueximage.model.PictureInfo;
 import org.zywx.wbpalmstar.plugin.ueximage.util.UEXImageUtil;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ImagePreviewActivity extends Activity {
@@ -59,12 +55,14 @@ public class ImagePreviewActivity extends Activity {
     //仅在浏览图片时有用。
     private TextView tvShare;
     private TextView tvToGrid;
+    private ResoureFinder finder;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_image_preview);
+        finder = ResoureFinder.getInstance(this);
+        setContentView(finder.getLayoutId("activity_image_preview"));
         uexImageUtil = UEXImageUtil.getInstance();
         isOpenBrowser = EUEXImageConfig.getInstance().getIsOpenBrowser();
         initData();
@@ -93,12 +91,12 @@ public class ImagePreviewActivity extends Activity {
 
 
     private void initViewForPicker() {
-        ivGoBack = (ImageView) findViewById(R.id.iv_left_on_title);
-        tvTitle = (TextView) findViewById(R.id.tv_title);
+        ivGoBack = (ImageView) findViewById(finder.getId("iv_left_on_title"));
+        tvTitle = (TextView) findViewById(finder.getId("tv_title"));
         tvTitle.setText(folderName);
-        btnFinishInTitle = (Button) findViewById(R.id.btn_finish_title);
-        viewPager = (ViewPager) findViewById(R.id.vp_picture);
-        cbChoose = (CheckBox) findViewById(R.id.checkbox);
+        btnFinishInTitle = (Button) findViewById(finder.getId("btn_finish_title"));
+        viewPager = (ViewPager) findViewById(finder.getId("vp_picture"));
+        cbChoose = (CheckBox) findViewById(finder.getId("checkbox"));
         ivGoBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,7 +119,7 @@ public class ImagePreviewActivity extends Activity {
                     setResult(RESULT_OK, null);
                     finish();
                 } else {
-                    String str = String.format(getString(R.string.at_least_choose),  EUEXImageConfig.getInstance().getMinImageCount());
+                    String str = String.format(finder.getString("at_least_choose"),  EUEXImageConfig.getInstance().getMinImageCount());
                     Toast.makeText(ImagePreviewActivity.this, str, Toast.LENGTH_SHORT).show();
                 }
 
@@ -130,18 +128,18 @@ public class ImagePreviewActivity extends Activity {
 
     }
     private void initViewForBrowser() {
-        ivGoBack = (ImageView) findViewById(R.id.iv_left_on_title);
-        tvTitle = (TextView) findViewById(R.id.tv_title);
+        ivGoBack = (ImageView) findViewById(finder.getId("iv_left_on_title"));
+        tvTitle = (TextView) findViewById(finder.getId("tv_title"));
 
-        btnFinishInTitle = (Button) findViewById(R.id.btn_finish_title);
+        btnFinishInTitle = (Button) findViewById(finder.getId("btn_finish_title"));
 
-        viewPager = (ViewPager) findViewById(R.id.vp_picture);
-        cbChoose = (CheckBox) findViewById(R.id.checkbox);
-        tvShare = (TextView) findViewById(R.id.tv_share);
-        tvToGrid = (TextView) findViewById(R.id.tv_to_grid);
+        viewPager = (ViewPager) findViewById(finder.getId("vp_picture"));
+        cbChoose = (CheckBox) findViewById(finder.getId("checkbox"));
+        tvShare = (TextView) findViewById(finder.getId("tv_share"));
+        tvToGrid = (TextView) findViewById(finder.getId("tv_to_grid"));
 
         ivGoBack.setVisibility(View.INVISIBLE);
-        tvCheckbox = (TextView) findViewById(R.id.tv_checkbox);
+        tvCheckbox = (TextView) findViewById(finder.getId("tv_checkbox"));
         cbChoose.setVisibility(View.INVISIBLE);
         tvCheckbox.setVisibility(View.INVISIBLE);
         tvToGrid.setVisibility(View.VISIBLE);
@@ -181,18 +179,16 @@ public class ImagePreviewActivity extends Activity {
                     }
                     File file = new File(Environment.getExternalStorageDirectory(),
                             File.separator + UEXImageUtil.TEMP_PATH + File.separator + "uex_image_to_share.jpg");
-                    file.deleteOnExit();
+
                     if (CommonUtil.saveBitmap2File(bitmap, file)) {
                         Intent shareIntent = new Intent();
                         shareIntent.setAction(Intent.ACTION_SEND);
                         shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
                         shareIntent.setType("image/*");
                         startActivity(Intent.createChooser(shareIntent, "分享到"));
-                        startActivity(shareIntent);
                     } else {
                         Toast.makeText(ImagePreviewActivity.this, "图片操作失败，请重试", Toast.LENGTH_SHORT).show();
                     }
-
                 }
             });
         } else {
@@ -226,16 +222,17 @@ public class ImagePreviewActivity extends Activity {
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             LayoutInflater inflater = (LayoutInflater) container.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View view = inflater.inflate(R.layout.view_pager_item, null);
-            imageView = (ImageView) view.findViewById(R.id.image);
+            View view = inflater.inflate(finder.getLayoutId("view_pager_item"), null);
+            imageView = (ImageView) view.findViewById(finder.getId("image"));
 
             //显示图片的配置
             DisplayImageOptions options = new DisplayImageOptions.Builder()
                     .cacheInMemory(true)
                     .cacheOnDisk(true)
                     .bitmapConfig(Bitmap.Config.RGB_565)
-                    .showImageOnLoading(R.drawable.loading)
+                    .showImageOnLoading(finder.getDrawableId("loading"))
                     .build();
+
             final String src = picList.get(position).getSrc();
             if (!isOpenBrowser) {
                 ImageLoader.getInstance().displayImage(src, imageView, options);

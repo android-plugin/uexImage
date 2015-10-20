@@ -23,10 +23,10 @@ import com.ace.universalimageloader.core.ImageLoader;
 import com.ace.universalimageloader.core.display.SimpleBitmapDisplayer;
 import com.ace.universalimageloader.core.imageaware.ImageViewAware;
 
-import org.zywx.wbpalmstar.plugin.ueximage.util.CommonUtil;
+import org.zywx.wbpalmstar.base.ResoureFinder;
+import org.zywx.wbpalmstar.plugin.ueximage.model.PictureInfo;
 import org.zywx.wbpalmstar.plugin.ueximage.util.Constants;
 import org.zywx.wbpalmstar.plugin.ueximage.util.EUEXImageConfig;
-import org.zywx.wbpalmstar.plugin.ueximage.model.PictureInfo;
 import org.zywx.wbpalmstar.plugin.ueximage.util.UEXImageUtil;
 
 import java.io.Serializable;
@@ -48,21 +48,24 @@ public class AlbumListActivity extends Activity implements Serializable {
     private FolderAdapter adapter;
     private ImageView ivLeftTitle;
     private Button btnRightTitle;
+    private ResoureFinder finder;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_album_list);
+        finder = ResoureFinder.getInstance(this);
+
+        setContentView(finder.getLayoutId("activity_album_list"));
         uexImageUtil = UEXImageUtil.getInstance();
 
-        ivLeftTitle = (ImageView)findViewById(R.id.iv_left_on_title);
-        btnRightTitle = (Button) findViewById(R.id.btn_finish_title);
+        ivLeftTitle = (ImageView)findViewById(finder.getId("iv_left_on_title"));
+        btnRightTitle = (Button) findViewById(finder.getId("btn_finish_title"));
 
-        ivProgressBar = (ImageView) findViewById(R.id.iv_progress_bar);
-        lvAlbumList = (ListView) findViewById(R.id.local_album_list);
+        ivProgressBar = (ImageView) findViewById(finder.getId("iv_progress_bar"));
+        lvAlbumList = (ListView) findViewById(finder.getId("local_album_list"));
 
-
-        Animation animation = AnimationUtils.loadAnimation(this, R.anim.rotate_loading);
+        Animation animation = AnimationUtils.loadAnimation(this, finder.getAnimId("rotate_loading"));
         ivProgressBar.startAnimation(animation);
         initData();
         ivLeftTitle.setOnClickListener(commonClickListener);
@@ -89,20 +92,17 @@ public class AlbumListActivity extends Activity implements Serializable {
     private View.OnClickListener commonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            switch (v.getId()) {
-                case R.id.iv_left_on_title:
-                    setResult(Constants.OPERATION_CANCELLED, null);
+            if (v.getId() == finder.getId("iv_left_on_title")) {
+                setResult(Constants.OPERATION_CANCELLED, null);
+                finish();
+            } else if (v.getId() == finder.getId("btn_finish_title")) {
+                //如果选择的图片小于最小数目，给一个提示
+                if(uexImageUtil.getCheckedItems().size() <  EUEXImageConfig.getInstance().getMinImageCount()) {
+                    Toast.makeText(AlbumListActivity.this, String.format(finder.getString("at_least_choose"),  EUEXImageConfig.getInstance().getMinImageCount()), Toast.LENGTH_SHORT).show();
+                } else {
+                    setResult(RESULT_OK, null);
                     finish();
-                    break;
-                case R.id.btn_finish_title:
-                    //如果选择的图片小于最小数目，给一个提示
-                    if(uexImageUtil.getCheckedItems().size() <  EUEXImageConfig.getInstance().getMinImageCount()) {
-                        Toast.makeText(AlbumListActivity.this, String.format(getString(R.string.at_least_choose),  EUEXImageConfig.getInstance().getMinImageCount()), Toast.LENGTH_SHORT).show();
-                    } else {
-                        setResult(RESULT_OK, null);
-                        finish();
-                    }
-                    break;
+                }
             }
         }
     };
@@ -153,9 +153,9 @@ public class AlbumListActivity extends Activity implements Serializable {
             options = new DisplayImageOptions.Builder()
                     .cacheInMemory(true)
                     .cacheOnDisk(false)
-                    .showImageForEmptyUri(R.drawable.loading)
-                    .showImageOnFail(R.drawable.loading)
-                    .showImageOnLoading(R.drawable.loading)
+                    .showImageForEmptyUri(finder.getDrawable("loading"))
+                    .showImageOnFail(finder.getDrawable("loading"))
+                    .showImageOnLoading(finder.getDrawable("loading"))
                     .bitmapConfig(Bitmap.Config.RGB_565)
                     .displayer(new SimpleBitmapDisplayer()).build();
 
@@ -196,9 +196,9 @@ public class AlbumListActivity extends Activity implements Serializable {
             ViewHolder viewHolder;
             if (convertView == null || convertView.getTag() == null) {
                 viewHolder = new ViewHolder();
-                convertView = LayoutInflater.from(context).inflate(R.layout.item_album_list, null);
-                viewHolder.imageView = (ImageView) convertView.findViewById(R.id.imageView);
-                viewHolder.textView = (TextView) convertView.findViewById(R.id.textview);
+                convertView = LayoutInflater.from(context).inflate(finder.getLayoutId("item_album_list"), null);
+                viewHolder.imageView = (ImageView) convertView.findViewById(finder.getId("imageView"));
+                viewHolder.textView = (TextView) convertView.findViewById(finder.getId("textview"));
                 convertView.setTag(viewHolder);
             } else {
                 viewHolder = (ViewHolder) convertView.getTag();

@@ -20,7 +20,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.zywx.wbpalmstar.base.BUtility;
 import org.zywx.wbpalmstar.plugin.ueximage.EUExImage;
-import org.zywx.wbpalmstar.plugin.ueximage.R;
 import org.zywx.wbpalmstar.plugin.ueximage.model.PictureInfo;
 
 import java.io.File;
@@ -189,7 +188,7 @@ public class UEXImageUtil {
                 }
             } catch (IOException e) {
                 Log.i(TAG, "file copy error");
-                Toast.makeText(context, context.getString(R.string.file_export_error), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "文件导出失败，请重新选择", Toast.LENGTH_SHORT).show();
                 return result;
             } catch (JSONException e) {
                 Log.i(TAG, e.getMessage());

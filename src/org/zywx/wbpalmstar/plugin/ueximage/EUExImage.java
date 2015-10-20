@@ -20,6 +20,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.zywx.wbpalmstar.base.BUtility;
+import org.zywx.wbpalmstar.base.ResoureFinder;
 import org.zywx.wbpalmstar.engine.EBrowserView;
 import org.zywx.wbpalmstar.engine.universalex.EUExBase;
 import org.zywx.wbpalmstar.plugin.ueximage.util.CommonUtil;
@@ -57,6 +58,13 @@ public class EUExImage extends EUExBase {
     private static LocalActivityManager mgr;
     private UEXImageUtil uexImageUtil;
 
+    private ResoureFinder finder;
+    private final String FILE_SYSTEM_ERROR = "文件系统操作出错";
+    private final String SAME_FILE_IN_DCIM = "系统相册中存在同名文件";
+    private final String JSON_FORMAT_ERROR = "json格式错误";
+    private final String NOT_SUPPORT_CROP = "你的设备不支持剪切功能！";
+
+
     public EUExImage(Context context, EBrowserView eBrowserView) {
         super(context, eBrowserView);
         this.context = context;
@@ -69,6 +77,8 @@ public class EUExImage extends EUExBase {
         }
         CommonUtil.initImageLoader(context);
         uexImageUtil = UEXImageUtil.getInstance();
+        finder = ResoureFinder.getInstance(context);
+
     }
 
     @Override
@@ -263,13 +273,13 @@ public class EUExImage extends EUExBase {
                 destFile.deleteOnExit();
                 destFile.createNewFile();
             } catch (IOException e) {
-                Toast.makeText(context, context.getString(R.string.file_system_error), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, FILE_SYSTEM_ERROR, Toast.LENGTH_SHORT).show();
                 return;
             }
             if(CommonUtil.saveFileFromAssetsToSystem(context, srcPath, destFile)) {
                 file = destFile;
             } else {
-                Toast.makeText(context, context.getString(R.string.file_system_error), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, FILE_SYSTEM_ERROR, Toast.LENGTH_SHORT).show();
                 return;
             }
         } else {
@@ -287,7 +297,7 @@ public class EUExImage extends EUExBase {
             cropIntent.putExtra("return-data", true);
             startActivityForResult(cropIntent, REQUEST_CROP_IMAGE);
         } catch (ActivityNotFoundException exception) {
-            Toast.makeText(context, context.getString(R.string.not_support_crop), Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, NOT_SUPPORT_CROP, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -434,7 +444,7 @@ public class EUExImage extends EUExBase {
                 File file = new File(dcimPath, fileName);
                 if (file.exists()) {
                     resultObject.put("isSuccess", "false");
-                    resultObject.put("errorStr", context.getString(R.string.same_file_in_dcim));
+                    resultObject.put("errorStr", SAME_FILE_IN_DCIM);
                     callBackPluginJs(JsConst.CALLBACK_SAVE_TO_PHOTO_ALBUM, resultObject.toString());
                     return;
                 }
@@ -445,7 +455,7 @@ public class EUExImage extends EUExBase {
                     updateGallery(file.getAbsolutePath());
                 } else {
                     resultObject.put("isSuccess", false);
-                    resultObject.put("errorStr", context.getString(R.string.file_system_error));
+                    resultObject.put("errorStr", FILE_SYSTEM_ERROR);
                 }
             } else {//如果傳的是別的路徑，也復制一份吧。
                 Log.i(TAG, "Path:" + realPath);
@@ -456,7 +466,7 @@ public class EUExImage extends EUExBase {
                 File destFile = new File(dcimPath, fileName);
                 if (destFile.exists()) {
                     resultObject.put("isSuccess", "false");
-                    resultObject.put("errorStr",  context.getString(R.string.same_file_in_dcim));
+                    resultObject.put("errorStr", SAME_FILE_IN_DCIM);
                     callBackPluginJs(JsConst.CALLBACK_SAVE_TO_PHOTO_ALBUM, resultObject.toString());
                     return;
                 }
@@ -466,7 +476,7 @@ public class EUExImage extends EUExBase {
                     updateGallery(destFile.getAbsolutePath());
                 } else {
                     resultObject.put("isSuccess", false);
-                    resultObject.put("errorStr", context.getString(R.string.file_system_error));
+                    resultObject.put("errorStr", FILE_SYSTEM_ERROR);
                 }
                 resultObject.put("isSuccess", true);
             }
@@ -475,7 +485,7 @@ public class EUExImage extends EUExBase {
             Log.i(TAG, e.getMessage());
             try {
                 resultObject.put("isSuccess", false);
-                resultObject.put("errorStr", context.getString(R.string.json_format_error));
+                resultObject.put("errorStr", JSON_FORMAT_ERROR);
             } catch (JSONException e2) {
                 Log.i(TAG, e2.getMessage());
             }
@@ -484,7 +494,7 @@ public class EUExImage extends EUExBase {
             Log.i(TAG, e.getMessage());
             try {
                 resultObject.put("isSuccess", false);
-                resultObject.put("errorStr", context.getString(R.string.file_system_error));
+                resultObject.put("errorStr", FILE_SYSTEM_ERROR);
             } catch (JSONException e2) {
                 Log.i(TAG, e2.getMessage());
             }

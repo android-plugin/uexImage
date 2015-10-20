@@ -30,6 +30,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.zywx.wbpalmstar.base.BUtility;
+import org.zywx.wbpalmstar.base.ResoureFinder;
 import org.zywx.wbpalmstar.plugin.ueximage.util.CommonUtil;
 import org.zywx.wbpalmstar.plugin.ueximage.util.Constants;
 import org.zywx.wbpalmstar.plugin.ueximage.util.EUEXImageConfig;
@@ -57,12 +58,14 @@ public class PictureGridActivity extends Activity {
     private MyAdapter adapter;
 
     private boolean isOpenBrowser = false;
+    private ResoureFinder finder;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_picture_grid);
+        finder = ResoureFinder.getInstance(this);
+        setContentView(finder.getLayoutId("activity_picture_grid"));
 
         uexImageUtil = UEXImageUtil.getInstance();
         folderName = getIntent().getStringExtra(Constants.EXTRA_FOLDER_NAME);
@@ -105,10 +108,10 @@ public class PictureGridActivity extends Activity {
     }
 
     private void initViewForPicker() {
-        ivGoBack = (ImageView) findViewById(R.id.iv_left_on_title);
-        tvTitle = (TextView) findViewById(R.id.tv_title);
-        gvPictures = (GridView) findViewById(R.id.gv_pictures);
-        btnFinishInTitle = (Button) findViewById(R.id.btn_finish_title);
+        ivGoBack = (ImageView) findViewById(finder.getId("iv_left_on_title"));
+        tvTitle = (TextView) findViewById(finder.getId("tv_title"));
+        gvPictures = (GridView) findViewById(finder.getId("gv_pictures"));
+        btnFinishInTitle = (Button) findViewById(finder.getId("btn_finish_title"));
         tvTitle.setText(folderName);
         adapter = new MyAdapter(this, picList);
         gvPictures.setAdapter(adapter);
@@ -130,18 +133,18 @@ public class PictureGridActivity extends Activity {
                     setResult(RESULT_OK, new Intent());
                     finish();
                 } else {
-                    String str = String.format(getString(R.string.at_least_choose),  EUEXImageConfig.getInstance().getMinImageCount());
+                    String str = String.format(finder.getString("at_least_choose"),  EUEXImageConfig.getInstance().getMinImageCount());
                     Toast.makeText(PictureGridActivity.this, str, Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
     private void initViewForBrowser()  {
-        ivGoBack = (ImageView) findViewById(R.id.iv_left_on_title);
-        tvTitle = (TextView) findViewById(R.id.tv_title);
-        btnFinishInTitle = (Button) findViewById(R.id.btn_finish_title);
+        ivGoBack = (ImageView) findViewById(finder.getId("iv_left_on_title"));
+        tvTitle = (TextView) findViewById(finder.getId("tv_title"));
+        btnFinishInTitle = (Button) findViewById(finder.getId("btn_finish_title"));
         ivGoBack.setVisibility(View.INVISIBLE);
-        gvPictures = (GridView) findViewById(R.id.gv_pictures);
+        gvPictures = (GridView) findViewById(finder.getId("gv_pictures"));
         adapter = new MyAdapter(this, picList);
         gvPictures.setAdapter(adapter);
         btnFinishInTitle.setOnClickListener(new View.OnClickListener() {
@@ -168,9 +171,9 @@ public class PictureGridActivity extends Activity {
             options = new DisplayImageOptions.Builder()
                     .cacheInMemory(true)
                     .cacheOnDisk(false)
-                    .showImageForEmptyUri(R.drawable.loading)
-                    .showImageOnFail(R.drawable.loading)
-                    .showImageOnLoading(R.drawable.loading)
+                    .showImageForEmptyUri(finder.getDrawableId("loading"))
+                    .showImageOnFail(finder.getDrawableId("loading"))
+                    .showImageOnLoading(finder.getDrawableId("loading"))
                     .bitmapConfig(Bitmap.Config.RGB_565)
                     .displayer(new SimpleBitmapDisplayer()).build();
         }
@@ -197,9 +200,9 @@ public class PictureGridActivity extends Activity {
             if (convertView == null || convertView.getTag() == null) {
                 viewHolder = new ViewHolder();
                 LayoutInflater inflater = getLayoutInflater();
-                convertView = inflater.inflate(R.layout.item_grid_picture, null);
-                viewHolder.imageView = (ImageView) convertView.findViewById(R.id.iv_item);
-                viewHolder.checkBox = (CheckBox) convertView.findViewById(R.id.checkbox);
+                convertView = inflater.inflate(finder.getLayoutId("item_grid_picture"), null);
+                viewHolder.imageView = (ImageView) convertView.findViewById(finder.getId("iv_item"));
+                viewHolder.checkBox = (CheckBox) convertView.findViewById(finder.getId("checkbox"));
                 //如果是浏览图片，则没有选择的checkbox
                 if(isOpenBrowser) {
                     viewHolder.checkBox.setVisibility(View.INVISIBLE);
