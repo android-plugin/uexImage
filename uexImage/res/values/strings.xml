@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+
+    <string name="title_activity_album_list">AlbumListActivity</string>
+
+    <string name="title_activity_Pic_Grid">PicGridActivity</string>
+    <string name="title_activity_image_preview">ImagePreviewActivity</string>
+    <string name="choose">选择</string>
+    <string name="title_activity_crop">CropActivity</string>
+    <string name="at_least_choose">请至少选择%s张图片</string>
+    <string name="file_export_error">文件导出失败，请重新选择</string>
+    <string name="title_activity_show_pics_with_grid">ShowPicsWithGrid</string>
+    <string name="share">分享</string>
+    <string name="list">列表</string>
+    <string name="file_system_error">文件系统操作出错</string>
+    <string name="same_file_in_dcim">系统相册中存在同名文件</string>
+    <string name="json_format_error">json格式错误</string>
+    <string name="not_support_crop">你的设备不支持剪切功能!</string>
+
+</resources>
