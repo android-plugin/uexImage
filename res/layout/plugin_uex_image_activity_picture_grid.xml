@@ -4,11 +4,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/white"
-    tools:context="org.zywx.wbpalmstar.plugin.ueximage.ShowPicsWithGrid">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="adfdfadfdsfasdfasdf"/>
+    tools:context="org.zywx.wbpalmstar.plugin.ueximage.PictureGridActivity">
+    <include layout="@layout/plugin_uex_image_common_title" />
+
     <GridView
         android:id="@+id/gv_pictures"
         android:layout_width="match_parent"
@@ -19,4 +17,6 @@
         android:horizontalSpacing="7.5dip"
         android:numColumns="3"
         android:verticalSpacing="7.5dip" />
+
+
 </LinearLayout>

@@ -62,7 +62,7 @@ public class ImagePreviewActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         finder = ResoureFinder.getInstance(this);
-        setContentView(finder.getLayoutId("activity_image_preview"));
+        setContentView(finder.getLayoutId("plugin_uex_image_activity_image_preview"));
         uexImageUtil = UEXImageUtil.getInstance();
         isOpenBrowser = EUEXImageConfig.getInstance().getIsOpenBrowser();
         initData();
@@ -119,7 +119,7 @@ public class ImagePreviewActivity extends Activity {
                     setResult(RESULT_OK, null);
                     finish();
                 } else {
-                    String str = String.format(finder.getString("at_least_choose"),  EUEXImageConfig.getInstance().getMinImageCount());
+                    String str = String.format(finder.getString("plugin_uex_image_at_least_choose"),  EUEXImageConfig.getInstance().getMinImageCount());
                     Toast.makeText(ImagePreviewActivity.this, str, Toast.LENGTH_SHORT).show();
                 }
 
@@ -179,7 +179,10 @@ public class ImagePreviewActivity extends Activity {
                     }
                     File file = new File(Environment.getExternalStorageDirectory(),
                             File.separator + UEXImageUtil.TEMP_PATH + File.separator + "uex_image_to_share.jpg");
-
+                    if (bitmap == null) {
+                        Toast.makeText(ImagePreviewActivity.this, "当前图片尚未加载完毕，请稍后重试", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     if (CommonUtil.saveBitmap2File(bitmap, file)) {
                         Intent shareIntent = new Intent();
                         shareIntent.setAction(Intent.ACTION_SEND);
@@ -222,7 +225,7 @@ public class ImagePreviewActivity extends Activity {
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             LayoutInflater inflater = (LayoutInflater) container.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View view = inflater.inflate(finder.getLayoutId("view_pager_item"), null);
+            View view = inflater.inflate(finder.getLayoutId("plugin_uex_image_view_pager_item"), null);
             imageView = (ImageView) view.findViewById(finder.getId("image"));
 
             //显示图片的配置
@@ -230,7 +233,7 @@ public class ImagePreviewActivity extends Activity {
                     .cacheInMemory(true)
                     .cacheOnDisk(true)
                     .bitmapConfig(Bitmap.Config.RGB_565)
-                    .showImageOnLoading(finder.getDrawableId("loading"))
+                    .showImageOnLoading(finder.getDrawableId("plugin_uex_image_loading"))
                     .build();
 
             final String src = picList.get(position).getSrc();

@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
 
-	<color name="gray_3">#333333</color>
-	<color name="gray_6">#666666</color>
-	<color name="green_common">#15C7CB</color>
-	<color name="green_2">#86D8FF</color>
-	<color name="gray_9">#d9d9d9</color>
+	<color name="plugin_uex_image_gray_3">#333333</color>
+	<color name="plugin_uex_image_green_common">#15C7CB</color>
+	<color name="plugin_uex_image_green_2">#86D8FF</color>
+	<color name="plugin_uex_image_gray_9">#d9d9d9</color>
 
 </resources>

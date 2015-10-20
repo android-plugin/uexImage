@@ -3,8 +3,6 @@
 	<color name="start_bg_color">#FFFFFF</color>
 	<color name="red">#FFFF0000</color>
 	<color name="orange">#FFFF9900</color>
-	<color name="gray_3">#333333</color>
-	<color name="gray_6">#666666</color>
 	<color name="gray">#FF717171</color>
 	<color name="white">#FFFFFFFF</color>
 	<color name="transparent">#00000000</color>
@@ -15,14 +13,15 @@
 	<color name="blue">#2162BD</color>
 	<color name="menu_press">#FF00599F</color>
 	<color name="dialog_bg">#1B252F</color>
-	<color name="green_common">#15C7CB</color>
-	<color name="green_2">#86D8FF</color>
-
-
 
 	<!-- Widgetone use-->
 	<color name="widget_dialog_title_line_color">#666666</color>
 	<color name="widget_bg_color">#333333</color>
 	<color name="activity_window_background_color">#60000000</color>
-	<color name="gray_9">#d9d9d9</color>
+
+
+	<color name="plugin_uex_image_gray_3">#333333</color>
+	<color name="plugin_uex_image_green_common">#15C7CB</color>
+	<color name="plugin_uex_image_green_2">#86D8FF</color>
+	<color name="plugin_uex_image_gray_9">#d9d9d9</color>
 </resources>

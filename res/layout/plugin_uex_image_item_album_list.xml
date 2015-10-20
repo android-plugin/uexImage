@@ -2,9 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:background="@drawable/white_gray_bg_selector"
+    android:paddingLeft="@dimen/plugin_uex_image_activity_horizontal_margin"
+    android:paddingRight="@dimen/plugin_uex_image_activity_horizontal_margin"
+    android:background="@drawable/plugin_uex_image_white_gray_bg_selector"
     android:orientation="horizontal">
 
     <ImageView
@@ -22,13 +22,13 @@
         android:layout_width="0dip"
         android:layout_weight="1"
         android:textSize="17sp"
-        android:textColor="@color/gray_3"
+        android:textColor="@color/plugin_uex_image_gray_3"
         android:singleLine="true"
         android:ellipsize="middle"
         android:layout_height="fill_parent" />
     <ImageView
         android:layout_width="wrap_content"
-        android:src="@drawable/icon_go"
+        android:src="@drawable/plugin_uex_image_icon_go"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"

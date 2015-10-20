@@ -65,7 +65,7 @@ public class PictureGridActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         finder = ResoureFinder.getInstance(this);
-        setContentView(finder.getLayoutId("activity_picture_grid"));
+        setContentView(finder.getLayoutId("plugin_uex_image_activity_picture_grid"));
 
         uexImageUtil = UEXImageUtil.getInstance();
         folderName = getIntent().getStringExtra(Constants.EXTRA_FOLDER_NAME);
@@ -133,7 +133,7 @@ public class PictureGridActivity extends Activity {
                     setResult(RESULT_OK, new Intent());
                     finish();
                 } else {
-                    String str = String.format(finder.getString("at_least_choose"),  EUEXImageConfig.getInstance().getMinImageCount());
+                    String str = String.format(finder.getString("plugin_uex_image_at_least_choose"),  EUEXImageConfig.getInstance().getMinImageCount());
                     Toast.makeText(PictureGridActivity.this, str, Toast.LENGTH_SHORT).show();
                 }
             }
@@ -171,9 +171,9 @@ public class PictureGridActivity extends Activity {
             options = new DisplayImageOptions.Builder()
                     .cacheInMemory(true)
                     .cacheOnDisk(false)
-                    .showImageForEmptyUri(finder.getDrawableId("loading"))
-                    .showImageOnFail(finder.getDrawableId("loading"))
-                    .showImageOnLoading(finder.getDrawableId("loading"))
+                    .showImageForEmptyUri(finder.getDrawableId("plugin_uex_image_loading"))
+                    .showImageOnFail(finder.getDrawableId("plugin_uex_image_loading"))
+                    .showImageOnLoading(finder.getDrawableId("plugin_uex_image_loading"))
                     .bitmapConfig(Bitmap.Config.RGB_565)
                     .displayer(new SimpleBitmapDisplayer()).build();
         }
@@ -200,7 +200,7 @@ public class PictureGridActivity extends Activity {
             if (convertView == null || convertView.getTag() == null) {
                 viewHolder = new ViewHolder();
                 LayoutInflater inflater = getLayoutInflater();
-                convertView = inflater.inflate(finder.getLayoutId("item_grid_picture"), null);
+                convertView = inflater.inflate(finder.getLayoutId("plugin_uex_image_item_grid_picture"), null);
                 viewHolder.imageView = (ImageView) convertView.findViewById(finder.getId("iv_item"));
                 viewHolder.checkBox = (CheckBox) convertView.findViewById(finder.getId("checkbox"));
                 //如果是浏览图片，则没有选择的checkbox

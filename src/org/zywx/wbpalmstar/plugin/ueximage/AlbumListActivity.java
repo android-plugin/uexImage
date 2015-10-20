@@ -56,7 +56,7 @@ public class AlbumListActivity extends Activity implements Serializable {
         super.onCreate(savedInstanceState);
         finder = ResoureFinder.getInstance(this);
 
-        setContentView(finder.getLayoutId("activity_album_list"));
+        setContentView(finder.getLayoutId("plugin_uex_image_activity_album_list"));
         uexImageUtil = UEXImageUtil.getInstance();
 
         ivLeftTitle = (ImageView)findViewById(finder.getId("iv_left_on_title"));
@@ -65,7 +65,7 @@ public class AlbumListActivity extends Activity implements Serializable {
         ivProgressBar = (ImageView) findViewById(finder.getId("iv_progress_bar"));
         lvAlbumList = (ListView) findViewById(finder.getId("local_album_list"));
 
-        Animation animation = AnimationUtils.loadAnimation(this, finder.getAnimId("rotate_loading"));
+        Animation animation = AnimationUtils.loadAnimation(this, finder.getAnimId("plugin_uex_image_rotate_loading"));
         ivProgressBar.startAnimation(animation);
         initData();
         ivLeftTitle.setOnClickListener(commonClickListener);
@@ -98,7 +98,7 @@ public class AlbumListActivity extends Activity implements Serializable {
             } else if (v.getId() == finder.getId("btn_finish_title")) {
                 //如果选择的图片小于最小数目，给一个提示
                 if(uexImageUtil.getCheckedItems().size() <  EUEXImageConfig.getInstance().getMinImageCount()) {
-                    Toast.makeText(AlbumListActivity.this, String.format(finder.getString("at_least_choose"),  EUEXImageConfig.getInstance().getMinImageCount()), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AlbumListActivity.this, String.format(finder.getString("plugin_uex_image_at_least_choose"),  EUEXImageConfig.getInstance().getMinImageCount()), Toast.LENGTH_SHORT).show();
                 } else {
                     setResult(RESULT_OK, null);
                     finish();
@@ -153,9 +153,9 @@ public class AlbumListActivity extends Activity implements Serializable {
             options = new DisplayImageOptions.Builder()
                     .cacheInMemory(true)
                     .cacheOnDisk(false)
-                    .showImageForEmptyUri(finder.getDrawable("loading"))
-                    .showImageOnFail(finder.getDrawable("loading"))
-                    .showImageOnLoading(finder.getDrawable("loading"))
+                    .showImageForEmptyUri(finder.getDrawable("plugin_uex_image_loading"))
+                    .showImageOnFail(finder.getDrawable("plugin_uex_image_loading"))
+                    .showImageOnLoading(finder.getDrawable("plugin_uex_image_loading"))
                     .bitmapConfig(Bitmap.Config.RGB_565)
                     .displayer(new SimpleBitmapDisplayer()).build();
 
@@ -196,7 +196,7 @@ public class AlbumListActivity extends Activity implements Serializable {
             ViewHolder viewHolder;
             if (convertView == null || convertView.getTag() == null) {
                 viewHolder = new ViewHolder();
-                convertView = LayoutInflater.from(context).inflate(finder.getLayoutId("item_album_list"), null);
+                convertView = LayoutInflater.from(context).inflate(finder.getLayoutId("plugin_uex_image_item_album_list"), null);
                 viewHolder.imageView = (ImageView) convertView.findViewById(finder.getId("imageView"));
                 viewHolder.textView = (TextView) convertView.findViewById(finder.getId("textview"));
                 convertView.setTag(viewHolder);

@@ -17,7 +17,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right|top"
-        android:background="@drawable/picture_setting_album_checkbox"
+        android:background="@drawable/plugin_uex_image_picker_checkbox"
         android:button="@null"
         android:checked="false"
         android:focusable="false" />
