@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest>
+
+    <activity
+        android:name=".AlbumListActivity"
+        android:label="@string/title_activity_album_list"
+        android:theme="@style/AppTheme" >
+    </activity>
+    <activity
+        android:name=".PictureGridActivity"
+        android:label="@string/title_activity_Pic_Grid" >
+    </activity>
+    <activity
+        android:name=".ImagePreviewActivity"
+        android:label="@string/title_activity_image_preview" >
+    </activity>
+</manifest>
