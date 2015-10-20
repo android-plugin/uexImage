@@ -83,7 +83,7 @@ public class PictureGridActivity extends Activity {
 
     private List<PictureInfo> transformData(JSONArray imageDataArray) {
         int len = imageDataArray.length();
-        List<PictureInfo> imageDataList = new ArrayList<>();
+        List<PictureInfo> imageDataList = new ArrayList<PictureInfo>();
         for (int i = 0; i< len; i ++) {
             try {
                 PictureInfo data = new PictureInfo();

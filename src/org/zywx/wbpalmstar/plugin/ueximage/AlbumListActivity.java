@@ -148,7 +148,7 @@ public class AlbumListActivity extends Activity implements Serializable {
         FolderAdapter(Context context, Map<String, List<PictureInfo>> folders) {
             this.folders = folders;
             this.context = context;
-            folderNameList = new ArrayList<>();
+            folderNameList = new ArrayList<String>();
 
             options = new DisplayImageOptions.Builder()
                     .cacheInMemory(true)

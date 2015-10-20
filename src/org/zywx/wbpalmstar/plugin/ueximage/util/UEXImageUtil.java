@@ -42,14 +42,14 @@ public class UEXImageUtil {
     private static final String TAG = "CommonUtil";
     private volatile static UEXImageUtil instance = null;
     //系统中存放图片的文件目录
-    private Map<String, List<PictureInfo>> folderList= new HashMap<>();
+    private Map<String, List<PictureInfo>> folderList= new HashMap<String, List<PictureInfo>>();
     //系统中的所有图片
     private List<PictureInfo> allPictureList = new ArrayList<PictureInfo>();
     //当前选中的图片集合
-    private List<PictureInfo> checkedItems = new ArrayList<>();
+    private List<PictureInfo> checkedItems = new ArrayList<PictureInfo>();
 
     //当前正在操作的图片集合
-    private List<PictureInfo> currentPicList = new ArrayList<>();
+    private List<PictureInfo> currentPicList = new ArrayList<PictureInfo>();
 
     public EUExImage euExImage;
     //图片临时保存的位置
@@ -136,7 +136,7 @@ public class UEXImageUtil {
                 if (folderList.containsKey(folder)) {
                     folderList.get(folder).add(pictureInfo);
                 } else {
-                    List<PictureInfo> files = new ArrayList<>();
+                    List<PictureInfo> files = new ArrayList<PictureInfo>();
                     files.add(pictureInfo);
                     folderList.put(folder, files);
                 }
@@ -243,7 +243,7 @@ public class UEXImageUtil {
 
     public List<PictureInfo> transformData(JSONArray imageDataArray) {
         int len = imageDataArray.length();
-        List<PictureInfo> imageDataList = new ArrayList<>();
+        List<PictureInfo> imageDataList = new ArrayList<PictureInfo>();
         for (int i = 0; i< len; i ++) {
             try {
                 PictureInfo data = new PictureInfo();
