@@ -1,8 +1,6 @@
 package org.zywx.wbpalmstar.plugin.ueximage;
 
 import android.app.Activity;
-import android.app.ActivityGroup;
-import android.app.LocalActivityManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -55,7 +53,6 @@ public class EUExImage extends EUExBase {
     public static final int REQUEST_IMAGE_PICKER = 101;
     public static final int REQUEST_IMAGE_BROWSER = 102;
     private Context context;
-    private static LocalActivityManager mgr;
     private UEXImageUtil uexImageUtil;
 
     private ResoureFinder finder;
@@ -68,7 +65,6 @@ public class EUExImage extends EUExBase {
     public EUExImage(Context context, EBrowserView eBrowserView) {
         super(context, eBrowserView);
         this.context = context;
-        mgr = ((ActivityGroup) mContext).getLocalActivityManager();
         //创建缓存文件夹
         File f = new File(Environment.getExternalStorageDirectory(),
                 File.separator + UEXImageUtil.TEMP_PATH);
@@ -237,7 +233,7 @@ public class EUExImage extends EUExBase {
         try {
             JSONObject jsonObject = new JSONObject(json);
             if (!jsonObject.has("src") || TextUtils.isEmpty(jsonObject.getString("src"))) {
-                Toast.makeText(mgr.getCurrentActivity(), "src不能为空", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "src不能为空", Toast.LENGTH_SHORT).show();
                 return;
             }
             src = jsonObject.getString("src");
@@ -248,7 +244,7 @@ public class EUExImage extends EUExBase {
             if (jsonObject.has("quality")) {
                 double qualityParam = jsonObject.getDouble("quality");
                 if (qualityParam < 0 || qualityParam > 1) {
-                    Toast.makeText(mgr.getCurrentActivity(), "quality 只能在0-1之间", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "quality 只能在0-1之间", Toast.LENGTH_SHORT).show();
                 } else {
                     cropQuality = qualityParam;
                 }
@@ -425,7 +421,7 @@ public class EUExImage extends EUExBase {
         try {
             JSONObject jsonObject = new JSONObject(json);
             if (!jsonObject.has("localPath") || TextUtils.isEmpty(jsonObject.getString("localPath"))) {
-                Toast.makeText(mgr.getCurrentActivity(), "localPath", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "localPath", Toast.LENGTH_SHORT).show();
                 return;
             }
             if (jsonObject.has("extraInfo")) {
