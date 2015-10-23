@@ -22,13 +22,13 @@ public class EUEXImageConfig {
     //设置最小选择的图片数目, 0表示无限制
     private int minImageCount = 1;
     //设置可以选择的图片的个数，0表示无限制
-    private int maxImageCount;
+    private int maxImageCount = Integer.MAX_VALUE;
     //图片质量
-    private double quality;
+    private double quality = 0.5;
     //是否用png格式导出图片
-    private boolean isUsePng;
+    private boolean isUsePng = false;
     //是否显示detailedInfo;
-    private boolean isShowDetailedInfo;
+    private boolean isShowDetailedInfo =false;
 
     //以下是关于openBrowser相关的设置
     //显示分享按钮

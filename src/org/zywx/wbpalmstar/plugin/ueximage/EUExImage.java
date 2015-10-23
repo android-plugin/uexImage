@@ -26,7 +26,6 @@ import org.zywx.wbpalmstar.plugin.ueximage.util.Constants;
 import org.zywx.wbpalmstar.plugin.ueximage.util.EUEXImageConfig;
 import org.zywx.wbpalmstar.plugin.ueximage.util.UEXImageUtil;
 
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -102,23 +101,33 @@ public class EUExImage extends EUExBase {
         JSONObject jsonObject;
         try {
             jsonObject = new JSONObject(json);
-            int min = jsonObject.getInt("min");
-            int max = jsonObject.getInt("max");
-            double quality = jsonObject.getDouble("quality");
-            Boolean usePng = jsonObject.getBoolean("usePng");
-            Boolean detailedInfo = jsonObject.getBoolean("detailedInfo");
-            EUEXImageConfig.getInstance().setMinImageCount(min);
-            EUEXImageConfig.getInstance().setMaxImageCount(max);
-            EUEXImageConfig.getInstance().setIsUsePng(usePng);
-            EUEXImageConfig.getInstance().setQuality(quality);
-            EUEXImageConfig.getInstance().setIsShowDetailedInfo(detailedInfo);
+            if (jsonObject.has("min")) {
+                int min = jsonObject.getInt("min");
+                EUEXImageConfig.getInstance().setMinImageCount(min);
+            }
+            if (jsonObject.has("max")) {
+                int max = jsonObject.getInt("max");
+                EUEXImageConfig.getInstance().setMaxImageCount(max);
+            }
+            if (jsonObject.has("quality")){
+                double quality = jsonObject.getDouble("quality");
+                EUEXImageConfig.getInstance().setQuality(quality);
+            }
+            if (jsonObject.has("usePng")) {
+                Boolean usePng = jsonObject.getBoolean("usePng");
+                EUEXImageConfig.getInstance().setIsUsePng(usePng);
+            }
+            if (jsonObject.has("detailedInfo")) {
+                Boolean detailedInfo = jsonObject.getBoolean("detailedInfo");
+                EUEXImageConfig.getInstance().setIsShowDetailedInfo(detailedInfo);
+            }
             EUEXImageConfig.getInstance().setIsOpenBrowser(false);
-
             Intent intent = new Intent(context, AlbumListActivity.class);
             startActivityForResult(intent, REQUEST_IMAGE_PICKER);
 
         } catch (JSONException e) {
             Log.i(TAG, e.getMessage());
+            Toast.makeText(context, "JSON解析错误", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -148,25 +157,34 @@ public class EUExImage extends EUExBase {
             } else {
                 JSONArray data = jsonObject.getJSONArray("data");
                 for (int i = 0; i< data.length(); i ++) {
-                    JSONObject obj = data.getJSONObject(i);
-                    if (!obj.has("src")) {
-                        Toast.makeText(context, "data中第"+ (i + 1)+"个元素的src不能为空", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    String src = obj.getString("src");
-                    String srcPath = BUtility.makeRealPath(
-                            BUtility.makeUrl(mBrwView.getCurrentUrl(), src),
-                            mBrwView.getCurrentWidget().m_widgetPath,
-                            mBrwView.getCurrentWidget().m_wgtType);
-                    obj.put("src", srcPath);
-                    if (obj.has("thumb")) {
-                        String thumb = obj.getString("thumb");
-                        String thumbPath = BUtility.makeRealPath(
-                                BUtility.makeUrl(mBrwView.getCurrentUrl(), thumb),
+                    if(data.get(i) instanceof  String) {
+                        String path = data.getString(i);
+                        String realPath = BUtility.makeRealPath(
+                                BUtility.makeUrl(mBrwView.getCurrentUrl(), path),
                                 mBrwView.getCurrentWidget().m_widgetPath,
                                 mBrwView.getCurrentWidget().m_wgtType);
-                        obj.put("thumb", thumbPath);
-                        Log.i(TAG, "thumb:" + thumb);
+                        data.put(i, realPath);
+                    } else {
+                        JSONObject obj = data.getJSONObject(i);
+                        if (!obj.has("src")) {
+                            Toast.makeText(context, "data中第"+ (i + 1)+"个元素的src不能为空", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        String src = obj.getString("src");
+                        String srcPath = BUtility.makeRealPath(
+                                BUtility.makeUrl(mBrwView.getCurrentUrl(), src),
+                                mBrwView.getCurrentWidget().m_widgetPath,
+                                mBrwView.getCurrentWidget().m_wgtType);
+                        obj.put("src", srcPath);
+                        if (obj.has("thumb")) {
+                            String thumb = obj.getString("thumb");
+                            String thumbPath = BUtility.makeRealPath(
+                                    BUtility.makeUrl(mBrwView.getCurrentUrl(), thumb),
+                                    mBrwView.getCurrentWidget().m_widgetPath,
+                                    mBrwView.getCurrentWidget().m_wgtType);
+                            obj.put("thumb", thumbPath);
+                            Log.i(TAG, "thumb:" + thumb);
+                        }
                     }
                 }
                 config.setDataArray(data);
@@ -186,7 +204,7 @@ public class EUExImage extends EUExBase {
                     Toast.makeText(context, "startOnGrid为true时，enableGrid不能为false", Toast.LENGTH_SHORT).show();
                 }
             }
-             //Android不支持
+            //Android不支持
             //boolean isDisplayNavArrows = jsonObject.getBoolean("displayNavArrows");
 
             if (jsonObject.has("startIndex")) {
@@ -254,6 +272,7 @@ public class EUExImage extends EUExBase {
             }
         } catch (JSONException e) {
             Log.i(TAG, e.getMessage());
+            Toast.makeText(context, "JSON解析错误", Toast.LENGTH_SHORT).show();
         }
         File file;
         //先将assets文件写入到临时文件夹中
@@ -421,7 +440,7 @@ public class EUExImage extends EUExBase {
         try {
             JSONObject jsonObject = new JSONObject(json);
             if (!jsonObject.has("localPath") || TextUtils.isEmpty(jsonObject.getString("localPath"))) {
-                Toast.makeText(context, "localPath", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "localPath不能为空", Toast.LENGTH_SHORT).show();
                 return;
             }
             if (jsonObject.has("extraInfo")) {
@@ -474,7 +493,6 @@ public class EUExImage extends EUExBase {
                     resultObject.put("isSuccess", false);
                     resultObject.put("errorStr", FILE_SYSTEM_ERROR);
                 }
-                resultObject.put("isSuccess", true);
             }
             callBackPluginJs(JsConst.CALLBACK_SAVE_TO_PHOTO_ALBUM, resultObject.toString());
         } catch (JSONException e) {
@@ -500,10 +518,6 @@ public class EUExImage extends EUExBase {
 
 
     public void clearOutputImages(String[] params) {
-        if (params == null || params.length < 1) {
-            errorCallback(0, 0, "error params!");
-            return;
-        }
         Message msg = new Message();
         msg.obj = this;
         msg.what = MSG_CLEAR_OUTPUT_IMAGES;
@@ -514,7 +528,6 @@ public class EUExImage extends EUExBase {
     }
 
     private void clearOutputImagesMsg(String[] params) {
-        String json = params[0];
         JSONObject jsonResult = new JSONObject();
         File directory = new File(Environment.getExternalStorageDirectory(),
                 File.separator + UEXImageUtil.TEMP_PATH);

@@ -18,7 +18,6 @@ import com.ace.universalimageloader.core.display.SimpleBitmapDisplayer;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.zywx.wbpalmstar.base.BUtility;
 import org.zywx.wbpalmstar.plugin.ueximage.EUExImage;
 import org.zywx.wbpalmstar.plugin.ueximage.model.PictureInfo;
 
@@ -143,7 +142,10 @@ public class UEXImageUtil {
         }
         folderList.put("所有图片", allPictureList);
         cursor.close();
-        EUEXImageConfig.getInstance().setMaxImageCount(allPictureList.size());
+        //如果传进来的max为0代表无限制
+        if ( EUEXImageConfig.getInstance().getMaxImageCount() == 0) {
+            EUEXImageConfig.getInstance().setMaxImageCount(allPictureList.size());
+        }
     }
 
     public List<PictureInfo> getCheckedItems() {
@@ -240,22 +242,49 @@ public class UEXImageUtil {
         return jsonObject;
     }
 
+//    public List<PictureInfo> transformData(JSONArray imageDataArray) {
+//        int len = imageDataArray.length();
+//        List<PictureInfo> imageDataList = new ArrayList<PictureInfo>();
+//        for (int i = 0; i< len; i ++) {
+//            try {
+//                PictureInfo data = new PictureInfo();
+//                JSONObject jsonObject = imageDataArray.getJSONObject(i);
+//                data.setSrc(jsonObject.getString("src"));
+//                if (jsonObject.has("thumb") && !TextUtils.isEmpty(jsonObject.getString("thumb"))) {
+//                    data.setThumb(jsonObject.getString("thumb"));
+//                }
+//                if (jsonObject.has("desc") && !TextUtils.isEmpty(jsonObject.getString("desc"))) {
+//                    data.setDesc(jsonObject.getString("desc"));
+//                }
+//                imageDataList.add(data);
+//            }catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        return imageDataList;
+//    }
+
     public List<PictureInfo> transformData(JSONArray imageDataArray) {
         int len = imageDataArray.length();
         List<PictureInfo> imageDataList = new ArrayList<PictureInfo>();
         for (int i = 0; i< len; i ++) {
             try {
-                PictureInfo data = new PictureInfo();
-                JSONObject jsonObject = imageDataArray.getJSONObject(i);
-                data.setSrc(jsonObject.getString("src"));
-                if (jsonObject.has("thumb") && !TextUtils.isEmpty(jsonObject.getString("thumb"))) {
-                    String thumb = BUtility.makeRealPath(jsonObject.getString("thumb"), null, 0);
-                    data.setThumb(thumb);
+                PictureInfo picInfo = new PictureInfo();
+                //针对只传一个字符串这种情况
+                if(imageDataArray.get(i) instanceof String) {
+                    String realPath = imageDataArray.getString(i);
+                    picInfo.setSrc(realPath);
+                } else {
+                    JSONObject jsonObject = imageDataArray.getJSONObject(i);
+                    picInfo.setSrc(jsonObject.getString("src"));
+                    if (jsonObject.has("thumb") && !TextUtils.isEmpty(jsonObject.getString("thumb"))) {
+                        picInfo.setThumb(jsonObject.getString("thumb"));
+                    }
+                    if (jsonObject.has("desc") && !TextUtils.isEmpty(jsonObject.getString("desc"))) {
+                        picInfo.setDesc(jsonObject.getString("desc"));
+                    }
                 }
-                if (jsonObject.has("desc") && !TextUtils.isEmpty(jsonObject.getString("desc"))) {
-                    data.setDesc(jsonObject.getString("desc"));
-                }
-                imageDataList.add(data);
+                imageDataList.add(picInfo);
             }catch (JSONException e) {
                 e.printStackTrace();
             }

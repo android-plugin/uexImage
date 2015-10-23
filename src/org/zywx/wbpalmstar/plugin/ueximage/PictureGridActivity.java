@@ -27,17 +27,13 @@ import com.ace.universalimageloader.core.imageaware.ImageViewAware;
 import com.ace.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.zywx.wbpalmstar.base.BUtility;
 import org.zywx.wbpalmstar.base.ResoureFinder;
+import org.zywx.wbpalmstar.plugin.ueximage.model.PictureInfo;
 import org.zywx.wbpalmstar.plugin.ueximage.util.CommonUtil;
 import org.zywx.wbpalmstar.plugin.ueximage.util.Constants;
 import org.zywx.wbpalmstar.plugin.ueximage.util.EUEXImageConfig;
-import org.zywx.wbpalmstar.plugin.ueximage.model.PictureInfo;
 import org.zywx.wbpalmstar.plugin.ueximage.util.UEXImageUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
 //以九宫格的形式显示某个文件夹下的图片列表
@@ -72,7 +68,7 @@ public class PictureGridActivity extends Activity {
         if(TextUtils.isEmpty(folderName)) {
             isOpenBrowser = true;
             JSONArray imageDataArray  = EUEXImageConfig.getInstance().getDataArray();
-            picList = transformData(imageDataArray);
+            picList = uexImageUtil.transformData(imageDataArray);
         } else {
             picList = uexImageUtil.getFolderList().get(folderName);
         }
@@ -84,28 +80,7 @@ public class PictureGridActivity extends Activity {
         }
     }
 
-    private List<PictureInfo> transformData(JSONArray imageDataArray) {
-        int len = imageDataArray.length();
-        List<PictureInfo> imageDataList = new ArrayList<PictureInfo>();
-        for (int i = 0; i< len; i ++) {
-            try {
-                PictureInfo data = new PictureInfo();
-                JSONObject jsonObject = imageDataArray.getJSONObject(i);
-                data.setSrc(jsonObject.getString("src"));
-                if (jsonObject.has("thumb") && !TextUtils.isEmpty(jsonObject.getString("thumb"))) {
-                    String thumb = BUtility.makeRealPath(jsonObject.getString("thumb"), null, 0);
-                    data.setThumb(thumb);
-                }
-                if (jsonObject.has("desc") && !TextUtils.isEmpty(jsonObject.getString("desc"))) {
-                    data.setDesc(jsonObject.getString("desc"));
-                }
-                imageDataList.add(data);
-            }catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        return imageDataList;
-    }
+
 
     private void initViewForPicker() {
         ivGoBack = (ImageView) findViewById(finder.getId("iv_left_on_title"));
