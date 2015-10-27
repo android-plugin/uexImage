@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
     <plugin
-        uexName="uexImage" version="3.0.1" build="1">
+        uexName="uexImage" version="3.0.2" build="2">
+        <info>2:修复图片压缩质量错误问题</info>
         <info>1:去掉插件中的ActivityGroup,配合引擎升级</info>
         <build>0:图片插件</build>
     </plugin>
