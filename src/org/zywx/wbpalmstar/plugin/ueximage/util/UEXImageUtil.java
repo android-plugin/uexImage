@@ -159,13 +159,12 @@ public class UEXImageUtil {
                 .cacheOnDisk(false)
                 .displayer(new SimpleBitmapDisplayer()).build();
         File f;
-        List<String> filePathList = new ArrayList<String>();
+        JSONArray filePathArray = new JSONArray();
         FileOutputStream fos = null;
         JSONObject result = new JSONObject();
         JSONArray detailedInfoArray = new JSONArray();
         for (PictureInfo picInfo : checkedItems) {
             String orginPicPath = ImageFilePath.getPath(context, Uri.parse(picInfo.getSrc()));
-            Log.i(TAG, "orginPath:" + orginPicPath);
             Bitmap bitmap = ImageLoader.getInstance().loadImageSync(picInfo.getSrc(),options);
             if (EUEXImageConfig.getInstance().getIsUsePng()) {
                 f = new File(Environment.getExternalStorageDirectory(),
@@ -183,7 +182,7 @@ public class UEXImageUtil {
                     bitmap.compress(Bitmap.CompressFormat.JPEG, (int)(EUEXImageConfig.getInstance().getQuality() * 100), fos);
                 }
                 fos.flush();
-                filePathList.add(f.getAbsolutePath());
+                filePathArray.put(f.getAbsolutePath());
                 if( EUEXImageConfig.getInstance().isShowDetailedInfo()) {
                     JSONObject detailedInfo = getExifData(orginPicPath, f.getAbsolutePath());
                     detailedInfoArray.put(detailedInfo);
@@ -206,7 +205,7 @@ public class UEXImageUtil {
         }
         try {
             result.put("isCancelled", false);
-            result.put("data", filePathList);
+            result.put("data", filePathArray);
             result.put("detailedImageInfo", detailedInfoArray);
         } catch (JSONException e) {
             e.printStackTrace();
