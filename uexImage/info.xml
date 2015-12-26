@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
     <plugin
-        uexName="uexImage" version="3.0.2" build="2">
-        <info>2:修复图片压缩质量错误问题</info>
-        <info>1:去掉插件中的ActivityGroup,配合引擎升级</info>
+        uexName="uexImage" version="3.0.3" build="3">
+        <info>3:修复在某些机型上图片裁剪失败的问题</info>
+        <build>2:修复图片压缩质量错误问题</build>
+        <build>1:去掉插件中的ActivityGroup,配合引擎升级</build>
         <build>0:图片插件</build>
     </plugin>
 </uexplugins>

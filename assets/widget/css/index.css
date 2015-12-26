@@ -51,5 +51,5 @@ body{ background:#077CE3; width:100%; height:100%;}
 .consj span{ width:85%; display:block; margin:4% 0 3% 0;}
 .textbox{display:block; width:85%;color:#bebdbf; padding:1.5% 1%;}
 .btn{ margin:3% 0; background:-webkit-gradient(linear,0 0,0 100%,from(#FFCD00),color-stop(50%,#FFBC00),color-stop(50%,#FFA500)); border:1px solid #FFA700; display:block; -webkit-border-radius:8px;text-align:center; padding:2%; color:#712000; display:block;}
-.tcxx{ width:85%; color:#bebdbf; height:150px; border:1px dashed #C6C6C6;padding:1%;}
+.tcxx{ width:85%; color:#bebdbf; height:50px; border:1px dashed #C6C6C6;padding:1%;}
 #payy{ width:85%; color:#bebdbf; height:200px; border:1px dashed #C6C6C6;padding:1%;}
