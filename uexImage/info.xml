@@ -2,7 +2,8 @@
 <uexplugins>
     <plugin
         uexName="uexImage" version="3.0.3" build="3">
-        <info>3:修复在某些机型上图片裁剪失败的问题</info>
+        <info>4:修复在华为机型的图片裁剪闪退的问题</info>
+        <build>3:修复在某些机型上图片裁剪失败的问题</build>
         <build>2:修复图片压缩质量错误问题</build>
         <build>1:去掉插件中的ActivityGroup,配合引擎升级</build>
         <build>0:图片插件</build>
