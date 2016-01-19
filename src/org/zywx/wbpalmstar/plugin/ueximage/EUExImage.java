@@ -274,6 +274,14 @@ public class EUExImage extends EUExBase {
             if (jsonObject.has("usePng")) {
                 cropUsePng = jsonObject.getBoolean("usePng");
             }
+            if (jsonObject.has("mode")) {
+                int i = jsonObject.getInt("mode");
+                if(3 == i){
+                	cropMode = i;
+                } else {
+                	cropMode = 1;
+                }
+            }
         } catch (JSONException e) {
             Log.i(TAG, e.getMessage());
             Toast.makeText(context, "JSON解析错误", Toast.LENGTH_SHORT).show();
@@ -313,8 +321,10 @@ public class EUExImage extends EUExBase {
 			Intent cropIntent = new Intent("com.android.camera.action.CROP");
 			cropIntent.setDataAndType(Uri.fromFile(imageFile), "image/*");
 			cropIntent.putExtra("crop", "true");
-//			cropIntent.putExtra("aspectX", 1);
-//			cropIntent.putExtra("aspectY", 1);
+			if(1 == cropMode){
+				cropIntent.putExtra("aspectX", 1);
+				cropIntent.putExtra("aspectY", 1);
+			}
 			Log.i("MobileModel", android.os.Build.MANUFACTURER);
 			if ((android.os.Build.MANUFACTURER).startsWith("HUAWEI")) {
 				cropIntent.putExtra("return-data", true);
