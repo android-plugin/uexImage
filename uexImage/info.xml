@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
     <plugin
-        uexName="uexImage" version="3.0.3" build="3">
+        uexName="uexImage" version="3.0.4" build="4">
         <info>4:修复在华为机型的图片裁剪闪退的问题</info>
         <build>3:修复在某些机型上图片裁剪失败的问题</build>
         <build>2:修复图片压缩质量错误问题</build>
