@@ -14,7 +14,7 @@
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="45dp"
-        android:background="#e0111222"
+        android:background="@color/plugin_uex_image_gray_4"
         android:gravity="center_vertical"
         >
         <TextView
