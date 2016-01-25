@@ -3,7 +3,7 @@
     android:id="@+id/title"
     android:layout_width="match_parent"
     android:layout_height="48dp"
-    android:background="@color/plugin_uex_image_green_common"
+    android:background="@color/plugin_uex_image_gray_4"
     android:paddingLeft="@dimen/plugin_uex_image_activity_horizontal_margin"
     android:paddingRight="@dimen/plugin_uex_image_activity_horizontal_margin"
     >
@@ -27,10 +27,10 @@
     <Button
         android:id="@+id/btn_finish_title"
         android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:background="@color/plugin_uex_image_green_2"
+        android:layout_height="35dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:background="@drawable/plugin_uex_image_border_round_corner"
         android:textColor="#ffffff"
         android:layout_marginRight="10dp"
         android:text="完成"
