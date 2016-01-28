@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-
 	<color name="plugin_uex_image_gray_3">#333333</color>
 	<color name="plugin_uex_image_gray_4">#2E3334</color>
 	<color name="plugin_uex_image_green_common">#15C7CB</color>
 	<color name="plugin_uex_image_green_1">#45C01A</color>
 	<color name="plugin_uex_image_green_2">#86D8FF</color>
 	<color name="plugin_uex_image_gray_9">#d9d9d9</color>
-
+	<color name="plugin_uex_image_black_1">#e0111222</color>
 </resources>
