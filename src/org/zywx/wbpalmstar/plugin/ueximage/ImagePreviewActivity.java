@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2015.  The AppCan Open Source Project.
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ */
 package org.zywx.wbpalmstar.plugin.ueximage;
 
 import android.app.Activity;
@@ -16,6 +34,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,7 +63,7 @@ public class ImagePreviewActivity extends Activity {
     private Button btnFinishInTitle;
     private CheckBox cbChoose;
     private TextView tvCheckbox;
-    private List<PictureInfo> checkedItems;
+    private List<String> checkedItems;
     private UEXImageUtil uexImageUtil;
 
     private ImageView imageView;
@@ -56,6 +75,7 @@ public class ImagePreviewActivity extends Activity {
     private TextView tvShare;
     private TextView tvToGrid;
     private ResoureFinder finder;
+    private RelativeLayout rlTitle;
 
 
     @Override
@@ -65,6 +85,16 @@ public class ImagePreviewActivity extends Activity {
         setContentView(finder.getLayoutId("plugin_uex_image_activity_image_preview"));
         uexImageUtil = UEXImageUtil.getInstance();
         isOpenBrowser = EUEXImageConfig.getInstance().getIsOpenBrowser();
+
+        rlTitle = (RelativeLayout) findViewById(finder.getId("title_layout"));
+        ivGoBack = (ImageView) findViewById(finder.getId("iv_left_on_title"));
+        tvTitle = (TextView) findViewById(finder.getId("tv_title"));
+        btnFinishInTitle = (Button) findViewById(finder.getId("btn_finish_title"));
+        viewPager = (ViewPager) findViewById(finder.getId("vp_picture"));
+        cbChoose = (CheckBox) findViewById(finder.getId("checkbox"));
+
+        rlTitle.setAlpha(0.9f);
+
         initData();
         if (isOpenBrowser) {
             initViewForBrowser();
@@ -82,7 +112,7 @@ public class ImagePreviewActivity extends Activity {
             folderName = getIntent().getExtras().getString(Constants.EXTRA_FOLDER_NAME);
             picIndex = getIntent().getExtras().getInt(Constants.EXTRA_PIC_INDEX);
             checkedItems = uexImageUtil.getCheckedItems();
-            picList = uexImageUtil.getFolderList().get(folderName);
+            picList = uexImageUtil.getCurrentPicList();
         }
     }
 
@@ -91,12 +121,7 @@ public class ImagePreviewActivity extends Activity {
 
 
     private void initViewForPicker() {
-        ivGoBack = (ImageView) findViewById(finder.getId("iv_left_on_title"));
-        tvTitle = (TextView) findViewById(finder.getId("tv_title"));
         tvTitle.setText(folderName);
-        btnFinishInTitle = (Button) findViewById(finder.getId("btn_finish_title"));
-        viewPager = (ViewPager) findViewById(finder.getId("vp_picture"));
-        cbChoose = (CheckBox) findViewById(finder.getId("checkbox"));
         ivGoBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,7 +135,7 @@ public class ImagePreviewActivity extends Activity {
             btnFinishInTitle.setText("完成(" + checkedItems.size() + "/" +  EUEXImageConfig.getInstance().getMaxImageCount() + ")");
             btnFinishInTitle.setEnabled(true);
         }
-        cbChoose.setTag(picList.get(picIndex));
+        cbChoose.setTag(picList.get(picIndex).getSrc());
         cbChoose.setOnCheckedChangeListener(onCheckedChangeListener);
         btnFinishInTitle.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -128,13 +153,6 @@ public class ImagePreviewActivity extends Activity {
 
     }
     private void initViewForBrowser() {
-        ivGoBack = (ImageView) findViewById(finder.getId("iv_left_on_title"));
-        tvTitle = (TextView) findViewById(finder.getId("tv_title"));
-
-        btnFinishInTitle = (Button) findViewById(finder.getId("btn_finish_title"));
-
-        viewPager = (ViewPager) findViewById(finder.getId("vp_picture"));
-        cbChoose = (CheckBox) findViewById(finder.getId("checkbox"));
         tvShare = (TextView) findViewById(finder.getId("tv_share"));
         tvToGrid = (TextView) findViewById(finder.getId("tv_to_grid"));
 
@@ -270,7 +288,7 @@ public class ImagePreviewActivity extends Activity {
         public void onPageSelected(int i) {
             picIndex = i;
             if (!isOpenBrowser) {
-                cbChoose.setChecked(checkedItems.contains(picList.get(i)));
+                cbChoose.setChecked(checkedItems.contains(picList.get(i).getSrc()));
             }
             tvTitle.setText((i + 1) + "/" + picList.size());
 
@@ -283,7 +301,7 @@ public class ImagePreviewActivity extends Activity {
                     cbChoose.setOnCheckedChangeListener(null);
                 } else if ( i == 0) {//静止
                     cbChoose.setOnCheckedChangeListener(onCheckedChangeListener);
-                    cbChoose.setTag(picList.get(picIndex));
+                    cbChoose.setTag(picList.get(picIndex).getSrc());
                 }
             }
         }
@@ -300,7 +318,7 @@ public class ImagePreviewActivity extends Activity {
                         buttonView.setChecked(false);
                         return;
                     }
-                    checkedItems.add((PictureInfo) buttonView.getTag());
+                    checkedItems.add((String)(buttonView.getTag()));
                 }
             } else {
                 if (checkedItems.contains(buttonView.getTag())) {

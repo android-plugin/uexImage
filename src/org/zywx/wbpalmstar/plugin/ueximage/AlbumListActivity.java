@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2015.  The AppCan Open Source Project.
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ */
 package org.zywx.wbpalmstar.plugin.ueximage;
 
 import android.app.Activity;
@@ -21,29 +39,26 @@ import android.widget.Toast;
 import com.ace.universalimageloader.core.DisplayImageOptions;
 import com.ace.universalimageloader.core.ImageLoader;
 import com.ace.universalimageloader.core.display.SimpleBitmapDisplayer;
+import com.ace.universalimageloader.core.imageaware.ImageAware;
 import com.ace.universalimageloader.core.imageaware.ImageViewAware;
 
 import org.zywx.wbpalmstar.base.ResoureFinder;
-import org.zywx.wbpalmstar.plugin.ueximage.model.PictureInfo;
+import org.zywx.wbpalmstar.plugin.ueximage.model.PictureFolder;
 import org.zywx.wbpalmstar.plugin.ueximage.util.Constants;
 import org.zywx.wbpalmstar.plugin.ueximage.util.EUEXImageConfig;
 import org.zywx.wbpalmstar.plugin.ueximage.util.UEXImageUtil;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 public class AlbumListActivity extends Activity implements Serializable {
     public static final String TAG = "AlbumListActivity";
     private ListView lvAlbumList;
 
     private UEXImageUtil uexImageUtil;
-
-    private List<String> folderNameList;
+    private List<PictureFolder> pictureFolders;
     private ImageView ivProgressBar;
     private FolderAdapter adapter;
     private ImageView ivLeftTitle;
@@ -74,7 +89,7 @@ public class AlbumListActivity extends Activity implements Serializable {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(AlbumListActivity.this, PictureGridActivity.class);
-                intent.putExtra(Constants.EXTRA_FOLDER_NAME, folderNameList.get(i));
+                intent.putExtra(Constants.EXTRA_FOLDER_PATH, pictureFolders.get(i).getFolderPath());
                 startActivityForResult(intent, EUExImage.REQUEST_IMAGE_PICKER);
             }
         });
@@ -129,7 +144,7 @@ public class AlbumListActivity extends Activity implements Serializable {
                         if (!isFinishing()) {
                             ivProgressBar.clearAnimation();
                             ((View) ivProgressBar.getParent()).setVisibility(View.GONE);
-                            adapter = new FolderAdapter(AlbumListActivity.this, uexImageUtil.getFolderList());
+                            adapter = new FolderAdapter(AlbumListActivity.this, uexImageUtil.getPictureFolderList());
                             lvAlbumList.setAdapter(adapter);
                             lvAlbumList.setVisibility(View.VISIBLE);
                         }
@@ -142,14 +157,13 @@ public class AlbumListActivity extends Activity implements Serializable {
 
 
     public class FolderAdapter extends BaseAdapter {
-        Map<String, List<PictureInfo>> folders;
+        List<PictureFolder> folders;
         Context context;
         DisplayImageOptions options;
-        FolderAdapter(Context context, Map<String, List<PictureInfo>> folders) {
+        FolderAdapter(Context context, List<PictureFolder> folders) {
+            pictureFolders = folders;
             this.folders = folders;
             this.context = context;
-            folderNameList = new ArrayList<String>();
-
             options = new DisplayImageOptions.Builder()
                     .cacheInMemory(true)
                     .cacheOnDisk(false)
@@ -158,20 +172,11 @@ public class AlbumListActivity extends Activity implements Serializable {
                     .showImageOnLoading(finder.getDrawable("plugin_uex_image_loading"))
                     .bitmapConfig(Bitmap.Config.RGB_565)
                     .displayer(new SimpleBitmapDisplayer()).build();
-
-            Iterator iter = folders.entrySet().iterator();
-            while (iter.hasNext()) {
-                Map.Entry entry = (Map.Entry) iter.next();
-                String key = (String) entry.getKey();
-                folderNameList.add(key);
-            }
-            final Map<String, List<PictureInfo>> tempFolders = folders;
             //根据文件夹内的图片数量降序显示
-            Collections.sort(folderNameList, new Comparator<String>() {
-                public int compare(String arg0, String arg1) {
-                    Integer num1 = tempFolders.get(arg0).size();
-                    Integer num2 = tempFolders.get(arg1).size();
-                    return num2.compareTo(num1);
+            Collections.sort(folders, new Comparator<PictureFolder>() {
+                @Override
+                public int compare(PictureFolder first, PictureFolder second) {
+                    return second.getCount().compareTo(first.getCount());
                 }
             });
         }
@@ -203,11 +208,11 @@ public class AlbumListActivity extends Activity implements Serializable {
             } else {
                 viewHolder = (ViewHolder) convertView.getTag();
             }
-            String name = folderNameList.get(i);
-            List<PictureInfo> files = folders.get(name);
-            viewHolder.textView.setText(name + "(" + files.size() + ")");
-            if (files.size() > 0) {
-                ImageLoader.getInstance().displayImage(files.get(0).getThumb(),new ImageViewAware(viewHolder.imageView),options,null,null);
+            PictureFolder pictureFolder = folders.get(i);
+            viewHolder.textView.setText(pictureFolder.getFolderName() + "(" + pictureFolder.getCount() + ")");
+            if (pictureFolder.getCount() > 0) {
+                ImageAware imageAware = new ImageViewAware(viewHolder.imageView, false);
+                ImageLoader.getInstance().displayImage(pictureFolder.getFirstImagePath(), imageAware, options,null,null);
             }
             return convertView;
         }

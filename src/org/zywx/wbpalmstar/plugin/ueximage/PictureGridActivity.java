@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2015.  The AppCan Open Source Project.
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ */
 package org.zywx.wbpalmstar.plugin.ueximage;
 
 import android.app.Activity;
@@ -22,8 +40,11 @@ import android.widget.Toast;
 
 import com.ace.universalimageloader.core.DisplayImageOptions;
 import com.ace.universalimageloader.core.ImageLoader;
+import com.ace.universalimageloader.core.assist.ImageScaleType;
 import com.ace.universalimageloader.core.display.SimpleBitmapDisplayer;
+import com.ace.universalimageloader.core.imageaware.ImageAware;
 import com.ace.universalimageloader.core.imageaware.ImageViewAware;
+import com.ace.universalimageloader.core.listener.PauseOnScrollListener;
 import com.ace.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import org.json.JSONArray;
@@ -34,6 +55,7 @@ import org.zywx.wbpalmstar.plugin.ueximage.util.Constants;
 import org.zywx.wbpalmstar.plugin.ueximage.util.EUEXImageConfig;
 import org.zywx.wbpalmstar.plugin.ueximage.util.UEXImageUtil;
 
+import java.io.File;
 import java.util.List;
 
 //以九宫格的形式显示某个文件夹下的图片列表
@@ -42,6 +64,7 @@ public class PictureGridActivity extends Activity {
     /*当打开系统图库时folderName才会有值，如果是打开图片选择器，此处图片信息将完全从系统中读。并且用户可以做选择图片的操作。
     如果是执行打开浏览器操作，则不会有值
      */
+    private String folderPath;
     private String folderName;
     private GridView gvPictures;
 
@@ -50,7 +73,7 @@ public class PictureGridActivity extends Activity {
     private UEXImageUtil uexImageUtil;
     private Button btnFinishInTitle;
     private List <PictureInfo> picList;
-    private List<PictureInfo> checkedItems;
+    private List<String> checkedItems;
     private MyAdapter adapter;
 
     private boolean isOpenBrowser = false;
@@ -64,15 +87,25 @@ public class PictureGridActivity extends Activity {
         setContentView(finder.getLayoutId("plugin_uex_image_activity_picture_grid"));
 
         uexImageUtil = UEXImageUtil.getInstance();
-        folderName = getIntent().getStringExtra(Constants.EXTRA_FOLDER_NAME);
-        if(TextUtils.isEmpty(folderName)) {
+        folderPath = getIntent().getStringExtra(Constants.EXTRA_FOLDER_PATH);
+        //执行浏览操作
+        if(TextUtils.isEmpty(folderPath)) {
             isOpenBrowser = true;
             JSONArray imageDataArray  = EUEXImageConfig.getInstance().getDataArray();
             picList = uexImageUtil.transformData(imageDataArray);
-        } else {
-            picList = uexImageUtil.getFolderList().get(folderName);
+        } else { //执行选择操作
+            folderName = new File(folderPath).getName();
+            picList = CommonUtil.getPictureInfo(this, folderPath);
+            uexImageUtil.setCurrentPicList(picList);
         }
         uexImageUtil.setCurrentPicList(picList);
+
+        ivGoBack = (ImageView) findViewById(finder.getId("iv_left_on_title"));
+        tvTitle = (TextView) findViewById(finder.getId("tv_title"));
+        btnFinishInTitle = (Button) findViewById(finder.getId("btn_finish_title"));
+        gvPictures = (GridView) findViewById(finder.getId("gv_pictures"));
+        //拖动下拉条和滑动过程中暂停加载
+        gvPictures.setOnScrollListener(new PauseOnScrollListener(ImageLoader.getInstance(), true, true));
         if(isOpenBrowser) {
             initViewForBrowser();
         } else {
@@ -83,10 +116,6 @@ public class PictureGridActivity extends Activity {
 
 
     private void initViewForPicker() {
-        ivGoBack = (ImageView) findViewById(finder.getId("iv_left_on_title"));
-        tvTitle = (TextView) findViewById(finder.getId("tv_title"));
-        gvPictures = (GridView) findViewById(finder.getId("gv_pictures"));
-        btnFinishInTitle = (Button) findViewById(finder.getId("btn_finish_title"));
         tvTitle.setText(folderName);
         adapter = new MyAdapter(this, picList);
         gvPictures.setAdapter(adapter);
@@ -115,11 +144,7 @@ public class PictureGridActivity extends Activity {
         });
     }
     private void initViewForBrowser()  {
-        ivGoBack = (ImageView) findViewById(finder.getId("iv_left_on_title"));
-        tvTitle = (TextView) findViewById(finder.getId("tv_title"));
-        btnFinishInTitle = (Button) findViewById(finder.getId("btn_finish_title"));
         ivGoBack.setVisibility(View.INVISIBLE);
-        gvPictures = (GridView) findViewById(finder.getId("gv_pictures"));
         adapter = new MyAdapter(this, picList);
         gvPictures.setAdapter(adapter);
         btnFinishInTitle.setOnClickListener(new View.OnClickListener() {
@@ -150,6 +175,7 @@ public class PictureGridActivity extends Activity {
                     .showImageOnFail(finder.getDrawableId("plugin_uex_image_loading"))
                     .showImageOnLoading(finder.getDrawableId("plugin_uex_image_loading"))
                     .bitmapConfig(Bitmap.Config.RGB_565)
+                    .imageScaleType(ImageScaleType.EXACTLY)
                     .displayer(new SimpleBitmapDisplayer()).build();
         }
 
@@ -189,21 +215,24 @@ public class PictureGridActivity extends Activity {
             } else {
                 viewHolder = (ViewHolder) convertView.getTag();
             }
-            ImageView imageView = viewHolder.imageView;
+            final ImageView imageView = viewHolder.imageView;
             PictureInfo pictureInfo = paths.get(i);
 
+            final ViewHolder tempViewHolder = viewHolder;
             if (!isOpenBrowser) {
-                ImageLoader.getInstance().displayImage(pictureInfo.getThumb(), new ImageViewAware(viewHolder.imageView), options,
+                ImageAware imageAware = new ImageViewAware(viewHolder.imageView, false);
+                ImageLoader.getInstance().displayImage(pictureInfo.getSrc(), imageAware, options,
                         loadingListener, null);
-                viewHolder.checkBox.setTag(pictureInfo);
-                viewHolder.checkBox.setChecked(checkedItems.contains(pictureInfo));
+                viewHolder.checkBox.setTag(pictureInfo.getSrc());
+                viewHolder.checkBox.setChecked(checkedItems.contains(pictureInfo.getSrc()));
             } else {//浏览图片：对于传入的图片的加载
                 String url = pictureInfo.getSrc();
                 if (pictureInfo.getThumb() != null) {
                     url = pictureInfo.getThumb();
                 }
                 if (url.substring(0,4).equalsIgnoreCase(Constants.HTTP)) {
-                    ImageLoader.getInstance().displayImage(url, new ImageViewAware(viewHolder.imageView), options,
+                    ImageAware imageAware = new ImageViewAware(viewHolder.imageView, false);
+                    ImageLoader.getInstance().displayImage(url, imageAware, options,
                             null, null);
                 } else {
                     Bitmap bitmap= CommonUtil.getLocalImage(PictureGridActivity.this, url);
@@ -263,7 +292,7 @@ public class PictureGridActivity extends Activity {
                         buttonView.setChecked(false);
                         return;
                     }
-                    checkedItems.add((PictureInfo) buttonView.getTag());
+                    checkedItems.add((String) buttonView.getTag());
                 }
             }
             if (checkedItems.size() > 0) {

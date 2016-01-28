@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2015.  The AppCan Open Source Project.
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ */
 package org.zywx.wbpalmstar.plugin.ueximage.util;
 
 
@@ -15,6 +33,7 @@ import com.ace.universalimageloader.core.assist.QueueProcessingType;
 import com.ace.universalimageloader.core.download.BaseImageDownloader;
 
 import org.zywx.wbpalmstar.base.BUtility;
+import org.zywx.wbpalmstar.plugin.ueximage.model.PictureInfo;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -23,6 +42,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 通用的工具方法
@@ -74,6 +95,26 @@ public class CommonUtil {
         return null;
     }
 
+    /**
+     * 获取指定路径下的图片信息列表
+     * @param dir
+     * @return 返回图片信息列表
+     */
+    public static List<PictureInfo> getPictureInfo(Context context, String dir) {
+
+        List<PictureInfo> list = new ArrayList<PictureInfo>();
+        File [] files = new File(dir).listFiles();
+        String path = null;
+        for (File f: files) {
+            path = f.getAbsolutePath();
+            if(CommonUtil.isPicture(path)) {
+                PictureInfo pictureInfo = new PictureInfo();
+                pictureInfo.setSrc("file://" + path);
+                list.add(pictureInfo);
+            }
+        }
+        return list;
+    }
     /**
      * 根据传入的路径加载图片，imgUrl只能是 widget/wgtRes/ 或 / 开头
      * @param ctx
@@ -209,5 +250,13 @@ public class CommonUtil {
             }
         }
         return false;
+    }
+    //判断文件是否是图片
+    public static boolean isPicture(String fileName) {
+        return fileName.endsWith(".jpg") || fileName.endsWith(".png")
+                || fileName.endsWith(".jpeg") || fileName.endsWith(".JPG")
+                || fileName.endsWith(".PNG") || fileName.endsWith(".JPEG")
+                || fileName.endsWith(".bmp") || fileName.endsWith(".gif")
+                || fileName.endsWith(".webp");
     }
 }

@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2015.  The AppCan Open Source Project.
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ */
 package org.zywx.wbpalmstar.plugin.ueximage.util;
 
 import android.content.Context;
@@ -18,19 +36,19 @@ import com.ace.universalimageloader.core.display.SimpleBitmapDisplayer;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.zywx.wbpalmstar.plugin.ueximage.EUExImage;
+import org.zywx.wbpalmstar.plugin.ueximage.model.PictureFolder;
 import org.zywx.wbpalmstar.plugin.ueximage.model.PictureInfo;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -38,29 +56,27 @@ import java.util.Map;
  */
 public class UEXImageUtil {
     private static final String TAG = "CommonUtil";
+    private static int TOTAL_COUNT = 0;
     private volatile static UEXImageUtil instance = null;
     //系统中存放图片的文件目录
-    private Map<String, List<PictureInfo>> folderList= new HashMap<String, List<PictureInfo>>();
+    private List<PictureFolder> pictureFolderList= new ArrayList<PictureFolder>();
+    //临时辅助类，防止该文件夹被多次扫描
+    private HashSet<String> tempDir = new HashSet<String>();
     //系统中的所有图片
     private List<PictureInfo> allPictureList = new ArrayList<PictureInfo>();
     //当前选中的图片集合
-    private List<PictureInfo> checkedItems = new ArrayList<PictureInfo>();
+    private List<String> checkedItems = new ArrayList<String>();
 
     //当前正在操作的图片集合
     private List<PictureInfo> currentPicList = new ArrayList<PictureInfo>();
 
-    public EUExImage euExImage;
     //图片临时保存的位置
     public static final String TEMP_PATH = "uex_image_temp";
 
     private UEXImageUtil() {}
 
-    public Map<String, List<PictureInfo>> getFolderList() {
-        return folderList;
-    }
-
-    public List<PictureInfo> getAllPictureList() {
-        return allPictureList;
+    public List<PictureFolder> getPictureFolderList() {
+        return pictureFolderList;
     }
 
     public List<PictureInfo> getCurrentPicList() {
@@ -83,7 +99,7 @@ public class UEXImageUtil {
     }
 
     public void resetData() {
-        folderList.clear();
+        pictureFolderList.clear();
         allPictureList.clear();
         checkedItems.clear();
         currentPicList.clear();
@@ -91,7 +107,7 @@ public class UEXImageUtil {
     }
 
     public void initAlbumList(Context context) {
-        if (folderList.size() > 0) {
+        if (pictureFolderList.size() > 0) {
             return;
         }
         String[] STORE_IMAGES = {
@@ -111,44 +127,43 @@ public class UEXImageUtil {
             int id = cursor.getInt(0);//大图ID
             String path = cursor.getString(1);//大图路径
             File file = new File(path);
+            //获取目录名
+            File parentFile = file.getParentFile();
+            String folderName = parentFile.getName();
+            String dirPath = parentFile.getAbsolutePath();
             //判断大图是否存在
             if (file.exists()) {
-                //小图URI
-                String thumbUri = CommonUtil.getThumbnail(context, id);
-                //获取大图URI
+                //判断文件夹是否已经存在
+                if (tempDir.contains(dirPath)) {
+                    continue;
+                }
+                tempDir.add(dirPath);
                 String uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI.buildUpon().
                         appendPath(Integer.toString(id)).build().toString();
-                if(TextUtils.isEmpty(uri))
-                    continue;
-                if (TextUtils.isEmpty(thumbUri))
-                    thumbUri = uri;
-                //获取目录名
-                String folder = file.getParentFile().getName();
-
-                PictureInfo pictureInfo = new PictureInfo();
-                pictureInfo.setSrc(uri);
-                pictureInfo.setThumb(thumbUri);
-
-                allPictureList.add(pictureInfo);
-                //判断文件夹是否已经存在
-                if (folderList.containsKey(folder)) {
-                    folderList.get(folder).add(pictureInfo);
-                } else {
-                    List<PictureInfo> files = new ArrayList<PictureInfo>();
-                    files.add(pictureInfo);
-                    folderList.put(folder, files);
-                }
+                PictureFolder pictureFolder = new PictureFolder();
+                pictureFolder.setFolderName(folderName);
+                pictureFolder.setFirstImagePath(uri);
+                pictureFolder.setFolderPath(dirPath);
+                int picCount = parentFile.list(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File dir, String filename) {
+                        return CommonUtil.isPicture(filename);
+                    }
+                }).length;
+                TOTAL_COUNT = TOTAL_COUNT + picCount;
+                pictureFolder.setCount(picCount);
+                pictureFolderList.add(pictureFolder);
             }
         }
-        folderList.put("所有图片", allPictureList);
         cursor.close();
+        tempDir.clear();
         //如果传进来的max为0代表无限制
         if ( EUEXImageConfig.getInstance().getMaxImageCount() == 0) {
-            EUEXImageConfig.getInstance().setMaxImageCount(allPictureList.size());
+            EUEXImageConfig.getInstance().setMaxImageCount(TOTAL_COUNT);
         }
     }
 
-    public List<PictureInfo> getCheckedItems() {
+    public List<String> getCheckedItems() {
         return checkedItems;
     }
 
@@ -163,9 +178,9 @@ public class UEXImageUtil {
         FileOutputStream fos = null;
         JSONObject result = new JSONObject();
         JSONArray detailedInfoArray = new JSONArray();
-        for (PictureInfo picInfo : checkedItems) {
-            String orginPicPath = ImageFilePath.getPath(context, Uri.parse(picInfo.getSrc()));
-            Bitmap bitmap = ImageLoader.getInstance().loadImageSync(picInfo.getSrc(),options);
+        for (String picPath : checkedItems) {
+            String orginPicPath = ImageFilePath.getPath(context, Uri.parse(picPath));
+            Bitmap bitmap = ImageLoader.getInstance().loadImageSync(picPath, options);
             if (EUEXImageConfig.getInstance().getIsUsePng()) {
                 f = new File(Environment.getExternalStorageDirectory(),
                         File.separator + TEMP_PATH + File.separator + "temp_" + new Date().getTime() +".png");
@@ -240,28 +255,6 @@ public class UEXImageUtil {
         }
         return jsonObject;
     }
-
-//    public List<PictureInfo> transformData(JSONArray imageDataArray) {
-//        int len = imageDataArray.length();
-//        List<PictureInfo> imageDataList = new ArrayList<PictureInfo>();
-//        for (int i = 0; i< len; i ++) {
-//            try {
-//                PictureInfo data = new PictureInfo();
-//                JSONObject jsonObject = imageDataArray.getJSONObject(i);
-//                data.setSrc(jsonObject.getString("src"));
-//                if (jsonObject.has("thumb") && !TextUtils.isEmpty(jsonObject.getString("thumb"))) {
-//                    data.setThumb(jsonObject.getString("thumb"));
-//                }
-//                if (jsonObject.has("desc") && !TextUtils.isEmpty(jsonObject.getString("desc"))) {
-//                    data.setDesc(jsonObject.getString("desc"));
-//                }
-//                imageDataList.add(data);
-//            }catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        return imageDataList;
-//    }
 
     public List<PictureInfo> transformData(JSONArray imageDataArray) {
         int len = imageDataArray.length();

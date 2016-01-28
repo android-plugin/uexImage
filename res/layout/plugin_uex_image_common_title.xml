@@ -32,7 +32,6 @@
         android:paddingRight="10dp"
         android:background="@drawable/plugin_uex_image_border_round_corner"
         android:textColor="#ffffff"
-        android:layout_marginRight="10dp"
         android:text="完成"
         android:textSize="16sp"
         android:layout_alignParentRight="true"
