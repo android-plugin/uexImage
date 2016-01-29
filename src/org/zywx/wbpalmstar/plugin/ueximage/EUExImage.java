@@ -340,8 +340,8 @@ public class EUExImage extends EUExBase {
 			cropIntent.setDataAndType(Uri.fromFile(imageFile), "image/*");
 			cropIntent.putExtra("crop", "true");
 			if(1 == cropMode){
-				cropIntent.putExtra("aspectX", 1);
-				cropIntent.putExtra("aspectY", 1);
+				cropIntent.putExtra("aspect_x", 1);
+				cropIntent.putExtra("aspect_y", 1);
 			}
 			Log.i("MobileModel", android.os.Build.MANUFACTURER);
 			if ((android.os.Build.MANUFACTURER).startsWith("HUAWEI")) {

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
     <plugin
-        uexName="uexImage" version="3.0.6" build="6">
-        <info>6.优化图片目录加载慢，内存占用高，图片预览时的屏幕适配问题</info>
-        <info>5.更换头部的UI背景</info>
+        uexName="uexImage" version="3.0.7" build="7">
+        <info>7.修复在华为GEM-730L上裁剪图片时显示为圆形的问题</info>
+        <build>6.优化图片目录加载慢，内存占用高，图片预览时的屏幕适配问题</build>
+        <build>5.更换头部的UI背景</build>
         <build>4:修复在华为机型的图片裁剪闪退的问题，与iOS同步图片剪裁器</build>
         <build>3:修复在某些机型上图片裁剪失败的问题</build>
         <build>2:修复图片压缩质量错误问题</build>
