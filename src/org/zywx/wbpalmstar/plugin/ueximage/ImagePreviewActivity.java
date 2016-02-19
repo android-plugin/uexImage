@@ -225,7 +225,11 @@ public class ImagePreviewActivity extends Activity {
         if(!isOpenBrowser) {
             cbChoose.setChecked(checkedItems.contains(picList.get(picIndex)));
         }
-        tvTitle.setText((picIndex + 1) + "/" + picList.size());
+        if(1==picList.size()){
+        	tvTitle.setText( "1" + "/" + picList.size());
+        }else{
+        	tvTitle.setText((picIndex + 1) + "/" + picList.size());
+        }
     }
 
     private PagerAdapter adapter = new PagerAdapter() {
@@ -290,8 +294,11 @@ public class ImagePreviewActivity extends Activity {
             if (!isOpenBrowser) {
                 cbChoose.setChecked(checkedItems.contains(picList.get(i).getSrc()));
             }
-            tvTitle.setText((i + 1) + "/" + picList.size());
-
+            if(1==picList.size()){
+            	tvTitle.setText( "1" + "/" + picList.size());
+            }else{
+            	tvTitle.setText((picIndex + 1) + "/" + picList.size());
+            }
         }
 
         @Override

@@ -51,6 +51,7 @@ import org.zywx.wbpalmstar.plugin.ueximage.util.UEXImageUtil;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Date;
 
 
 public class EUExImage extends EUExBase {
@@ -408,9 +409,9 @@ public class EUExImage extends EUExBase {
 					Bitmap bmp = extras.getParcelable("data");
 					String fileName;
 					if (cropUsePng) {
-						fileName = "crop_temp.png";
+						fileName = "crop_temp_"+ new Date().getTime() +".png";
 					} else {
-						fileName = "crop_temp.jpg";
+						fileName = "crop_temp_"+ new Date().getTime() +".jpg";
 					}
 					f = new File(Environment.getExternalStorageDirectory(),
 							File.separator + UEXImageUtil.TEMP_PATH + File.separator + fileName);
@@ -474,9 +475,9 @@ public class EUExImage extends EUExBase {
 					Bitmap bitmap = ImageLoader.getInstance().loadImageSync(uri.toString(), options);
 					String fileName;
 					if (cropUsePng) {
-						fileName = "crop_temp.png";
+						fileName = "crop_temp_"+ new Date().getTime() +".png";
 					} else {
-						fileName = "crop_temp.jpg";
+						fileName = "crop_temp_"+ new Date().getTime() +".jpg";
 					}
 					f = new File(Environment.getExternalStorageDirectory(),
 							File.separator + UEXImageUtil.TEMP_PATH + File.separator + fileName);
