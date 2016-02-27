@@ -221,7 +221,7 @@ public class CommonUtil {
         }
         return false;
     }
-    public static boolean copyFile(Context context, File fromFile, File toFile) {
+    public static boolean copyFile(File fromFile, File toFile) {
         BufferedInputStream bis = null;
         BufferedOutputStream fos = null;
         try {

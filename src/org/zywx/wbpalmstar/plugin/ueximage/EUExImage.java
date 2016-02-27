@@ -322,7 +322,10 @@ public class EUExImage extends EUExBase {
                 Toast.makeText(context, FILE_SYSTEM_ERROR, Toast.LENGTH_SHORT).show();
                 return;
             }
-            if(CommonUtil.saveFileFromAssetsToSystem(context, srcPath, destFile)) {
+            if (srcPath.startsWith("/data")){
+                CommonUtil.copyFile(new File(srcPath),destFile);
+                file=destFile;
+            }else if(CommonUtil.saveFileFromAssetsToSystem(context, srcPath, destFile)) {
                 file = destFile;
             } else {
                 Toast.makeText(context, FILE_SYSTEM_ERROR, Toast.LENGTH_SHORT).show();
@@ -602,7 +605,7 @@ public class EUExImage extends EUExBase {
                     return;
                 }
 
-                if (CommonUtil.copyFile(context, new File(realPath), destFile)) {
+                if (CommonUtil.copyFile(new File(realPath), destFile)) {
                     resultObject.put("isSuccess", true);
                     updateGallery(destFile.getAbsolutePath());
                 } else {
