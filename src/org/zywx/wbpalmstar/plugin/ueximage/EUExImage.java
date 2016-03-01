@@ -583,8 +583,11 @@ public class EUExImage extends EUExBase {
                     return;
                 }
                 file.createNewFile();
-
-                if(CommonUtil.saveFileFromAssetsToSystem(context, realPath, file)) {
+                if (realPath.startsWith("/data")){
+                    CommonUtil.copyFile(new File(realPath), file);
+                    resultObject.put("isSuccess", true);
+                    updateGallery(file.getAbsolutePath());
+                } else if(CommonUtil.saveFileFromAssetsToSystem(context, realPath, file)) {
                     resultObject.put("isSuccess", true);
                     updateGallery(file.getAbsolutePath());
                 } else {
