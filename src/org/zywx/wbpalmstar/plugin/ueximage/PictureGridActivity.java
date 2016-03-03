@@ -26,6 +26,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,6 +57,7 @@ import org.zywx.wbpalmstar.plugin.ueximage.util.EUEXImageConfig;
 import org.zywx.wbpalmstar.plugin.ueximage.util.UEXImageUtil;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 
 //以九宫格的形式显示某个文件夹下的图片列表
@@ -177,6 +179,7 @@ public class PictureGridActivity extends Activity {
                     .bitmapConfig(Bitmap.Config.RGB_565)
                     .imageScaleType(ImageScaleType.EXACTLY)
                     .displayer(new SimpleBitmapDisplayer()).build();
+            Collections.reverse(paths);
         }
 
         @Override

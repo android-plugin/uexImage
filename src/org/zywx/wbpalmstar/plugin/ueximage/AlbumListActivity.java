@@ -54,6 +54,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public class AlbumListActivity extends Activity implements Serializable {
+    private static final long serialVersionUID = 1L;
     public static final String TAG = "AlbumListActivity";
     private ListView lvAlbumList;
 

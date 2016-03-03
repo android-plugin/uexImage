@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
     <plugin
-        uexName="uexImage" version="3.0.10" build="10">
-        <info>10:针对保存图片到相册接口，修复开启增量更新时的res协议路径的bug</info>
+        uexName="uexImage" version="3.0.11" build="11">
+        <info>11:优化图片剪裁功能，优化图片选择器倒序加载图片</info>
+        <build>10:针对保存图片到相册接口，修复开启增量更新时的res协议路径的bug</build>
         <build>9:修复开启增量更新时的res协议路径的bug</build>
         <build>8:修复单张图片在图片浏览器上title不正确的问题，优化裁剪后图片的命名</build>
         <build>7:修复在华为GEM-730L上裁剪图片时显示为圆形的问题</build>
