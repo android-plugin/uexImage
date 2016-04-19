@@ -109,6 +109,7 @@ public class CommonUtil {
             path = f.getAbsolutePath();
             if(CommonUtil.isPicture(path)) {
                 PictureInfo pictureInfo = new PictureInfo();
+                pictureInfo.setLastModified(f.lastModified());
                 pictureInfo.setSrc("file://" + path);
                 list.add(pictureInfo);
             }

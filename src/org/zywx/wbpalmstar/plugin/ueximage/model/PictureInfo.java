@@ -25,6 +25,7 @@ public class PictureInfo {
     private String src;//原图系统URI或路径
     private String thumb;//缩略图URI或路径
     private String desc;
+	private long lastModified;
 
     public String getSrc() {
         return src;
@@ -49,4 +50,12 @@ public class PictureInfo {
     public void setDesc(String desc) {
         this.desc = desc;
     }
+
+	public long getLastModified() {
+		return lastModified;
+	}
+
+	public void setLastModified(long lastModified) {
+		this.lastModified = lastModified;
+	}
 }

@@ -58,6 +58,7 @@ import org.zywx.wbpalmstar.plugin.ueximage.util.UEXImageUtil;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 //以九宫格的形式显示某个文件夹下的图片列表
@@ -179,7 +180,19 @@ public class PictureGridActivity extends Activity {
                     .bitmapConfig(Bitmap.Config.RGB_565)
                     .imageScaleType(ImageScaleType.EXACTLY)
                     .displayer(new SimpleBitmapDisplayer()).build();
-            Collections.reverse(paths);
+            Collections.sort(paths, new Comparator<PictureInfo>() {
+				@Override
+				public int compare(PictureInfo lhs, PictureInfo rhs) {
+					if (lhs.getLastModified() < rhs.getLastModified()) {
+						return 1;
+					} else if (lhs.getLastModified() == rhs.getLastModified()) {
+						return 0;
+					} else if (lhs.getLastModified() > rhs.getLastModified()) {
+						return -1;
+					}
+					return 0;
+				}
+			});
         }
 
         @Override
