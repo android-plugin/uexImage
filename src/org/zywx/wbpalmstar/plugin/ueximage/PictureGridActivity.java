@@ -179,7 +179,9 @@ public class PictureGridActivity extends Activity {
                     .showImageOnLoading(finder.getDrawableId("plugin_uex_image_loading"))
                     .bitmapConfig(Bitmap.Config.RGB_565)
                     .imageScaleType(ImageScaleType.EXACTLY)
-                    .displayer(new SimpleBitmapDisplayer()).build();
+                    .displayer(new SimpleBitmapDisplayer())
+                    .considerExifParams(true)//考虑Exif旋转
+                    .build();
             Collections.sort(paths, new Comparator<PictureInfo>() {
 				@Override
 				public int compare(PictureInfo lhs, PictureInfo rhs) {

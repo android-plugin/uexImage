@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
     <plugin
-        uexName="uexImage" version="3.0.13" build="13">
-        <info>13:优化图片选择器按照图片修改时间排序</info>
+        uexName="uexImage" version="3.0.14" build="14">
+        <info>14:修复三星等机型Exif导致图片显示方向不正确的问题</info>
+        <build>13:优化图片选择器按照图片修改时间排序</build>
         <build>12:更换图片加载中资源文件</build>
         <build>11:优化图片剪裁功能，优化图片选择器倒序加载图片</build>
         <build>10:针对保存图片到相册接口，修复开启增量更新时的res协议路径的bug</build>

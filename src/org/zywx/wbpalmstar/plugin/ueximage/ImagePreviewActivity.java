@@ -256,6 +256,7 @@ public class ImagePreviewActivity extends Activity {
                     .cacheOnDisk(true)
                     .bitmapConfig(Bitmap.Config.RGB_565)
                     .showImageOnLoading(finder.getDrawableId("plugin_uex_image_loading"))
+                    .considerExifParams(true)//考虑Exif旋转
                     .build();
 
             final String src = picList.get(position).getSrc();
