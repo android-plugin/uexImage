@@ -172,7 +172,9 @@ public class AlbumListActivity extends Activity implements Serializable {
                     .showImageOnFail(finder.getDrawable("plugin_uex_image_loading"))
                     .showImageOnLoading(finder.getDrawable("plugin_uex_image_loading"))
                     .bitmapConfig(Bitmap.Config.RGB_565)
-                    .displayer(new SimpleBitmapDisplayer()).build();
+                    .displayer(new SimpleBitmapDisplayer())
+                    .considerExifParams(true)//考虑Exif旋转
+                    .build();
             //根据文件夹内的图片数量降序显示
             Collections.sort(folders, new Comparator<PictureFolder>() {
                 @Override
