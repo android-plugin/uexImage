@@ -27,7 +27,6 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.ace.universalimageloader.core.DisplayImageOptions;
 import com.ace.universalimageloader.core.ImageLoader;
@@ -40,6 +39,7 @@ import org.zywx.wbpalmstar.plugin.ueximage.model.PictureFolder;
 import org.zywx.wbpalmstar.plugin.ueximage.model.PictureInfo;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -176,6 +176,7 @@ public class UEXImageUtil {
         File f;
         JSONArray filePathArray = new JSONArray();
         FileOutputStream fos = null;
+        FileInputStream in = null;
         JSONObject result = new JSONObject();
         JSONArray detailedInfoArray = new JSONArray();
         for (String picPath : checkedItems) {
@@ -191,11 +192,21 @@ public class UEXImageUtil {
             try {
                 f.createNewFile();
                 fos = new FileOutputStream(f);
-                if ( EUEXImageConfig.getInstance().getIsUsePng()) {
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                if ((int)(EUEXImageConfig.getInstance().getQuality()) == 1) {
+                    in = new FileInputStream(new File(orginPicPath));
+                    byte[] buffer = new byte[1024];
+                    int byteRead = 0;
+                    while ((byteRead = in.read(buffer)) != -1) {
+                        fos.write(buffer, 0, byteRead);
+                    }
                 } else {
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, (int)(EUEXImageConfig.getInstance().getQuality() * 100), fos);
+                    if ( EUEXImageConfig.getInstance().getIsUsePng()) {
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                    } else {
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, (int)(EUEXImageConfig.getInstance().getQuality() * 100), fos);
+                    }
                 }
+
                 fos.flush();
                 filePathArray.put(f.getAbsolutePath());
                 if( EUEXImageConfig.getInstance().isShowDetailedInfo()) {
@@ -204,7 +215,6 @@ public class UEXImageUtil {
                 }
             } catch (IOException e) {
                 Log.i(TAG, "file copy error");
-                Toast.makeText(context, "文件导出失败，请重新选择", Toast.LENGTH_SHORT).show();
                 return result;
             } catch (JSONException e) {
                 Log.i(TAG, e.getMessage());
@@ -212,6 +222,9 @@ public class UEXImageUtil {
                 try {
                     if (fos != null) {
                         fos.close();
+                    }
+                    if (in != null) {
+                        in.close();
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
