@@ -172,7 +172,9 @@ public class UEXImageUtil {
         DisplayImageOptions options = new DisplayImageOptions.Builder()
                 .cacheInMemory(false)
                 .cacheOnDisk(false)
-                .displayer(new SimpleBitmapDisplayer()).build();
+                .displayer(new SimpleBitmapDisplayer())
+                .considerExifParams(true)//考虑Exif旋转
+                .build();
         File f;
         JSONArray filePathArray = new JSONArray();
         FileOutputStream fos = null;
