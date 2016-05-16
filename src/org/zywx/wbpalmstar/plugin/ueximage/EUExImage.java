@@ -343,9 +343,11 @@ public class EUExImage extends EUExBase {
 			cropIntent.setDataAndType(Uri.fromFile(imageFile), "image/*");
 			cropIntent.putExtra("crop", "true");
 			if (1 == cropMode) {
-				cropIntent.putExtra("aspect_x", 1);
+				cropIntent.putExtra("aspect_x", 1); //针对华为部份手机
 				cropIntent.putExtra("aspect_y", 1);
-			}
+                cropIntent.putExtra("aspectX", 1);
+                cropIntent.putExtra("aspectY", 1);
+            }
 			String fileName = null;
 			if (cropUsePng) {
 				fileName = "EXTRA_" + new Date().getTime() + ".png";
