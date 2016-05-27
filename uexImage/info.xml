@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
     <plugin
-        uexName="uexImage" version="3.0.16" build="16">
-        <info>16:当进行图片方形裁剪时，固定图片的尺寸</info>
+        uexName="uexImage" version="3.0.17" build="17">
+        <info>17:引入第三方裁剪库，解决方形裁剪问题</info>
+        <build>16:当进行图片方形裁剪时，固定图片的尺寸</build>
         <build>15:优化选择图片时quality为1时的处理逻辑，防止图片质量会有细微差别</build>
         <build>14:修复三星等机型Exif导致图片显示方向不正确的问题</build>
         <build>13:优化图片选择器按照图片修改时间排序</build>

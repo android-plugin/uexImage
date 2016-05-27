@@ -21,16 +21,16 @@ package org.zywx.wbpalmstar.plugin.ueximage;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Message;
-import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.soundcloud.android.crop.Crop;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,8 +45,6 @@ import org.zywx.wbpalmstar.plugin.ueximage.util.EUEXImageConfig;
 import org.zywx.wbpalmstar.plugin.ueximage.util.UEXImageUtil;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 
@@ -65,7 +63,7 @@ public class EUExImage extends EUExBase {
     //当前Android只支持方型裁剪
     private int cropMode = 1;
     
-	private File EXTRA_OUTPUT = null;
+	private File cropOutput = null;
 
     //裁剪操作的状态，1 代表成功， 2 代表失败，3代表用户取消。
     private int cropStatus = 1;
@@ -339,33 +337,21 @@ public class EUExImage extends EUExBase {
 
     private void performCrop(File imageFile) {
     	try {
-			Intent cropIntent = new Intent("com.android.camera.action.CROP");
-			cropIntent.setDataAndType(Uri.fromFile(imageFile), "image/*");
-			cropIntent.putExtra("crop", "true");
-            if (1 == cropMode) {
-                if (android.os.Build.MODEL.contains("GEM-703L")) {
-                    cropIntent.putExtra("aspect_x", 1); //针对华为部份手机
-                    cropIntent.putExtra("aspect_y", 1);
-                } else if (android.os.Build.MODEL.contains("HUAWEI")) {
-                    cropIntent.putExtra("aspectX", 9998);
-                    cropIntent.putExtra("aspectY", 9999);
-                } else {
-                    cropIntent.putExtra("aspectX", 1);
-                    cropIntent.putExtra("aspectY", 1);
-                }
-            }
-			String fileName = null;
-			if (cropUsePng) {
-				fileName = "EXTRA_" + new Date().getTime() + ".png";
-			} else {
-				fileName = "EXTRA_" + new Date().getTime() + ".jpg";
-			}
-			EXTRA_OUTPUT = new File(Environment.getExternalStorageDirectory(),
-					File.separator + UEXImageUtil.TEMP_PATH + File.separator + fileName);
-			cropIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(EXTRA_OUTPUT));
-			cropIntent.putExtra("return-data", false);
 
-			startActivityForResult(cropIntent, REQUEST_CROP_IMAGE);
+			String fileName = null;
+            Long time = new Date().getTime();
+            if (cropUsePng) {
+				fileName = "crop_temp_" + time + ".png";
+			} else {
+				fileName = "crop_temp_" + time + ".jpg";
+			}
+
+			cropOutput = new File(Environment.getExternalStorageDirectory(),
+					File.separator + UEXImageUtil.TEMP_PATH + File.separator + fileName);
+            cropOutput.createNewFile();
+            Uri destination = Uri.fromFile(cropOutput);
+            registerActivityResult();
+            Crop.of(Uri.fromFile(imageFile), destination, cropQuality, cropUsePng).asSquare().start((Activity) mContext);
 		} catch (Exception exception) {
 			Toast.makeText(context, NOT_SUPPORT_CROP, Toast.LENGTH_SHORT).show();
 		}
@@ -386,7 +372,7 @@ public class EUExImage extends EUExBase {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //裁剪图片
-        if (requestCode == REQUEST_CROP_IMAGE) {
+        if (requestCode == Crop.REQUEST_CROP) {
             cropCallBack(resultCode);
         }
         //选择图片
@@ -412,69 +398,18 @@ public class EUExImage extends EUExBase {
     }
 
 	private void cropCallBack(int resultCode) {
-		File f = null;
-		if (resultCode == Activity.RESULT_OK) {
-			Bitmap bitmap = null;
-			if (EXTRA_OUTPUT.exists()) {
-				try {
-					bitmap = MediaStore.Images.Media.getBitmap(mContext.getContentResolver(),
-							Uri.fromFile(EXTRA_OUTPUT));
-				} catch (FileNotFoundException e2) {
-					e2.printStackTrace();
-				} catch (IOException e2) {
-					e2.printStackTrace();
-				}
-				String fileName;
-				if (cropUsePng) {
-					fileName = "crop_temp_" + new Date().getTime() + ".png";
-				} else {
-					fileName = "crop_temp_" + new Date().getTime() + ".jpg";
-				}
-				f = new File(Environment.getExternalStorageDirectory(),
-						File.separator + UEXImageUtil.TEMP_PATH + File.separator + fileName);
-				FileOutputStream fos = null;
-				try {
-					fos = new FileOutputStream(f);
-					if (cropUsePng) {
-						bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
-					} else {
-						bitmap.compress(Bitmap.CompressFormat.JPEG, (int) (cropQuality * 100), fos);
-
-					}
-					fos.flush();
-				} catch (IOException e) {
-					Log.i(TAG, e.getMessage());
-					cropStatus = 2;
-				} finally {
-					if (fos != null) {
-						try {
-							fos.close();
-						} catch (IOException e1) {
-							Log.i(TAG, e1.getMessage());
-						}
-					}
-				}
-				updateGallery(f.getAbsolutePath());
-				cropStatus = 1;
-				if (EXTRA_OUTPUT.exists()) {
-					EXTRA_OUTPUT.delete();
-				}
-				Log.i(TAG, "crop success -------->");
-			} else {
-				cropStatus = 2;
-				Log.i(TAG, "crop Fail -------->");
-			}
-		} else {
-			cropStatus = 3;
-			Log.i(TAG, "crop Fail -------->");
-		}
+        //如果是用户取消，则删除这个临时文件
+        if (cropOutput.length() == 0) {
+            cropOutput.delete();
+        }
+        updateGallery(cropOutput.getAbsolutePath());
 		JSONObject result = new JSONObject();
 		try {
-			switch (cropStatus) {
+			switch (Crop.cropStatus) {
 			case 1:
 				result.put("isCancelled", false);
-				result.put("data", f.getAbsolutePath());
-				Log.i("f.getAbsolutePath()", f.getAbsolutePath() + "");
+				result.put("data", cropOutput.getAbsolutePath());
+				Log.i("f.getAbsolutePath()", cropOutput.getAbsolutePath() + "");
 				break;
 			case 2:
 				result.put("isCancelled", false);
