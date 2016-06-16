@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf8"?>
+    <manifest>
+        <activity
+            android:name="org.zywx.wbpalmstar.plugin.ueximage.AlbumListActivity"
+            android:theme="@style/plugin_uex_image_appTheme" >
+        </activity>
+        <activity
+            android:name="org.zywx.wbpalmstar.plugin.ueximage.PictureGridActivity"
+            android:theme="@style/plugin_uex_image_appTheme" >
+        </activity>
+        <activity
+            android:name="org.zywx.wbpalmstar.plugin.ueximage.ImagePreviewActivity"
+            android:theme="@style/plugin_uex_image_appTheme" >
+        </activity>
+        <activity android:name="org.zywx.wbpalmstar.plugin.ueximage.crop.CropImageActivity"/>
+    </manifest>
