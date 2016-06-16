@@ -23,22 +23,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.Environment;
-import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.soundcloud.android.crop.Crop;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.zywx.wbpalmstar.base.BDebug;
 import org.zywx.wbpalmstar.base.BUtility;
 import org.zywx.wbpalmstar.base.ResoureFinder;
 import org.zywx.wbpalmstar.engine.EBrowserView;
 import org.zywx.wbpalmstar.engine.universalex.EUExBase;
+import org.zywx.wbpalmstar.plugin.ueximage.crop.Crop;
 import org.zywx.wbpalmstar.plugin.ueximage.util.CommonUtil;
 import org.zywx.wbpalmstar.plugin.ueximage.util.Constants;
 import org.zywx.wbpalmstar.plugin.ueximage.util.EUEXImageConfig;
@@ -62,7 +60,7 @@ public class EUExImage extends EUExBase {
     private boolean cropUsePng = false;
     //当前Android只支持方型裁剪
     private int cropMode = 1;
-    
+
 	private File cropOutput = null;
 
     //裁剪操作的状态，1 代表成功， 2 代表失败，3代表用户取消。
@@ -79,6 +77,12 @@ public class EUExImage extends EUExBase {
     private final String SAME_FILE_IN_DCIM = "系统相册中存在同名文件";
     private final String JSON_FORMAT_ERROR = "json格式错误";
     private final String NOT_SUPPORT_CROP = "你的设备不支持剪切功能！";
+
+    //openPicker对应的回调函数
+    private String openPickerFuncId;
+    //openBrowser对应的回调函数
+    private String openBrowserFuncId;
+    private String openCropperId;
 
 
     public EUExImage(Context context, EBrowserView eBrowserView) {
@@ -107,17 +111,10 @@ public class EUExImage extends EUExBase {
             errorCallback(0, 0, "error params!");
             return;
         }
-        Message msg = new Message();
-        msg.obj = this;
-        msg.what = MSG_OPEN_PICKER;
-        Bundle bd = new Bundle();
-        bd.putStringArray(BUNDLE_DATA, params);
-        msg.setData(bd);
-        mHandler.sendMessage(msg);
-    }
-
-    private void openPickerMsg(String[] params) {
         String json = params[0];
+        if (params.length == 2) {
+            openPickerFuncId = params[1];
+        }
         JSONObject jsonObject;
         try {
             jsonObject = new JSONObject(json);
@@ -146,10 +143,11 @@ public class EUExImage extends EUExBase {
             startActivityForResult(intent, REQUEST_IMAGE_PICKER);
 
         } catch (JSONException e) {
-            Log.i(TAG, e.getMessage());
+            if (BDebug.DEBUG) {
+                Log.i(TAG, e.getMessage());
+            }
             Toast.makeText(context, "JSON解析错误", Toast.LENGTH_SHORT).show();
         }
-
     }
 
     public void openBrowser(String[] params) {
@@ -157,17 +155,10 @@ public class EUExImage extends EUExBase {
             errorCallback(0, 0, "error params!");
             return;
         }
-        Message msg = new Message();
-        msg.obj = this;
-        msg.what = MSG_OPEN_BROWSER;
-        Bundle bd = new Bundle();
-        bd.putStringArray(BUNDLE_DATA, params);
-        msg.setData(bd);
-        mHandler.sendMessage(msg);
-    }
-
-    private void openBrowserMsg(String[] params) {
         String json = params[0];
+        if (params.length == 2) {
+            openBrowserFuncId = params[1];
+        }
         try {
             JSONObject jsonObject = new JSONObject(json);
             EUEXImageConfig config = EUEXImageConfig.getInstance();
@@ -203,7 +194,6 @@ public class EUExImage extends EUExBase {
                                     mBrwView.getCurrentWidget().m_widgetPath,
                                     mBrwView.getCurrentWidget().m_wgtType);
                             obj.put("thumb", thumbPath);
-                            Log.i(TAG, "thumb:" + thumb);
                         }
                     }
                 }
@@ -250,22 +240,16 @@ public class EUExImage extends EUExBase {
         }
     }
 
+
     public void openCropper(String[] params) {
         if (params == null || params.length < 1) {
             errorCallback(0, 0, "error params!");
             return;
         }
-        Message msg = new Message();
-        msg.obj = this;
-        msg.what = MSG_OPEN_CROPPER;
-        Bundle bd = new Bundle();
-        bd.putStringArray(BUNDLE_DATA, params);
-        msg.setData(bd);
-        mHandler.sendMessage(msg);
-    }
-
-    private void openCropperMsg(String[] params) {
         String json = params[0];
+        if (params.length == 2) {
+            openCropperId = params[1];
+        }
         String src = "";
         String srcPath = "";
         try {
@@ -293,13 +277,15 @@ public class EUExImage extends EUExBase {
             if (jsonObject.has("mode")) {
                 int i = jsonObject.getInt("mode");
                 if(3 == i){
-                	cropMode = i;
+                    cropMode = i;
                 } else {
-                	cropMode = 1;
+                    cropMode = 1;
                 }
             }
         } catch (JSONException e) {
-            Log.i(TAG, e.getMessage());
+            if (BDebug.DEBUG) {
+                Log.i(TAG, e.getMessage());
+            }
             Toast.makeText(context, "JSON解析错误", Toast.LENGTH_SHORT).show();
         }
         File file;
@@ -362,8 +348,10 @@ public class EUExImage extends EUExBase {
                 new String[]{filename}, null,
                 new MediaScannerConnection.OnScanCompletedListener() {
                     public void onScanCompleted(String path, Uri uri) {
-                        Log.i("ExternalStorage", "Scanned " + path + ":");
-                        Log.i("ExternalStorage", "-> uri=" + uri);
+                        if (BDebug.DEBUG) {
+                            Log.i("ExternalStorage", "Scanned " + path + ":");
+                            Log.i("ExternalStorage", "-> uri=" + uri);
+                        }
                     }
                 });
     }
@@ -380,6 +368,9 @@ public class EUExImage extends EUExBase {
             if (resultCode == Activity.RESULT_OK) {
                 JSONObject jsonObject= uexImageUtil.getChoosedPicInfo(context);
                 callBackPluginJs(JsConst.CALLBACK_ON_PICKER_CLOSED, jsonObject.toString());
+                if (openPickerFuncId != null) {
+                    callbackToJs(Integer.parseInt(openPickerFuncId), false, jsonObject);
+                }
             } else if (resultCode == Constants.OPERATION_CANCELLED) {
                 JSONObject jsonObject = new JSONObject();
                 try {
@@ -388,12 +379,18 @@ public class EUExImage extends EUExBase {
                     e.printStackTrace();
                 }
                 callBackPluginJs(JsConst.CALLBACK_ON_PICKER_CLOSED, jsonObject.toString());
+                if (openPickerFuncId != null) {
+                    callbackToJs(Integer.parseInt(openPickerFuncId), false, jsonObject);
+                }
             }
             uexImageUtil.resetData();
         }
         //浏览图片
         if (requestCode == REQUEST_IMAGE_BROWSER) {
             callBackPluginJs(JsConst.CALLBACK_ON_BROWSER_CLOSED, "pic browser closed");
+            if(openBrowserFuncId != null) {
+                callbackToJs(Integer.parseInt(openBrowserFuncId), false);
+            }
         }
     }
 
@@ -409,7 +406,6 @@ public class EUExImage extends EUExBase {
 			case 1:
 				result.put("isCancelled", false);
 				result.put("data", cropOutput.getAbsolutePath());
-				Log.i("f.getAbsolutePath()", cropOutput.getAbsolutePath() + "");
 				break;
 			case 2:
 				result.put("isCancelled", false);
@@ -423,6 +419,9 @@ public class EUExImage extends EUExBase {
 			e.printStackTrace();
 		}
 		callBackPluginJs(JsConst.CALLBACK_ON_CROPPER_CLOSED, result.toString());
+        if (null != openCropperId) {
+            callbackToJs(Integer.parseInt(openCropperId), false, result);
+        }
 	}
 
     public void saveToPhotoAlbum(String[] params) {
@@ -430,17 +429,11 @@ public class EUExImage extends EUExBase {
             errorCallback(0, 0, "error params!");
             return;
         }
-        Message msg = new Message();
-        msg.obj = this;
-        msg.what = MSG_SAVE_TO_PHOTO_ALBUM;
-        Bundle bd = new Bundle();
-        bd.putStringArray(BUNDLE_DATA, params);
-        msg.setData(bd);
-        mHandler.sendMessage(msg);
-    }
-
-    private void saveToPhotoAlbumMsg(String[] params) {
         String json = params[0];
+        String funcId = null;
+        if (params.length == 2) {
+            funcId = params[1];
+        }
         //回调的结果
         JSONObject resultObject = new JSONObject();
         try {
@@ -467,6 +460,9 @@ public class EUExImage extends EUExBase {
                     resultObject.put("isSuccess", "false");
                     resultObject.put("errorStr", SAME_FILE_IN_DCIM);
                     callBackPluginJs(JsConst.CALLBACK_SAVE_TO_PHOTO_ALBUM, resultObject.toString());
+                    if (null != funcId) {
+                        callbackToJs(Integer.parseInt(funcId), false, resultObject);
+                    }
                     return;
                 }
                 file.createNewFile();
@@ -482,7 +478,6 @@ public class EUExImage extends EUExBase {
                     resultObject.put("errorStr", FILE_SYSTEM_ERROR);
                 }
             } else {//如果傳的是別的路徑，也復制一份吧。
-                Log.i(TAG, "Path:" + realPath);
                 File fromFile = new File(realPath);
                 String fileName = fromFile.getName();
 
@@ -492,6 +487,9 @@ public class EUExImage extends EUExBase {
                     resultObject.put("isSuccess", "false");
                     resultObject.put("errorStr", SAME_FILE_IN_DCIM);
                     callBackPluginJs(JsConst.CALLBACK_SAVE_TO_PHOTO_ALBUM, resultObject.toString());
+                    if (null != funcId) {
+                        callbackToJs(Integer.parseInt(funcId), false, resultObject);
+                    }
                     return;
                 }
 
@@ -504,8 +502,10 @@ public class EUExImage extends EUExBase {
                 }
             }
             callBackPluginJs(JsConst.CALLBACK_SAVE_TO_PHOTO_ALBUM, resultObject.toString());
+            if (null != funcId) {
+                callbackToJs(Integer.parseInt(funcId), false, resultObject);
+            }
         } catch (JSONException e) {
-            Log.i(TAG, e.getMessage());
             try {
                 resultObject.put("isSuccess", false);
                 resultObject.put("errorStr", JSON_FORMAT_ERROR);
@@ -513,8 +513,10 @@ public class EUExImage extends EUExBase {
                 Log.i(TAG, e2.getMessage());
             }
             callBackPluginJs(JsConst.CALLBACK_SAVE_TO_PHOTO_ALBUM, resultObject.toString());
+            if (null != funcId) {
+                callbackToJs(Integer.parseInt(funcId), false, resultObject);
+            }
         } catch (IOException e) {
-            Log.i(TAG, e.getMessage());
             try {
                 resultObject.put("isSuccess", false);
                 resultObject.put("errorStr", FILE_SYSTEM_ERROR);
@@ -522,21 +524,15 @@ public class EUExImage extends EUExBase {
                 Log.i(TAG, e2.getMessage());
             }
             callBackPluginJs(JsConst.CALLBACK_SAVE_TO_PHOTO_ALBUM, resultObject.toString());
+            if (null != funcId) {
+                callbackToJs(Integer.parseInt(funcId), false, resultObject);
+            }
         }
+
     }
 
 
-    public void clearOutputImages(String[] params) {
-        Message msg = new Message();
-        msg.obj = this;
-        msg.what = MSG_CLEAR_OUTPUT_IMAGES;
-        Bundle bd = new Bundle();
-        bd.putStringArray(BUNDLE_DATA, params);
-        msg.setData(bd);
-        mHandler.sendMessage(msg);
-    }
-
-    private void clearOutputImagesMsg(String[] params) {
+    public boolean clearOutputImages(String[] params) {
         JSONObject jsonResult = new JSONObject();
         File directory = new File(Environment.getExternalStorageDirectory(),
                 File.separator + UEXImageUtil.TEMP_PATH);
@@ -549,34 +545,7 @@ public class EUExImage extends EUExBase {
             Log.i(TAG, e.getMessage());
         }
         callBackPluginJs(JsConst.CALLBACK_CLEAR_OUTPUT_IMAGES, jsonResult.toString());
-    }
-
-    @Override
-    public void onHandleMessage(Message message) {
-        if(message == null){
-            return;
-        }
-        Bundle bundle=message.getData();
-        switch (message.what) {
-
-            case MSG_OPEN_PICKER:
-                openPickerMsg(bundle.getStringArray(BUNDLE_DATA));
-                break;
-            case MSG_OPEN_BROWSER:
-                openBrowserMsg(bundle.getStringArray(BUNDLE_DATA));
-                break;
-            case MSG_OPEN_CROPPER:
-                openCropperMsg(bundle.getStringArray(BUNDLE_DATA));
-                break;
-            case MSG_SAVE_TO_PHOTO_ALBUM:
-                saveToPhotoAlbumMsg(bundle.getStringArray(BUNDLE_DATA));
-                break;
-            case MSG_CLEAR_OUTPUT_IMAGES:
-                clearOutputImagesMsg(bundle.getStringArray(BUNDLE_DATA));
-                break;
-            default:
-                super.onHandleMessage(message);
-        }
+        return true;
     }
 
     private void callBackPluginJs(String methodName, String jsonData){

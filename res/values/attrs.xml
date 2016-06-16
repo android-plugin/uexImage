@@ -59,7 +59,7 @@
         <attr name="ptrScrollingWhileRefreshingEnabled" format="reference|boolean" />
 
         <!--
-        	Whether PullToRefreshListView has it's extras enabled. This allows the user to be 
+        	Whether PullToRefreshListView has it's extras enabled. This allows the user to be
         	able to scroll while refreshing, and behaves better. It acheives this by adding
         	Header and/or Footer Views to the ListView.
         -->
@@ -76,9 +76,9 @@
         <attr name="ptrDrawableTop" format="reference" />
         <attr name="ptrDrawableBottom" format="reference" />
     </declare-styleable>
-    
+
 	<declare-styleable name="Carousel">
-		<attr name="android:gravity" />	
+		<attr name="android:gravity" />
 		<attr name="android:animationDuration" />
 		<attr name="UseReflection" format="boolean"/>
 		<attr name="Items" format="integer"/>
@@ -86,8 +86,8 @@
 		<attr name="maxTheta" format="float"/>
 		<attr name="minQuantity" format="integer"/>
 		<attr name="maxQuantity" format="integer"/>
-	</declare-styleable>	
-	
+	</declare-styleable>
+
 	<declare-styleable name="SlidingMenu">
         <attr name="mode">
             <enum name="left" value="0" />

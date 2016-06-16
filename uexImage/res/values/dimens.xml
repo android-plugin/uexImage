@@ -2,4 +2,6 @@
 <resources>
 
     <dimen name="plugin_uex_image_activity_horizontal_margin">16dp</dimen>
+    <dimen name="crop_bar_height">56dp</dimen>
+
 </resources>

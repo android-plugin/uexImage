@@ -1,0 +1,17 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Crop.DoneCancelBar">
+
+    <FrameLayout
+        android:id="@+id/btn_cancel"
+        style="@style/Crop.ActionButton">
+        <TextView style="@style/Crop.ActionButtonText.Cancel" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/btn_done"
+        style="@style/Crop.ActionButton">
+        <TextView style="@style/Crop.ActionButtonText.Done" />
+    </FrameLayout>
+
+</LinearLayout>
+<!-- From: file:/D:/workspace/android-crop/lib/src/main/res/layout/plugin_uex_image_crop_layout_done_cancelyout_done_cancel.xml -->

@@ -4,4 +4,9 @@
     <string name="plugin_uex_image_at_least_choose">请至少选择%s张图片</string>
     <string name="plugin_uex_image_share">分享</string>
     <string name="plugin_uex_image_list">列表</string>
+    <string name="plugin_uex_image_crop_cancel">取消</string>
+    <string name="plugin_uex_image_crop_done">完成</string>
+    <string name="plugin_uex_image_crop_pick_error">无效的图片</string>
+    <string name="plugin_uex_image_crop_saving">正在保存照片…</string>
+    <string name="plugin_uex_image_crop_wait">请等待…</string>
 </resources>
