@@ -72,6 +72,12 @@ public class EUExImage extends EUExBase {
     private final String JSON_FORMAT_ERROR = "json格式错误";
     private final String NOT_SUPPORT_CROP = "你的设备不支持剪切功能！";
 
+    //openPicker对应的回调函数
+    private String openPickerFuncId;
+    //openBrowser对应的回调函数
+    private String openBrowserFuncId;
+    private String openCropperId;
+
 
     public EUExImage(Context context, EBrowserView eBrowserView) {
         super(context, eBrowserView);
@@ -100,6 +106,9 @@ public class EUExImage extends EUExBase {
             return;
         }
         String json = params[0];
+        if (params.length == 2) {
+            openPickerFuncId = params[1];
+        }
         JSONObject jsonObject;
         try {
             jsonObject = new JSONObject(json);
@@ -142,6 +151,9 @@ public class EUExImage extends EUExBase {
             return;
         }
         String json = params[0];
+        if (params.length == 2) {
+            openBrowserFuncId = params[1];
+        }
         try {
             JSONObject jsonObject = new JSONObject(json);
             EUEXImageConfig config = EUEXImageConfig.getInstance();
@@ -230,6 +242,9 @@ public class EUExImage extends EUExBase {
             return;
         }
         String json = params[0];
+        if (params.length == 2) {
+            openCropperId = params[1];
+        }
         String src = "";
         String srcPath = "";
         try {
@@ -263,7 +278,9 @@ public class EUExImage extends EUExBase {
                 }
             }
         } catch (JSONException e) {
-            Log.i(TAG, e.getMessage());
+            if (BDebug.DEBUG) {
+                Log.i(TAG, e.getMessage());
+            }
             Toast.makeText(context, "JSON解析错误", Toast.LENGTH_SHORT).show();
         }
         File file;
@@ -326,8 +343,10 @@ public class EUExImage extends EUExBase {
                 new String[]{filename}, null,
                 new MediaScannerConnection.OnScanCompletedListener() {
                     public void onScanCompleted(String path, Uri uri) {
-                        Log.i("ExternalStorage", "Scanned " + path + ":");
-                        Log.i("ExternalStorage", "-> uri=" + uri);
+                        if (BDebug.DEBUG) {
+                            Log.i("ExternalStorage", "Scanned " + path + ":");
+                            Log.i("ExternalStorage", "-> uri=" + uri);
+                        }
                     }
                 });
     }
@@ -344,6 +363,9 @@ public class EUExImage extends EUExBase {
             if (resultCode == Activity.RESULT_OK) {
                 JSONObject jsonObject= uexImageUtil.getChoosedPicInfo(context);
                 callBackPluginJs(JsConst.CALLBACK_ON_PICKER_CLOSED, jsonObject.toString());
+                if (openPickerFuncId != null) {
+                    callbackToJs(Integer.parseInt(openPickerFuncId), false, jsonObject);
+                }
             } else if (resultCode == Constants.OPERATION_CANCELLED) {
                 JSONObject jsonObject = new JSONObject();
                 try {
@@ -352,12 +374,18 @@ public class EUExImage extends EUExBase {
                     e.printStackTrace();
                 }
                 callBackPluginJs(JsConst.CALLBACK_ON_PICKER_CLOSED, jsonObject.toString());
+                if (openPickerFuncId != null) {
+                    callbackToJs(Integer.parseInt(openPickerFuncId), false, jsonObject);
+                }
             }
             uexImageUtil.resetData();
         }
         //浏览图片
         if (requestCode == REQUEST_IMAGE_BROWSER) {
             callBackPluginJs(JsConst.CALLBACK_ON_BROWSER_CLOSED, "pic browser closed");
+            if(openBrowserFuncId != null) {
+                callbackToJs(Integer.parseInt(openBrowserFuncId), false);
+            }
         }
     }
 
@@ -386,6 +414,9 @@ public class EUExImage extends EUExBase {
             e.printStackTrace();
         }
         callBackPluginJs(JsConst.CALLBACK_ON_CROPPER_CLOSED, result.toString());
+        if (null != openCropperId) {
+            callbackToJs(Integer.parseInt(openCropperId), false, result);
+        }
     }
 
     public void saveToPhotoAlbum(String[] params) {
@@ -394,7 +425,10 @@ public class EUExImage extends EUExBase {
             return;
         }
         String json = params[0];
-
+        String funcId = null;
+        if (params.length == 2) {
+            funcId = params[1];
+        }
         //回调的结果
         JSONObject resultObject = new JSONObject();
         try {
@@ -418,9 +452,12 @@ public class EUExImage extends EUExBase {
                 String dcimPath = Environment.getExternalStorageDirectory() + File.separator + Environment.DIRECTORY_DCIM + File.separator;
                 File file = new File(dcimPath, fileName);
                 if (file.exists()) {
-                    resultObject.put("isSuccess", "false");
+                    resultObject.put("isSuccess", false);
                     resultObject.put("errorStr", SAME_FILE_IN_DCIM);
                     callBackPluginJs(JsConst.CALLBACK_SAVE_TO_PHOTO_ALBUM, resultObject.toString());
+                    if (null != funcId) {
+                        callbackToJs(Integer.parseInt(funcId), false, resultObject);
+                    }
                     return;
                 }
                 file.createNewFile();
@@ -442,9 +479,12 @@ public class EUExImage extends EUExBase {
                 String dcimPath = Environment.getExternalStorageDirectory() + File.separator + Environment.DIRECTORY_DCIM + File.separator;
                 File destFile = new File(dcimPath, fileName);
                 if (destFile.exists()) {
-                    resultObject.put("isSuccess", "false");
+                    resultObject.put("isSuccess", false);
                     resultObject.put("errorStr", SAME_FILE_IN_DCIM);
                     callBackPluginJs(JsConst.CALLBACK_SAVE_TO_PHOTO_ALBUM, resultObject.toString());
+                    if (null != funcId) {
+                        callbackToJs(Integer.parseInt(funcId), false, resultObject);
+                    }
                     return;
                 }
 
@@ -457,8 +497,10 @@ public class EUExImage extends EUExBase {
                 }
             }
             callBackPluginJs(JsConst.CALLBACK_SAVE_TO_PHOTO_ALBUM, resultObject.toString());
+            if (null != funcId) {
+                callbackToJs(Integer.parseInt(funcId), false, resultObject);
+            }
         } catch (JSONException e) {
-            Log.i(TAG, e.getMessage());
             try {
                 resultObject.put("isSuccess", false);
                 resultObject.put("errorStr", JSON_FORMAT_ERROR);
@@ -466,8 +508,10 @@ public class EUExImage extends EUExBase {
                 Log.i(TAG, e2.getMessage());
             }
             callBackPluginJs(JsConst.CALLBACK_SAVE_TO_PHOTO_ALBUM, resultObject.toString());
+            if (null != funcId) {
+                callbackToJs(Integer.parseInt(funcId), false, resultObject);
+            }
         } catch (IOException e) {
-            Log.i(TAG, e.getMessage());
             try {
                 resultObject.put("isSuccess", false);
                 resultObject.put("errorStr", FILE_SYSTEM_ERROR);
@@ -475,11 +519,15 @@ public class EUExImage extends EUExBase {
                 Log.i(TAG, e2.getMessage());
             }
             callBackPluginJs(JsConst.CALLBACK_SAVE_TO_PHOTO_ALBUM, resultObject.toString());
+            if (null != funcId) {
+                callbackToJs(Integer.parseInt(funcId), false, resultObject);
+            }
         }
     }
 
 
-    public void clearOutputImages(String[] params) {
+
+    public boolean clearOutputImages(String[] params) {
         JSONObject jsonResult = new JSONObject();
         File directory = new File(Environment.getExternalStorageDirectory(),
                 File.separator + UEXImageUtil.TEMP_PATH);
@@ -492,6 +540,7 @@ public class EUExImage extends EUExBase {
             Log.i(TAG, e.getMessage());
         }
         callBackPluginJs(JsConst.CALLBACK_CLEAR_OUTPUT_IMAGES, jsonResult.toString());
+        return true;
     }
 
     private void callBackPluginJs(String methodName, String jsonData){
