@@ -418,7 +418,7 @@ public class EUExImage extends EUExBase {
                 String dcimPath = Environment.getExternalStorageDirectory() + File.separator + Environment.DIRECTORY_DCIM + File.separator;
                 File file = new File(dcimPath, fileName);
                 if (file.exists()) {
-                    resultObject.put("isSuccess", "false");
+                    resultObject.put("isSuccess", false);
                     resultObject.put("errorStr", SAME_FILE_IN_DCIM);
                     callBackPluginJs(JsConst.CALLBACK_SAVE_TO_PHOTO_ALBUM, resultObject.toString());
                     return;
@@ -442,7 +442,7 @@ public class EUExImage extends EUExBase {
                 String dcimPath = Environment.getExternalStorageDirectory() + File.separator + Environment.DIRECTORY_DCIM + File.separator;
                 File destFile = new File(dcimPath, fileName);
                 if (destFile.exists()) {
-                    resultObject.put("isSuccess", "false");
+                    resultObject.put("isSuccess", false);
                     resultObject.put("errorStr", SAME_FILE_IN_DCIM);
                     callBackPluginJs(JsConst.CALLBACK_SAVE_TO_PHOTO_ALBUM, resultObject.toString());
                     return;
