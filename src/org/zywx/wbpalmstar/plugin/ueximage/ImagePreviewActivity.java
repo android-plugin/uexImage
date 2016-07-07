@@ -30,6 +30,8 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -76,7 +78,11 @@ public class ImagePreviewActivity extends Activity {
     private TextView tvToGrid;
     private ResoureFinder finder;
     private RelativeLayout rlTitle;
+    private RelativeLayout rlBottom;
 
+
+    private AlphaAnimation fadeInAnim;
+    private AlphaAnimation fadeOutAnim;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,8 +98,9 @@ public class ImagePreviewActivity extends Activity {
         btnFinishInTitle = (Button) findViewById(finder.getId("btn_finish_title"));
         viewPager = (ViewPager) findViewById(finder.getId("vp_picture"));
         cbChoose = (CheckBox) findViewById(finder.getId("checkbox"));
-
+        rlBottom = (RelativeLayout) findViewById(finder.getId("rl_bottom"));
         rlTitle.setAlpha(0.9f);
+        rlBottom.setAlpha(0.9f);
 
         initData();
         if (isOpenBrowser) {
@@ -101,6 +108,7 @@ public class ImagePreviewActivity extends Activity {
         } else {
             initViewForPicker();
         }
+        initAnimation();
 
     }
     private void initData() {
@@ -271,7 +279,7 @@ public class ImagePreviewActivity extends Activity {
                     imageView.setImageBitmap(bitmap);
                 }
             }
-
+            imageView.setOnClickListener(imageClickListener);
             container.addView(view);
             return view;
         }
@@ -281,6 +289,39 @@ public class ImagePreviewActivity extends Activity {
             container.removeView((View) object);
         }
     };
+    private View.OnClickListener imageClickListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            toogleView();
+        }
+    };
+    private void toogleView() {
+        if (rlTitle.getVisibility() == View.VISIBLE) {
+            rlTitle.setVisibility(View.INVISIBLE);
+            rlTitle.startAnimation(fadeOutAnim);
+            rlBottom.setVisibility(View.INVISIBLE);
+            rlBottom.startAnimation(fadeOutAnim);
+        } else {
+            rlTitle.setVisibility(View.VISIBLE);
+            rlTitle.startAnimation(fadeInAnim);
+            rlBottom.setVisibility(View.VISIBLE);
+            rlBottom.startAnimation(fadeInAnim);
+        }
+    }
+
+    private void initAnimation() {
+        final int duration = 300;
+        LinearInterpolator interpolator = new LinearInterpolator();
+        fadeInAnim = new AlphaAnimation(0, 1);
+        fadeInAnim.setDuration(duration);
+        fadeInAnim.setInterpolator(interpolator);
+
+        fadeOutAnim = new AlphaAnimation(1, 0);
+        fadeOutAnim.setDuration(duration);
+        fadeOutAnim.setInterpolator(interpolator);
+    }
+
 
 
 

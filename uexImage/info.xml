@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
     <plugin
-        uexName="uexImage" version="4.0.0" build="19">
-        <info>19:支持function传入</info>
+        uexName="uexImage" version="4.0.0" build="20">
+        <info>20: 图片预览时支持隐藏或显示标题和尾部</info>
+        <build>19:支持function传入</build>
         <build>18:修改库的引入方式，移除aar</build>
         <build>17:引入第三方裁剪库，解决方形裁剪问题</build>
         <build>16:当进行图片方形裁剪时，固定图片的尺寸</build>
