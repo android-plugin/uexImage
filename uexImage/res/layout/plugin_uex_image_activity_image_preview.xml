@@ -9,6 +9,7 @@
         />
     <include android:id="@+id/title_layout" layout="@layout/plugin_uex_image_common_title" />
     <RelativeLayout
+        android:id="@+id/rl_bottom"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="45dp"
