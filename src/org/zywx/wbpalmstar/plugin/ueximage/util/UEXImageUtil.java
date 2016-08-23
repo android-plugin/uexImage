@@ -202,10 +202,12 @@ public class UEXImageUtil {
                         fos.write(buffer, 0, byteRead);
                     }
                 } else {
-                    if ( EUEXImageConfig.getInstance().getIsUsePng()) {
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
-                    } else {
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, (int)(EUEXImageConfig.getInstance().getQuality() * 100), fos);
+                    if (bitmap!=null){
+                        if ( EUEXImageConfig.getInstance().getIsUsePng()) {
+                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                        } else {
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, (int)(EUEXImageConfig.getInstance().getQuality() * 100), fos);
+                        }
                     }
                 }
 

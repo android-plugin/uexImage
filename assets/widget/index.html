@@ -1,146 +1,62 @@
 <!DOCTYPE html>
 <html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
-<head>
-    <title>
-    </title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="css/index.css">
-    <link rel="stylesheet" href="css/ui-btn.css">
-    <link rel="stylesheet" href="css/ui-base.css">
-    <link rel="stylesheet" href="css/ui-box.css">
-    <link rel="stylesheet" href="css/ui-color.css">
-    <link rel="stylesheet" href="css/ui-res.css">
-    <style>
-        input{
-        color: black;
-        padding: 1px 6px;
-        margin-left:6px;
-        }
-        input[type="text"]{
-        padding: .2em .4em;
-        margin:.4em .6em;
-        font-size:1em;
-        }
-        input[type="button"]{
-        padding: .6em .8em;
-        margin:.4em .6em;
-        font-size:1.2em;
-        }
-    </style>
-    <script type="text/javascript">
-
-
-
-    function openPicker(){
-        var data = {
-            min:1,
-            max:2,
-            quality:0.8,
-            //usePng:true,
-            detailedInfo:true
-        }
-        var json = JSON.stringify(data);
-        uexImage.openPicker(json,function(info){
-                        if(info.isCancelled){
-                            alert("cancelled!");
-                        }else{
-                            alert(info.data);
-                            if(info.detailedImageInfo){
-                                alert(JSON.stringify(info.detailedImageInfo));
-                            }
-                        }
-                    });
-    }
-
-    function openBrowser(){
-        var data = {
-            displayActionButton:true,
-            displayNavArrows:true,
-            enableGrid:false,
-            //startOnGrid:true,
-            startIndex:2,
-            data:["res://photo1.jpg",
-                  {
-                  src:"res://photo2.jpg",
-                  thumb:"res://photo2t.jpg",
-                  },
-                  {
-                  src:"res://photo3.jpg",
-                  thumb:"res://photo3t.jpg",
-                  desc:"22222222222222"
-                  },
-                  {
-                  src:"http://bizhi.33lc.com/uploadfile/2014/0729/20140729112727686.jpg",
-                  thumb:"res://photo4t.jpg",
-                  desc:"22222222222222"
-                  }]
-        }
-
-        var json = JSON.stringify(data);
-        uexImage.openBrowser(json,function(){
-                                alert("browser close!");
-                             });
-    }
-
-    function openCropper(){
-        var data = {
-            src:"res://photo5.jpg",
-            mode:2
-        }
-        var json = JSON.stringify(data);
-        uexImage.openCropper(json,function(info){
-                                if(info.isCancelled){
-                                    alert("cancelled!");
-                                }else{
-                                    alert(info.data);
-                                }
-                             });
-    }
-
-    function saveToPhotoAlbum(){
-
-        var data = {
-            localPath:"res://photo4.jpg"
-        };
-        var json = JSON.stringify(data);
-        uexImage.saveToPhotoAlbum(json,function(info){
-                                    if(info.isSuccess){
-                                        alert("储存成功!");
-                                    }else{
-                                        alert("储存失败:" + info.errorStr);
-                                    }
-                                  });
-
-    }
-
-    function clearOutputImages(){
-        var ret = uexImage.clearOutputImages();
-        alert(ret);
-    }
-
-		</script>
-</head>
-<body class="um-vp " ontouchstart>
-<div id="page_0" class="up ub ub-ver" tabindex="0">
-    <!--header开始-->
-    <div id="header" class="uh t-wh ub" style="background: #27A73F;">
-        <h1 class="ut ub-f1 ulev0 ut-s tx-c" tabindex="0">uexImage</h1>
-    </div>
-    <!--header结束--><!--content开始-->
-    <div id="content" class="ub-f1 tx-l t-bla" style="">
-        <div class="conbor">
-            <div class="consj">
-                <input type="button" value="打开选择器" onclick="openPicker();"/>
-                <input type="button" value="打开浏览器" onclick="openBrowser();"/>
-                <input type="button" value="打开裁剪器" onclick="openCropper();"/>
-                <input type="button" value="储存图片到相册" onclick="saveToPhotoAlbum();"/>
-                <input type="button" value="清除缓存的图片文件" onclick="clearOutputImages();"/>
+    
+    <head>
+        <title>
+        </title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+        <link rel="stylesheet" href="./css/index.css">
+        <script src="js/eruda.min.js"></script>
+        <script src="./js/index.js">
+        </script>
+    </head>
+    
+    <body class="" ontouchstart>
+        <div class="bc-bg" tabindex="0" data-control="PAGE" id="Page_ylUCGd">
+            <div class="uh bc-head  ubb bc-border" data-control="HEADER" id="Header_bPMcMr">
+                <div class="ub">
+                    <div class="nav-btn" id="nav-left">
+                        <div class="fa fa-1g ub-img1">
+                        </div>
+                    </div>
+                    <h1 class="ut ub-f1 ulev-3 ut-s tx-c" tabindex="0">测试系统</h1>
+                    <div class="nav-btn" id="nav-right">
+                        <div class="fa  fa-1g  ub-img1">
+                        </div>
+                    </div>
+                </div>
             </div>
+            <div class="" data-control="BOX">
+                <div class="button ub ub-ac bc-text-head ub-pc bc-btn" id="Button_DgxEcP" onclick="openTestCase('uexFileMgr')">uexFileMgr</div>
+            </div>
+            <div class="" data-control="BOX">
+                <div class="button ub ub-ac bc-text-head ub-pc bc-btn" id="uexXmlHttpMgr" onclick='openTestCase("uexXMLHttpMgr")'>uexXmlHttpMgr</div>
+            </div>
+            <div class="button ub ub-ac bc-text-head ub-pc bc-btn" id="uexUploaderMgr" onclick='openTestCase("uexUploaderMgr")'>uexUploaderMgr</div>
+            <div class="button ub ub-ac bc-text-head ub-pc bc-btn" id="uexDatabaseMgr" onclick='openTestCase("uexDatabaseMgr")'>uexDatabaseMgr</div>
+            <div class="button ub ub-ac bc-text-head ub-pc bc-btn" id="uexDownloaderMgr" onclick='openTestCase("uexDownloaderMgr")'>uexDownloaderMgr</div>
+            <div class="button ub ub-ac bc-text-head ub-pc bc-btn" id="uexDevice" onclick='openTestCase("uexDevice")'>uexDevice</div>
+            <div class="button ub ub-ac bc-text-head ub-pc bc-btn" id="uexSocketMgr" onclick='openTestCase("uexSocketMgr")'>uexSocketMgr</div>
+            <div class="button ub ub-ac bc-text-head ub-pc bc-btn" id="uexImage" onclick='openTestCase("uexImage")'>uexImage</div>
         </div>
-    </div>
-</body>
-<script>
+        <script src="js/appcan.js">
+        </script>
+        <script src="js/appcan.control.js">
+        </script>
+        <script src="js/appcan.scrollbox.js">
+        </script>
+        <script src="js/template.import.js">
+        </script>
+        <script src="./assets/mvvm/index.js">
+        </script>
 
-</script>
+    </body>
+
 </html>

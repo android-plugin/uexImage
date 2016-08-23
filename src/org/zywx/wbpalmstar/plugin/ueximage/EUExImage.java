@@ -364,7 +364,7 @@ public class EUExImage extends EUExBase {
                 JSONObject jsonObject= uexImageUtil.getChoosedPicInfo(context);
                 callBackPluginJs(JsConst.CALLBACK_ON_PICKER_CLOSED, jsonObject.toString());
                 if (openPickerFuncId != null) {
-                    callbackToJs(Integer.parseInt(openPickerFuncId), false, jsonObject);
+                    callbackToJs(Integer.parseInt(openPickerFuncId), false, 0,jsonObject);
                 }
             } else if (resultCode == Constants.OPERATION_CANCELLED) {
                 JSONObject jsonObject = new JSONObject();
@@ -375,7 +375,7 @@ public class EUExImage extends EUExBase {
                 }
                 callBackPluginJs(JsConst.CALLBACK_ON_PICKER_CLOSED, jsonObject.toString());
                 if (openPickerFuncId != null) {
-                    callbackToJs(Integer.parseInt(openPickerFuncId), false, jsonObject);
+                    callbackToJs(Integer.parseInt(openPickerFuncId), false,-1, jsonObject);
                 }
             }
             uexImageUtil.resetData();
@@ -395,18 +395,22 @@ public class EUExImage extends EUExBase {
             cropOutput.delete();
         }
         updateGallery(cropOutput.getAbsolutePath());
+        int error=0;
         JSONObject result = new JSONObject();
         try {
             switch (Crop.cropStatus) {
                 case 1:
+                    error=0;
                     result.put("isCancelled", false);
                     result.put("data", cropOutput.getAbsolutePath());
                     break;
                 case 2:
+                    error=1;
                     result.put("isCancelled", false);
                     result.put("data", "系统错误");
                     break;
                 case 3:
+                    error=-1;
                     result.put("isCancelled", true);
                     break;
             }
@@ -415,7 +419,7 @@ public class EUExImage extends EUExBase {
         }
         callBackPluginJs(JsConst.CALLBACK_ON_CROPPER_CLOSED, result.toString());
         if (null != openCropperId) {
-            callbackToJs(Integer.parseInt(openCropperId), false, result);
+            callbackToJs(Integer.parseInt(openCropperId), false,error, result);
         }
     }
 
@@ -456,7 +460,7 @@ public class EUExImage extends EUExBase {
                     resultObject.put("errorStr", SAME_FILE_IN_DCIM);
                     callBackPluginJs(JsConst.CALLBACK_SAVE_TO_PHOTO_ALBUM, resultObject.toString());
                     if (null != funcId) {
-                        callbackToJs(Integer.parseInt(funcId), false, resultObject);
+                        callbackToJs(Integer.parseInt(funcId), false,1, SAME_FILE_IN_DCIM);
                     }
                     return;
                 }
@@ -483,7 +487,7 @@ public class EUExImage extends EUExBase {
                     resultObject.put("errorStr", SAME_FILE_IN_DCIM);
                     callBackPluginJs(JsConst.CALLBACK_SAVE_TO_PHOTO_ALBUM, resultObject.toString());
                     if (null != funcId) {
-                        callbackToJs(Integer.parseInt(funcId), false, resultObject);
+                        callbackToJs(Integer.parseInt(funcId), false, 1,SAME_FILE_IN_DCIM);
                     }
                     return;
                 }
@@ -498,7 +502,7 @@ public class EUExImage extends EUExBase {
             }
             callBackPluginJs(JsConst.CALLBACK_SAVE_TO_PHOTO_ALBUM, resultObject.toString());
             if (null != funcId) {
-                callbackToJs(Integer.parseInt(funcId), false, resultObject);
+                callbackToJs(Integer.parseInt(funcId), false, 0,"");
             }
         } catch (JSONException e) {
             try {
@@ -509,7 +513,7 @@ public class EUExImage extends EUExBase {
             }
             callBackPluginJs(JsConst.CALLBACK_SAVE_TO_PHOTO_ALBUM, resultObject.toString());
             if (null != funcId) {
-                callbackToJs(Integer.parseInt(funcId), false, resultObject);
+                callbackToJs(Integer.parseInt(funcId), false, 1,JSON_FORMAT_ERROR);
             }
         } catch (IOException e) {
             try {
@@ -520,7 +524,7 @@ public class EUExImage extends EUExBase {
             }
             callBackPluginJs(JsConst.CALLBACK_SAVE_TO_PHOTO_ALBUM, resultObject.toString());
             if (null != funcId) {
-                callbackToJs(Integer.parseInt(funcId), false, resultObject);
+                callbackToJs(Integer.parseInt(funcId), false,1, FILE_SYSTEM_ERROR);
             }
         }
     }
