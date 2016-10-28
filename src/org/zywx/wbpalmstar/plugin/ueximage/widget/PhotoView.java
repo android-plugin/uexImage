@@ -20,6 +20,8 @@ import android.widget.OverScroller;
 import android.widget.Scroller;
 
 /**
+ * 项目地址：https://github.com/bm-x/PhotoView
+ *
  * Created by liuheng on 2015/6/21.
  * <p></p>
  * 如有任何意见和建议可邮件  bmme@vip.qq.com
