@@ -1,3 +1,15 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.1.2'
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
 apply plugin: 'com.android.application'
 
 dependencies {
@@ -44,25 +56,27 @@ android {
     }
 }
 
-def pluginName="uexImage"
-def buildConfigPath="org/zywx/wbpalmstar/widgetone/"
+// def pluginName="uexImage"
+// def buildConfigPath="org/zywx/wbpalmstar/widgetone/"
 
-def jarDir=pluginName+'/jar/'
-def jarName="plugin_"+pluginName+".jar"
-def jarPath=jarDir+jarName
+// def jarDir=pluginName+'/jar/'
+// def jarName="plugin_"+pluginName+".jar"
+// def jarPath=jarDir+jarName
 
-task clearJar(type: Delete) {
-    delete jarPath;
-}
+// task clearJar(type: Delete) {
+//     delete jarPath;
+// }
 
-task makeJar(type:Jar,dependsOn:['compileReleaseJavaWithJavac']) {
-    archiveName jarName
-    from('build/intermediates/classes/release/')
-    destinationDir=file(jarDir)
-    exclude('**/R.class')
-    exclude('**/R\$*.class')
-    exclude('**/BuildConfig.class')
-    exclude(buildConfigPath)
-}
+// task makeJar(type:Jar,dependsOn:['compileReleaseJavaWithJavac']) {
+//     archiveName jarName
+//     from('build/intermediates/classes/release/')
+//     destinationDir=file(jarDir)
+//     exclude('**/R.class')
+//     exclude('**/R\$*.class')
+//     exclude('**/BuildConfig.class')
+//     exclude(buildConfigPath)
+// }
 
-makeJar.dependsOn(clearJar)
+// makeJar.dependsOn(clearJar)
+
+apply from: "https://raw.githubusercontent.com/android-plugin/gradle-plugin/master/buildPlugin.gradle"
