@@ -244,7 +244,7 @@ public class UEXImageUtil {
 
     }
 
-    private JSONObject getExifData(String orginPicPath, String tempPath) throws IOException, JSONException {
+    public JSONObject getExifData(String orginPicPath, String tempPath) throws IOException, JSONException {
         ExifInterface exif = new ExifInterface(orginPicPath);
         float [] latLong = new float[2];
         exif.getLatLong(latLong);

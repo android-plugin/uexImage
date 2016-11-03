@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<org.zywx.wbpalmstar.plugin.ueximage.widget.SwipeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swipeLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:id="@+id/ll_image_detail"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+       >
+
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:id="@+id/ll_photoView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </LinearLayout>
+</org.zywx.wbpalmstar.plugin.ueximage.widget.SwipeLayout>
+

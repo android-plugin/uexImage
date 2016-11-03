@@ -21,11 +21,13 @@ package org.zywx.wbpalmstar.plugin.ueximage;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
@@ -34,6 +36,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,6 +45,7 @@ import com.ace.universalimageloader.core.DisplayImageOptions;
 import com.ace.universalimageloader.core.ImageLoader;
 import com.ace.universalimageloader.core.assist.FailReason;
 import com.ace.universalimageloader.core.listener.ImageLoadingListener;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.zywx.wbpalmstar.base.BDebug;
@@ -53,8 +57,11 @@ import org.zywx.wbpalmstar.plugin.ueximage.util.Constants;
 import org.zywx.wbpalmstar.plugin.ueximage.util.EUEXImageConfig;
 import org.zywx.wbpalmstar.plugin.ueximage.util.UEXImageUtil;
 import org.zywx.wbpalmstar.plugin.ueximage.widget.PhotoView;
+import org.zywx.wbpalmstar.plugin.ueximage.widget.RowView;
+import org.zywx.wbpalmstar.plugin.ueximage.widget.SwipeLayout;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 public class ImagePreviewActivity extends Activity {
@@ -257,10 +264,14 @@ public class ImagePreviewActivity extends Activity {
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
+            View view = getLayoutInflater().inflate(finder.getLayoutId("plugin_uex_image_swipe_layout"), null);
+            SwipeLayout swipeLayout = (SwipeLayout) view.findViewById(finder.getId("swipeLayout"));
+            swipeLayout.setLeftSwipeEnabled(false);
+            swipeLayout.setRightSwipeEnabled(false);
+            swipeLayout.setShowMode(SwipeLayout.ShowMode.PullOut);
+            LinearLayout ll = (LinearLayout) swipeLayout.findViewById(finder.getId("ll_photoView"));
             final PhotoView imageView = new PhotoView(ImagePreviewActivity.this);
-            ViewPager.LayoutParams layoutParams=new ViewPager.LayoutParams();
-            layoutParams.height=container.getMeasuredHeight();
-            layoutParams.width=container.getMeasuredWidth();
+            LinearLayout.LayoutParams layoutParams=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             imageView.setLayoutParams(layoutParams);
             imageView.enable();
             imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
@@ -295,8 +306,52 @@ public class ImagePreviewActivity extends Activity {
                 }
             });
             imageView.setOnClickListener(imageClickListener);
-            container.addView(imageView);
-            return imageView;
+
+            ll.addView(imageView);
+            LinearLayout detail = (LinearLayout) swipeLayout.findViewById(finder.getId("ll_image_detail"));
+            try {
+                String path = getRealImageUrl(src);
+                if(path.startsWith("file:///")) {
+                    path = path.replace("file://", "");
+                }
+                ExifInterface exif = new ExifInterface(path);
+                if (exif != null) {
+                    if (!TextUtils.isEmpty(exif.getAttribute(ExifInterface.TAG_MAKE)) && !TextUtils.isEmpty(exif.getAttribute(ExifInterface.TAG_MODEL))) {
+                        RowView deviceRowView = new RowView(ImagePreviewActivity.this, "器材", exif.getAttribute(ExifInterface.TAG_MAKE) + "/" + exif.getAttribute(ExifInterface.TAG_MODEL));
+                        detail.addView(deviceRowView);
+                    }
+                    if (!TextUtils.isEmpty(exif.getAttribute(ExifInterface.TAG_EXPOSURE_TIME)) && TextUtils.isEmpty( exif.getAttribute(ExifInterface.TAG_ISO))) {
+                        RowView exposureRowView = new RowView(ImagePreviewActivity.this, "曝光",
+                                "曝光时间:" + exif.getAttribute(ExifInterface.TAG_EXPOSURE_TIME) + ", ISO" + exif.getAttribute(ExifInterface.TAG_ISO));
+                        detail.addView(exposureRowView);
+                    }
+
+                    if (!TextUtils.isEmpty(exif.getAttribute(ExifInterface.TAG_FOCAL_LENGTH))) {
+                        RowView focusLengthRowView = new RowView(ImagePreviewActivity.this, "焦距:",
+                                exif.getAttribute(ExifInterface.TAG_FOCAL_LENGTH));
+                        detail.addView(focusLengthRowView);
+                        String whiteBalance = exif.getAttribute(ExifInterface.TAG_WHITE_BALANCE);
+                        if (TextUtils.isEmpty(whiteBalance)) {
+                            whiteBalance = "Auto";
+                        }
+                        RowView colorRowView = new RowView(ImagePreviewActivity.this, "色彩:", "白平衡:" + whiteBalance);
+                        detail.addView(colorRowView);
+
+                    }
+                    if (!TextUtils.isEmpty(exif.getAttribute(ExifInterface.TAG_DATETIME))) {
+                        RowView dateRowView = new RowView(ImagePreviewActivity.this, "时间:", exif.getAttribute(ExifInterface.TAG_DATETIME));
+                        detail.addView(dateRowView);
+                    }
+                }
+                System.out.println("EXIF:" + new Gson().toJson(exif));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            swipeLayout.addDrag(SwipeLayout.DragEdge.Bottom, detail);
+            container.addView(view);
+            return view;
+
         }
 
         @Override
