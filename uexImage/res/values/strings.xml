@@ -9,4 +9,5 @@
     <string name="plugin_uex_image_crop_pick_error">无效的图片</string>
     <string name="plugin_uex_image_crop_saving">正在保存照片…</string>
     <string name="plugin_uex_image_crop_wait">请等待…</string>
+    <string name="plugin_uex_image_no_detail_info">无详细信息</string>
 </resources>

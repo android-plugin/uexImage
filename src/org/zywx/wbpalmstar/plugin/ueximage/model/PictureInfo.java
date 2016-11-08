@@ -18,6 +18,8 @@
  */
 package org.zywx.wbpalmstar.plugin.ueximage.model;
 
+import org.json.JSONObject;
+
 /**
  * Created by Fred on 2015/8/13.
  */
@@ -26,6 +28,7 @@ public class PictureInfo {
     private String thumb;//缩略图URI或路径
     private String desc;
 	private long lastModified;
+    private JSONObject detailInfo;
 
     public String getSrc() {
         return src;
@@ -58,4 +61,12 @@ public class PictureInfo {
 	public void setLastModified(long lastModified) {
 		this.lastModified = lastModified;
 	}
+
+    public JSONObject getDetailInfo() {
+        return detailInfo;
+    }
+
+    public void setDetailInfo(JSONObject detailInfo) {
+        this.detailInfo = detailInfo;
+    }
 }

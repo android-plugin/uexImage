@@ -21,13 +21,13 @@ package org.zywx.wbpalmstar.plugin.ueximage;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.media.ExifInterface;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
@@ -45,12 +45,14 @@ import com.ace.universalimageloader.core.DisplayImageOptions;
 import com.ace.universalimageloader.core.ImageLoader;
 import com.ace.universalimageloader.core.assist.FailReason;
 import com.ace.universalimageloader.core.listener.ImageLoadingListener;
-import com.google.gson.Gson;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.zywx.wbpalmstar.base.BDebug;
 import org.zywx.wbpalmstar.base.BUtility;
 import org.zywx.wbpalmstar.base.ResoureFinder;
+import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
 import org.zywx.wbpalmstar.plugin.ueximage.model.PictureInfo;
 import org.zywx.wbpalmstar.plugin.ueximage.util.CommonUtil;
 import org.zywx.wbpalmstar.plugin.ueximage.util.Constants;
@@ -61,7 +63,7 @@ import org.zywx.wbpalmstar.plugin.ueximage.widget.RowView;
 import org.zywx.wbpalmstar.plugin.ueximage.widget.SwipeLayout;
 
 import java.io.File;
-import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 
 public class ImagePreviewActivity extends Activity {
@@ -133,9 +135,6 @@ public class ImagePreviewActivity extends Activity {
             picList = uexImageUtil.getCurrentPicList();
         }
     }
-
-
-
 
 
     private void initViewForPicker() {
@@ -308,46 +307,39 @@ public class ImagePreviewActivity extends Activity {
             imageView.setOnClickListener(imageClickListener);
 
             ll.addView(imageView);
-            LinearLayout detail = (LinearLayout) swipeLayout.findViewById(finder.getId("ll_image_detail"));
-            try {
-                String path = getRealImageUrl(src);
-                if(path.startsWith("file:///")) {
-                    path = path.replace("file://", "");
-                }
-                ExifInterface exif = new ExifInterface(path);
-                if (exif != null) {
-                    if (!TextUtils.isEmpty(exif.getAttribute(ExifInterface.TAG_MAKE)) && !TextUtils.isEmpty(exif.getAttribute(ExifInterface.TAG_MODEL))) {
-                        RowView deviceRowView = new RowView(ImagePreviewActivity.this, "器材", exif.getAttribute(ExifInterface.TAG_MAKE) + "/" + exif.getAttribute(ExifInterface.TAG_MODEL));
-                        detail.addView(deviceRowView);
-                    }
-                    if (!TextUtils.isEmpty(exif.getAttribute(ExifInterface.TAG_EXPOSURE_TIME)) && TextUtils.isEmpty( exif.getAttribute(ExifInterface.TAG_ISO))) {
-                        RowView exposureRowView = new RowView(ImagePreviewActivity.this, "曝光",
-                                "曝光时间:" + exif.getAttribute(ExifInterface.TAG_EXPOSURE_TIME) + ", ISO" + exif.getAttribute(ExifInterface.TAG_ISO));
-                        detail.addView(exposureRowView);
-                    }
-
-                    if (!TextUtils.isEmpty(exif.getAttribute(ExifInterface.TAG_FOCAL_LENGTH))) {
-                        RowView focusLengthRowView = new RowView(ImagePreviewActivity.this, "焦距:",
-                                exif.getAttribute(ExifInterface.TAG_FOCAL_LENGTH));
-                        detail.addView(focusLengthRowView);
-                        String whiteBalance = exif.getAttribute(ExifInterface.TAG_WHITE_BALANCE);
-                        if (TextUtils.isEmpty(whiteBalance)) {
-                            whiteBalance = "Auto";
-                        }
-                        RowView colorRowView = new RowView(ImagePreviewActivity.this, "色彩:", "白平衡:" + whiteBalance);
-                        detail.addView(colorRowView);
-
-                    }
-                    if (!TextUtils.isEmpty(exif.getAttribute(ExifInterface.TAG_DATETIME))) {
-                        RowView dateRowView = new RowView(ImagePreviewActivity.this, "时间:", exif.getAttribute(ExifInterface.TAG_DATETIME));
-                        detail.addView(dateRowView);
-                    }
-                }
-                System.out.println("EXIF:" + new Gson().toJson(exif));
-            } catch (IOException e) {
-                e.printStackTrace();
+            JSONObject detailInfo = picList.get(position).getDetailInfo();
+            //如果是选择图片的操作，则不会显示这些信息
+            if (!isOpenBrowser ) {
+                swipeLayout.setBottomSwipeEnabled(false);
+                swipeLayout.setTopSwipeEnabled(false);
+                container.addView(view);
+                return view;
             }
+            LinearLayout detail = (LinearLayout) swipeLayout.findViewById(finder.getId("ll_image_detail"));
+            //如果没有传信息
+            if (detailInfo == null) {
+                LinearLayout.LayoutParams innerLayoutParam = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                TextView tvNoDetailInfo = new TextView(ImagePreviewActivity.this);
+                innerLayoutParam.gravity = Gravity.CENTER_HORIZONTAL;
+//                tvNoDetailInfo.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                tvNoDetailInfo.setTextColor(Color.WHITE);
+                tvNoDetailInfo.setText(EUExUtil.getString("plugin_uex_image_no_detail_info"));
+                detail.addView(tvNoDetailInfo, innerLayoutParam);
+                swipeLayout.addDrag(SwipeLayout.DragEdge.Bottom, detail);
+                container.addView(view);
+                return view;
+            }
+            Iterator iterator = detailInfo.keys();
+            while (iterator.hasNext()) {
+                String key = (String)iterator.next();
+                try {
+                    RowView rowView = new RowView(ImagePreviewActivity.this, key + ":", (String)detailInfo.getString(key));
+                    detail.addView(rowView);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
+            }
             swipeLayout.addDrag(SwipeLayout.DragEdge.Bottom, detail);
             container.addView(view);
             return view;

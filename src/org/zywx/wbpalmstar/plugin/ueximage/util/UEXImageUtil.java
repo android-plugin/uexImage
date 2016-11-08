@@ -268,6 +268,35 @@ public class UEXImageUtil {
                 e.printStackTrace();
             }
         }
+        String make = exif.getAttribute(ExifInterface.TAG_MAKE);
+        String model = exif.getAttribute(ExifInterface.TAG_MODEL);
+        String exposureTime = exif.getAttribute(ExifInterface.TAG_EXPOSURE_TIME);
+        String iso = exif.getAttribute(ExifInterface.TAG_ISO);
+
+        String focalLength = exif.getAttribute(ExifInterface.TAG_FOCAL_LENGTH);
+        String whiteBalance = exif.getAttribute(ExifInterface.TAG_WHITE_BALANCE);
+        String flash = exif.getAttribute(ExifInterface.TAG_FLASH);
+        if (!TextUtils.isEmpty(make)) {
+            jsonObject.put("make", make);
+        }
+        if (!TextUtils.isEmpty(model)) {
+            jsonObject.put("model", model);
+        }
+        if (!TextUtils.isEmpty(exposureTime)) {
+            jsonObject.put("exposureTime", exposureTime);
+        }
+        if (!TextUtils.isEmpty(iso)) {
+            jsonObject.put("iso", iso);
+        }
+        if (!TextUtils.isEmpty(focalLength)) {
+            jsonObject.put("focalLength", focalLength);
+        }
+        if (!TextUtils.isEmpty(whiteBalance)) {
+            jsonObject.put("whiteBalance", whiteBalance);
+        }
+        if (!TextUtils.isEmpty(flash)) {
+            jsonObject.put("flash", flash);
+        }
         return jsonObject;
     }
 
@@ -289,6 +318,9 @@ public class UEXImageUtil {
                     }
                     if (jsonObject.has("desc") && !TextUtils.isEmpty(jsonObject.getString("desc"))) {
                         picInfo.setDesc(jsonObject.getString("desc"));
+                    }
+                    if (jsonObject.has("detailInfo")) {
+                        picInfo.setDetailInfo(jsonObject.getJSONObject("detailInfo"));
                     }
                 }
                 imageDataList.add(picInfo);

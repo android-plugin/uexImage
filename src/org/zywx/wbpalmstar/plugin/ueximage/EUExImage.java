@@ -178,6 +178,10 @@ public class EUExImage extends EUExBase {
                                     mBrwView.getCurrentWidget().m_wgtType);
                             obj.put("thumb", thumbPath);
                         }
+                        if (obj.has("detailInfo")) {
+                            JSONObject detailInfo =obj.getJSONObject("detailInfo");
+                            obj.put("detailInfo", detailInfo);
+                        }
                     }
                 }
                 config.setDataArray(data);
@@ -207,8 +211,6 @@ public class EUExImage extends EUExBase {
                 }
                 config.setStartIndex(startIndex);
             }
-            JSONArray data = config.getDataArray();
-
             config.setIsOpenBrowser(true);
             Intent intent;
             if (config.isStartOnGrid()) {
