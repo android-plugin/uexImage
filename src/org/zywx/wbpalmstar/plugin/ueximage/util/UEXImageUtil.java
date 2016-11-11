@@ -276,6 +276,7 @@ public class UEXImageUtil {
         String focalLength = exif.getAttribute(ExifInterface.TAG_FOCAL_LENGTH);
         String whiteBalance = exif.getAttribute(ExifInterface.TAG_WHITE_BALANCE);
         String flash = exif.getAttribute(ExifInterface.TAG_FLASH);
+        String aperture = exif.getAttribute(ExifInterface.TAG_APERTURE);
         if (!TextUtils.isEmpty(make)) {
             jsonObject.put("make", make);
         }
@@ -296,6 +297,9 @@ public class UEXImageUtil {
         }
         if (!TextUtils.isEmpty(flash)) {
             jsonObject.put("flash", flash);
+        }
+        if (!TextUtils.isEmpty(aperture)) {
+            jsonObject.put("aperture", aperture);
         }
         return jsonObject;
     }
