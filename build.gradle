@@ -13,7 +13,8 @@ buildscript {
 apply plugin: 'com.android.application'
 
 dependencies {
-    compile fileTree(include: '*.jar', dir: 'libs')
+    compile fileTree(dir: 'libs', include: '*.jar')
+
 }
 
 repositories {
@@ -23,7 +24,7 @@ repositories {
 }
 
 android {
-    compileSdkVersion 21
+    compileSdkVersion 23
     buildToolsVersion "23.0.1"
     lintOptions {
         abortOnError false
@@ -55,28 +56,4 @@ android {
         release.setRoot('build-types/release')
     }
 }
-
-// def pluginName="uexImage"
-// def buildConfigPath="org/zywx/wbpalmstar/widgetone/"
-
-// def jarDir=pluginName+'/jar/'
-// def jarName="plugin_"+pluginName+".jar"
-// def jarPath=jarDir+jarName
-
-// task clearJar(type: Delete) {
-//     delete jarPath;
-// }
-
-// task makeJar(type:Jar,dependsOn:['compileReleaseJavaWithJavac']) {
-//     archiveName jarName
-//     from('build/intermediates/classes/release/')
-//     destinationDir=file(jarDir)
-//     exclude('**/R.class')
-//     exclude('**/R\$*.class')
-//     exclude('**/BuildConfig.class')
-//     exclude(buildConfigPath)
-// }
-
-// makeJar.dependsOn(clearJar)
-
 apply from: "https://raw.githubusercontent.com/android-plugin/gradle-plugin/master/buildPlugin.gradle"
