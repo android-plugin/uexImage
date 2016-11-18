@@ -21,13 +21,12 @@ package org.zywx.wbpalmstar.plugin.ueximage;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.Gravity;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
@@ -52,7 +51,6 @@ import org.json.JSONObject;
 import org.zywx.wbpalmstar.base.BDebug;
 import org.zywx.wbpalmstar.base.BUtility;
 import org.zywx.wbpalmstar.base.ResoureFinder;
-import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
 import org.zywx.wbpalmstar.plugin.ueximage.model.PictureInfo;
 import org.zywx.wbpalmstar.plugin.ueximage.util.CommonUtil;
 import org.zywx.wbpalmstar.plugin.ueximage.util.Constants;
@@ -316,29 +314,47 @@ public class ImagePreviewActivity extends Activity {
                 return view;
             }
             LinearLayout detail = (LinearLayout) swipeLayout.findViewById(finder.getId("ll_image_detail"));
+
+            TextView tvTitle = (TextView) detail.findViewById(finder.getId("tv_detail_image_title"));
+            TextView tvDesc = (TextView) detail.findViewById(finder.getId("tv_detail_image_desc"));
+            View dividerView = detail.findViewById(finder.getId("tv_detail_divider"));
+            TextView tvNoDetailInfo = (TextView) detail.findViewById(finder.getId("tv_no_detail_info"));
+
             //如果没有传信息
             if (detailInfo == null) {
-                LinearLayout.LayoutParams innerLayoutParam = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                TextView tvNoDetailInfo = new TextView(ImagePreviewActivity.this);
-                innerLayoutParam.gravity = Gravity.CENTER_HORIZONTAL;
-//                tvNoDetailInfo.setGravity(View.TEXT_ALIGNMENT_CENTER);
-                tvNoDetailInfo.setTextColor(Color.WHITE);
-                tvNoDetailInfo.setText(EUExUtil.getString("plugin_uex_image_no_detail_info"));
-                detail.addView(tvNoDetailInfo, innerLayoutParam);
+                tvTitle.setVisibility(View.GONE);
+                tvDesc.setVisibility(View.GONE);
+                dividerView.setVisibility(View.GONE);
+                tvNoDetailInfo.setVisibility(View.VISIBLE);
                 swipeLayout.addDrag(SwipeLayout.DragEdge.Bottom, detail);
                 container.addView(view);
                 return view;
             }
+
+            String title = detailInfo.optString("title");
+            String desc = detailInfo.optString("desc");
+            if (TextUtils.isEmpty(desc)) {
+                tvDesc.setVisibility(View.INVISIBLE);
+            }
+            if (TextUtils.isEmpty(title)) {
+                tvTitle.setVisibility(View.INVISIBLE);
+                tvDesc.setVisibility(View.INVISIBLE);
+                dividerView.setVisibility(View.INVISIBLE);
+            }
+            tvTitle.setText(title);
+            tvDesc.setText(desc);
+
             Iterator iterator = detailInfo.keys();
             while (iterator.hasNext()) {
                 String key = (String)iterator.next();
                 try {
-                    RowView rowView = new RowView(ImagePreviewActivity.this, key + ":", (String)detailInfo.getString(key));
-                    detail.addView(rowView);
+                    if (!key.equals("title") && !key.equals("desc")) {
+                        RowView rowView = new RowView(ImagePreviewActivity.this, key + ":", (String) detailInfo.getString(key));
+                        detail.addView(rowView);
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
             }
             swipeLayout.addDrag(SwipeLayout.DragEdge.Bottom, detail);
             container.addView(view);

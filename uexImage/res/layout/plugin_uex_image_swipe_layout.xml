@@ -7,11 +7,47 @@
     <LinearLayout
         android:id="@+id/ll_image_detail"
         android:orientation="vertical"
-        android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:paddingTop="60dp"
        >
-
+        <TextView
+            android:id="@+id/tv_detail_image_title"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="30sp"
+            android:text="这是图片的主题"
+            android:textColor="@android:color/white"/>
+        <TextView
+            android:id="@+id/tv_detail_image_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="16dp"
+            android:text="这是图片的描述"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            />
+        <View
+            android:id="@+id/tv_detail_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/plugin_uex_image_gray_3"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="30dp"
+            />
+        <TextView
+            android:id="@+id/tv_no_detail_info"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textColor="@android:color/white"
+            android:text="@string/plugin_uex_image_no_detail_info"
+            android:visibility="gone"
+            android:textSize="16sp"
+            android:gravity="center"/>
     </LinearLayout>
     <LinearLayout
         android:orientation="horizontal"

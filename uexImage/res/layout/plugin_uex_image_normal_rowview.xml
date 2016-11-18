@@ -11,12 +11,14 @@
         android:id="@+id/tv_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/plugin_uex_image_gray_9"/>
+        android:textSize="16sp"
+        android:textColor="@color/plugin_uex_image_gray_10"/>
 
     <TextView
         android:id="@+id/tv_detail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="16sp"
         android:layout_marginLeft="5dp"
         android:textColor="@color/white"/>
 
