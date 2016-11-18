@@ -349,7 +349,7 @@ public class ImagePreviewActivity extends Activity {
                 String key = (String)iterator.next();
                 try {
                     if (!key.equals("title") && !key.equals("desc")) {
-                        RowView rowView = new RowView(ImagePreviewActivity.this, key + ":", (String) detailInfo.getString(key));
+                        RowView rowView = new RowView(ImagePreviewActivity.this, key, (String) detailInfo.getString(key));
                         detail.addView(rowView);
                     }
                 } catch (JSONException e) {
