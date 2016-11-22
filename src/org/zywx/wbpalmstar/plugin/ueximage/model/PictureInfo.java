@@ -27,6 +27,7 @@ public class PictureInfo {
     private String src;//原图系统URI或路径
     private String thumb;//缩略图URI或路径
     private String desc;
+    private String title;
 	private long lastModified;
     private JSONObject detailInfo;
 
@@ -68,5 +69,13 @@ public class PictureInfo {
 
     public void setDetailInfo(JSONObject detailInfo) {
         this.detailInfo = detailInfo;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

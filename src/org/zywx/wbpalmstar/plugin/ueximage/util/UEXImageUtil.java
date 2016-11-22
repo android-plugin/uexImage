@@ -320,6 +320,9 @@ public class UEXImageUtil {
                     if (jsonObject.has("thumb") && !TextUtils.isEmpty(jsonObject.getString("thumb"))) {
                         picInfo.setThumb(jsonObject.getString("thumb"));
                     }
+                    if (!TextUtils.isEmpty(jsonObject.optString("title"))) {
+                        picInfo.setTitle(jsonObject.getString("title"));
+                    }
                     if (jsonObject.has("desc") && !TextUtils.isEmpty(jsonObject.getString("desc"))) {
                         picInfo.setDesc(jsonObject.getString("desc"));
                     }

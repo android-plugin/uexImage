@@ -280,6 +280,10 @@ public class ImagePreviewActivity extends Activity {
                     .considerExifParams(true)//考虑Exif旋转
                     .build();
             String src = picList.get(position).getSrc();
+
+            String title = picList.get(position).getTitle();
+            String desc = picList.get(position).getDesc();
+
             ImageLoader.getInstance().displayImage(getRealImageUrl(src), imageView, options, new ImageLoadingListener() {
                 @Override
                 public void onLoadingStarted(String s, View view) {
@@ -318,21 +322,7 @@ public class ImagePreviewActivity extends Activity {
             TextView tvTitle = (TextView) detail.findViewById(finder.getId("tv_detail_image_title"));
             TextView tvDesc = (TextView) detail.findViewById(finder.getId("tv_detail_image_desc"));
             View dividerView = detail.findViewById(finder.getId("tv_detail_divider"));
-            TextView tvNoDetailInfo = (TextView) detail.findViewById(finder.getId("tv_no_detail_info"));
 
-            //如果没有传信息
-            if (detailInfo == null) {
-                tvTitle.setVisibility(View.GONE);
-                tvDesc.setVisibility(View.GONE);
-                dividerView.setVisibility(View.GONE);
-                tvNoDetailInfo.setVisibility(View.VISIBLE);
-                swipeLayout.addDrag(SwipeLayout.DragEdge.Bottom, detail);
-                container.addView(view);
-                return view;
-            }
-
-            String title = detailInfo.optString("title");
-            String desc = detailInfo.optString("desc");
             if (TextUtils.isEmpty(desc)) {
                 tvDesc.setVisibility(View.INVISIBLE);
             }
@@ -341,8 +331,16 @@ public class ImagePreviewActivity extends Activity {
                 tvDesc.setVisibility(View.INVISIBLE);
                 dividerView.setVisibility(View.INVISIBLE);
             }
-            tvTitle.setText(title);
-            tvDesc.setText(desc);
+            if (TextUtils.isEmpty(title) && TextUtils.isEmpty(desc)) {
+                tvTitle.setText(title);
+                tvDesc.setText(desc);
+            }
+            //如果没有传信息
+            if (detailInfo == null) {
+                swipeLayout.addDrag(SwipeLayout.DragEdge.Bottom, detail);
+                container.addView(view);
+                return view;
+            }
 
             Iterator iterator = detailInfo.keys();
             while (iterator.hasNext()) {

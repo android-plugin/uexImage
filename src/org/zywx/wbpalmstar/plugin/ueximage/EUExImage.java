@@ -178,8 +178,10 @@ public class EUExImage extends EUExBase {
                                     mBrwView.getCurrentWidget().m_wgtType);
                             obj.put("thumb", thumbPath);
                         }
+                        obj.put("title", obj.optString("title"));
+                        obj.put("desc", obj.optString("desc"));
                         if (obj.has("detailInfo")) {
-                            JSONObject detailInfo =obj.getJSONObject("detailInfo");
+                            JSONObject detailInfo = obj.optJSONObject("detailInfo");
                             obj.put("detailInfo", detailInfo);
                         }
                     }
