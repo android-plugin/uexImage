@@ -1,143 +1,62 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="css/index.css">
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    
+    <head>
+        <title>
+        </title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+        <link rel="stylesheet" href="./css/index.css">
+        <script src="js/eruda.min.js"></script>
+        <script src="./js/index.js">
+        </script>
+    </head>
+    
+    <body class="" ontouchstart>
+        <div class="bc-bg" tabindex="0" data-control="PAGE" id="Page_ylUCGd">
+            <div class="uh bc-head  ubb bc-border" data-control="HEADER" id="Header_bPMcMr">
+                <div class="ub">
+                    <div class="nav-btn" id="nav-left">
+                        <div class="fa fa-1g ub-img1">
+                        </div>
+                    </div>
+                    <h1 class="ut ub-f1 ulev-3 ut-s tx-c" tabindex="0">测试系统</h1>
+                    <div class="nav-btn" id="nav-right">
+                        <div class="fa  fa-1g  ub-img1">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="" data-control="BOX">
+                <div class="button ub ub-ac bc-text-head ub-pc bc-btn" id="Button_DgxEcP" onclick="openTestCase('uexFileMgr')">uexFileMgr</div>
+            </div>
+            <div class="" data-control="BOX">
+                <div class="button ub ub-ac bc-text-head ub-pc bc-btn" id="uexXmlHttpMgr" onclick='openTestCase("uexXMLHttpMgr")'>uexXmlHttpMgr</div>
+            </div>
+            <div class="button ub ub-ac bc-text-head ub-pc bc-btn" id="uexUploaderMgr" onclick='openTestCase("uexUploaderMgr")'>uexUploaderMgr</div>
+            <div class="button ub ub-ac bc-text-head ub-pc bc-btn" id="uexDatabaseMgr" onclick='openTestCase("uexDatabaseMgr")'>uexDatabaseMgr</div>
+            <div class="button ub ub-ac bc-text-head ub-pc bc-btn" id="uexDownloaderMgr" onclick='openTestCase("uexDownloaderMgr")'>uexDownloaderMgr</div>
+            <div class="button ub ub-ac bc-text-head ub-pc bc-btn" id="uexDevice" onclick='openTestCase("uexDevice")'>uexDevice</div>
+            <div class="button ub ub-ac bc-text-head ub-pc bc-btn" id="uexSocketMgr" onclick='openTestCase("uexSocketMgr")'>uexSocketMgr</div>
+            <div class="button ub ub-ac bc-text-head ub-pc bc-btn" id="uexImage" onclick='openTestCase("uexImage")'>uexImage</div>
+        </div>
+        <script src="js/appcan.js">
+        </script>
+        <script src="js/appcan.control.js">
+        </script>
+        <script src="js/appcan.scrollbox.js">
+        </script>
+        <script src="js/template.import.js">
+        </script>
+        <script src="./assets/mvvm/index.js">
+        </script>
 
-    <script type="text/javascript">
-	function openPicker() {
-		uexImage.onPickerClosed = onPickerClosed;
-		var params = {
-			min : "1",
-			max : "10",
-			quality : "0.5",
-			usePng : "false",
-			detailedInfo : "true"
-		};
-		var data = JSON.stringify(params);
-		uexImage.openPicker(data);
-	}
+    </body>
 
-	function openBrowser() {
-		var params = {
-			"displayActionButton" : true,
-			"displayNavArrows" : true,
-			"enableGrid" : true,
-			"startOnGrid" : false,
-			"startIndex" : 1,
-			data : [
-					{
-						"src" : "http://img0.imgtn.bdimg.com/it/u=2416840456,1080513470&fm=21&gp=0.jpg"
-					},
-					{
-						"src" : "res://test.png"
-					}
-				   ]
-		};
-		var data = JSON.stringify(params);
-		uexImage.openBrowser(data);
-	}
-	function openPickerForCropper() {
-		uexImage.onPickerClosed = onPickerClosedForCropper;
-		var params = {
-			min : "1",
-			max : "1",
-			quality : "1",
-			usePng : "false",
-			detailedInfo : "false"
-		};
-		var data = JSON.stringify(params);
-		uexImage.openPicker(data);
-	}
-	function openCropper() {
-		var params = {
-			//src : document.getElementById("selectPath").innerHTML,
-			src: "res://1016.jpg",
-			usePng : "true",
-			mode : "1"
-		};
-		var data = JSON.stringify(params);
-		uexImage.openCropper(data);
-	}
-
-	function saveToPhotoAlbum() {
-		var params = {
-			localPath : "res://1016.jpg",
-			extraInfo : ""
-		};
-		var data = JSON.stringify(params);
-		uexImage.saveToPhotoAlbum(data);
-	}
-
-	function clearOutputImages() {
-		var params = {
-			localPath : "",
-			extraInfo : ""
-		};
-		var data = JSON.stringify(params);
-		uexImage.clearOutputImages(data);
-	}
-
-	window.uexOnload = function(type) {
-		if (type == 0) {
-			uexImage.cbOpenPicker = cbOpenPicker;
-			uexImage.onBrowserClosed = onBrowserClosed;
-			uexImage.onCropperClosed = onCropperClosed;
-			uexImage.cbSaveToPhotoAlbum = cbSaveToPhotoAlbum;
-			uexImage.cbClearOutputImages = cbClearOutputImages;
-		}
-	}
-
-	function cbOpenPicker(info) {
-		alert("cbOpenPicker:" + info);
-	}
-	function onPickerClosed(info) {
-		alert("onPickerClosed:" + info);
-	}
-	function onBrowserClosed(info) {
-		alert("onBrowserClosed:" + info);
-	}
-	function onPickerClosedForCropper(info) {
-		alert(info);
-		var info = eval('(' + info + ')');
-		if(!info.isCancelled){
-			document.getElementById("selectPath").innerHTML = info.data[0];
-		}else{
-			document.getElementById("selectPath").innerHTML = "";
-		}
-	}
-	function onCropperClosed(info) {
-		alert("onCropperClosed:" + info);
-	}
-	function cbSaveToPhotoAlbum(info) {
-		alert("cbSaveToPhotoAlbum:" + info);
-	}
-	function cbClearOutputImages(info) {
-		alert("cbClearOutputImages:" + info);
-	}
-</script>
-</head>
-
-<body>
-<div class="tit">uexImage</div>
-<div class="conbor">
-    <div class="consj">
-        <span>1.打开图片选择器</span>
-        <input class='btn' type='button' value='openPicker' onclick='openPicker();'>
-        <span>2.打开图片浏览器</span>
-        <input class='btn' type='button' value='openBrowser' onclick='openBrowser();'>
-        <span>3.图片剪裁</span>
-        <input class='btn' type='button' value='1.openPicker' onclick='openPickerForCropper();'>
-        <span>选择的图片路径为：</span>
-        <div class='tcxx' id='selectPath'></div>
-        <input class='btn' type='button' value='2.openCropper' onclick='openCropper();'>
-        <span>4.储存到相册</span>
-        <input class='btn' type='button' value='saveToPhotoAlbum' onclick='saveToPhotoAlbum();'>
-        <span>5.清除由本插件导出的所有图片</span>
-        <input class='btn' type='button' value='clearOutputImages' onclick='clearOutputImages();'>
-    </div>
-</div>
-</body>
 </html>
