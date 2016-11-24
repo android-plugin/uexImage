@@ -330,10 +330,13 @@ public class ImagePreviewActivity extends Activity {
                 tvTitle.setVisibility(View.INVISIBLE);
                 tvDesc.setVisibility(View.INVISIBLE);
                 dividerView.setVisibility(View.INVISIBLE);
-            }
-            if (TextUtils.isEmpty(title) && TextUtils.isEmpty(desc)) {
+            } else {
                 tvTitle.setText(title);
-                tvDesc.setText(desc);
+                if (!TextUtils.isEmpty(desc)) {
+                    tvDesc.setText(desc);
+                } else {
+                    tvDesc.setVisibility(View.GONE);
+                }
             }
             //如果没有传信息
             if (detailInfo == null) {
