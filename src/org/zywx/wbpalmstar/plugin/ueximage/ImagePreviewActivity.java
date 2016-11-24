@@ -231,7 +231,7 @@ public class ImagePreviewActivity extends Activity {
     protected void onResume() {
         super.onResume();
         if(!isOpenBrowser) {
-            cbChoose.setChecked(checkedItems.contains(picList.get(picIndex)));
+            cbChoose.setChecked(checkedItems.contains(picList.get(picIndex).getSrc()));
         }
         if(1==picList.size()){
         	tvTitle.setText( "1" + "/" + picList.size());
