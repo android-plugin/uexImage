@@ -42,6 +42,7 @@ import android.widget.Toast;
 
 import com.ace.universalimageloader.core.DisplayImageOptions;
 import com.ace.universalimageloader.core.ImageLoader;
+import com.ace.universalimageloader.core.assist.ImageScaleType;
 
 import org.json.JSONArray;
 import org.zywx.wbpalmstar.base.ResoureFinder;
@@ -259,14 +260,18 @@ public class ImagePreviewActivity extends Activity {
             imageView = (ImageView) view.findViewById(finder.getId("image"));
 
             //显示图片的配置
-            DisplayImageOptions options = new DisplayImageOptions.Builder()
-                    .cacheInMemory(true)
-                    .cacheOnDisk(true)
-                    .bitmapConfig(Bitmap.Config.RGB_565)
+            DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder()
                     .showImageOnLoading(finder.getDrawableId("plugin_uex_image_loading"))
-                    .considerExifParams(true)//考虑Exif旋转
-                    .build();
-
+                    .considerExifParams(true);//考虑Exif旋转
+            //显示大图
+            if (picList.get(position).isShowBigPic()) {
+                builder.imageScaleType(ImageScaleType.NONE);
+            } else { //显示处理后的图片，占内存小
+                builder.cacheInMemory(true);
+                builder.imageScaleType(ImageScaleType.EXACTLY);
+                builder.bitmapConfig(Bitmap.Config.RGB_565);
+            }
+            DisplayImageOptions options = builder.build();
             final String src = picList.get(position).getSrc();
             if (!isOpenBrowser) {
                 ImageLoader.getInstance().displayImage(src, imageView, options);

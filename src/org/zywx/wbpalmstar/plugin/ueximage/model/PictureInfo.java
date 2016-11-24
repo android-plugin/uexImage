@@ -27,6 +27,8 @@ public class PictureInfo {
     private String desc;
 	private long lastModified;
 
+    private boolean showBigPic;
+
     public String getSrc() {
         return src;
     }
@@ -58,4 +60,12 @@ public class PictureInfo {
 	public void setLastModified(long lastModified) {
 		this.lastModified = lastModified;
 	}
+
+    public boolean isShowBigPic() {
+        return showBigPic;
+    }
+
+    public void setShowBigPic(boolean showBigPic) {
+        this.showBigPic = showBigPic;
+    }
 }
