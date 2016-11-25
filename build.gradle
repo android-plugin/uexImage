@@ -51,6 +51,10 @@ android {
         debug.setRoot('build-types/debug')
         release.setRoot('build-types/release')
     }
+    defaultConfig {
+        applicationId "com.zymobi.uexImage"
+        multiDexEnabled = true
+    }
 }
 
 apply from: "https://raw.githubusercontent.com/android-plugin/gradle-plugin/master/buildPlugin.gradle"

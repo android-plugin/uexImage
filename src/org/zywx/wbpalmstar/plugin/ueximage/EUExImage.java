@@ -332,7 +332,7 @@ public class EUExImage extends EUExBase {
             cropOutput.createNewFile();
             Uri destination = Uri.fromFile(cropOutput);
             registerActivityResult();
-            Crop.of(Uri.fromFile(imageFile), destination, cropQuality, cropUsePng).asSquare().start((Activity) mContext);
+            Crop.of(Uri.fromFile(imageFile), destination, cropQuality, cropUsePng).start((Activity) mContext);
         } catch (Exception exception) {
             Toast.makeText(context, NOT_SUPPORT_CROP, Toast.LENGTH_SHORT).show();
         }
