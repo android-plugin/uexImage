@@ -26,7 +26,6 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -185,11 +184,11 @@ public class PictureGridActivity extends Activity {
             Collections.sort(paths, new Comparator<PictureInfo>() {
 				@Override
 				public int compare(PictureInfo lhs, PictureInfo rhs) {
-					if (lhs.getLastModified() < rhs.getLastModified()) {
+					if (lhs.getLastModified() > rhs.getLastModified()) {
 						return 1;
 					} else if (lhs.getLastModified() == rhs.getLastModified()) {
 						return 0;
-					} else if (lhs.getLastModified() > rhs.getLastModified()) {
+					} else if (lhs.getLastModified() < rhs.getLastModified()) {
 						return -1;
 					}
 					return 0;

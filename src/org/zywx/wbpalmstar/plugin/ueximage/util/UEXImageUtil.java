@@ -292,6 +292,7 @@ public class UEXImageUtil {
                     if (jsonObject.has("desc") && !TextUtils.isEmpty(jsonObject.getString("desc"))) {
                         picInfo.setDesc(jsonObject.getString("desc"));
                     }
+                    picInfo.setShowBigPic(jsonObject.optBoolean("showBigPic", false));
                 }
                 imageDataList.add(picInfo);
             }catch (JSONException e) {

@@ -37,7 +37,8 @@ if (UNIT_TEST) {
                 data:["res://photo1.jpg",
                     {
                         src:"res://photo2.jpg",
-                        thumb:"res://photo2t.jpg"
+                        thumb:"res://photo2t.jpg",
+                        showBigPic: true
                     },
                     {
                         src:"res://photo3.jpg",

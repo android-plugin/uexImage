@@ -19,7 +19,6 @@
 package org.zywx.wbpalmstar.plugin.ueximage;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -27,7 +26,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
@@ -42,6 +40,7 @@ import android.widget.Toast;
 
 import com.ace.universalimageloader.core.DisplayImageOptions;
 import com.ace.universalimageloader.core.ImageLoader;
+import com.ace.universalimageloader.core.assist.ImageScaleType;
 
 import org.json.JSONArray;
 import org.zywx.wbpalmstar.base.ResoureFinder;
@@ -50,6 +49,7 @@ import org.zywx.wbpalmstar.plugin.ueximage.util.CommonUtil;
 import org.zywx.wbpalmstar.plugin.ueximage.util.Constants;
 import org.zywx.wbpalmstar.plugin.ueximage.util.EUEXImageConfig;
 import org.zywx.wbpalmstar.plugin.ueximage.util.UEXImageUtil;
+import org.zywx.wbpalmstar.plugin.ueximage.widget.PhotoView;
 
 import java.io.File;
 import java.util.List;
@@ -231,7 +231,7 @@ public class ImagePreviewActivity extends Activity {
     protected void onResume() {
         super.onResume();
         if(!isOpenBrowser) {
-            cbChoose.setChecked(checkedItems.contains(picList.get(picIndex)));
+            cbChoose.setChecked(checkedItems.contains(picList.get(picIndex).getSrc()));
         }
         if(1==picList.size()){
         	tvTitle.setText( "1" + "/" + picList.size());
@@ -254,19 +254,27 @@ public class ImagePreviewActivity extends Activity {
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            LayoutInflater inflater = (LayoutInflater) container.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View view = inflater.inflate(finder.getLayoutId("plugin_uex_image_view_pager_item"), null);
-            imageView = (ImageView) view.findViewById(finder.getId("image"));
+            final PhotoView imageView = new PhotoView(ImagePreviewActivity.this);
+            ViewPager.LayoutParams layoutParams=new ViewPager.LayoutParams();
+            layoutParams.height=container.getMeasuredHeight();
+            layoutParams.width=container.getMeasuredWidth();
+            imageView.setLayoutParams(layoutParams);
+            imageView.enable();
+            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
             //显示图片的配置
-            DisplayImageOptions options = new DisplayImageOptions.Builder()
-                    .cacheInMemory(true)
-                    .cacheOnDisk(true)
-                    .bitmapConfig(Bitmap.Config.RGB_565)
+            DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder()
                     .showImageOnLoading(finder.getDrawableId("plugin_uex_image_loading"))
-                    .considerExifParams(true)//考虑Exif旋转
-                    .build();
-
+                    .considerExifParams(true);//考虑Exif旋转
+            //显示大图
+            if (picList.get(position).isShowBigPic()) {
+                builder.imageScaleType(ImageScaleType.NONE);
+            } else { //显示处理后的图片，占内存小
+                builder.cacheInMemory(true);
+                builder.imageScaleType(ImageScaleType.EXACTLY);
+                builder.bitmapConfig(Bitmap.Config.RGB_565);
+            }
+            DisplayImageOptions options = builder.build();
             final String src = picList.get(position).getSrc();
             if (!isOpenBrowser) {
                 ImageLoader.getInstance().displayImage(src, imageView, options);
@@ -280,8 +288,8 @@ public class ImagePreviewActivity extends Activity {
                 }
             }
             imageView.setOnClickListener(imageClickListener);
-            container.addView(view);
-            return view;
+            container.addView(imageView);
+            return imageView;
         }
 
         @Override
