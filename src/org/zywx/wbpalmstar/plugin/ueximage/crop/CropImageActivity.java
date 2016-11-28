@@ -406,12 +406,12 @@ public class CropImageActivity extends MonitoredActivity {
             } finally {
                 CropUtil.closeSilently(outputStream);
             }
-
-            CropUtil.copyExifRotation(
-                    CropUtil.getFromMediaUri(this, getContentResolver(), sourceUri),
-                    CropUtil.getFromMediaUri(this, getContentResolver(), saveUri)
-            );
-
+            if (!cropUsePng) {
+                CropUtil.copyExifRotation(
+                        CropUtil.getFromMediaUri(this, getContentResolver(), sourceUri),
+                        CropUtil.getFromMediaUri(this, getContentResolver(), saveUri)
+                );
+            }
             setResultUri(saveUri);
         }
 
