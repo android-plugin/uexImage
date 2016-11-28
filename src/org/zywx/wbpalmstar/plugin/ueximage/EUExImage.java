@@ -52,8 +52,11 @@ public class EUExImage extends EUExBase {
 
     private double cropQuality = 0.5;
     private boolean cropUsePng = false;
-    //当前Android只支持方型裁剪
+    //当前Android只支持方型裁剪, 即cropMode为1
+    //cropMode 为4: 矩型裁剪,比例为 4:3, cropMode为5: 矩形裁剪, 比例为16:9 cropMode 为6：自由缩放
+
     private int cropMode = 1;
+
 
     private File cropOutput = null;
 
@@ -270,12 +273,8 @@ public class EUExImage extends EUExBase {
                 cropUsePng = jsonObject.getBoolean("usePng");
             }
             if (jsonObject.has("mode")) {
-                int i = jsonObject.getInt("mode");
-                if(3 == i){
-                    cropMode = i;
-                } else {
-                    cropMode = 1;
-                }
+                int i = jsonObject.optInt("mode", 1);
+                cropMode = i;
             }
         } catch (JSONException e) {
             if (BDebug.DEBUG) {
@@ -332,7 +331,15 @@ public class EUExImage extends EUExBase {
             cropOutput.createNewFile();
             Uri destination = Uri.fromFile(cropOutput);
             registerActivityResult();
-            Crop.of(Uri.fromFile(imageFile), destination, cropQuality, cropUsePng).start((Activity) mContext);
+            Crop crop = Crop.of(Uri.fromFile(imageFile), destination, cropQuality, cropUsePng);
+            if (cropMode < 4) {
+                crop.asSquare();
+            } else if (cropMode == 4) {
+                crop.withAspect(4, 3);
+            } else if (cropMode == 5) {
+                crop.withAspect(16, 9);
+            }
+            crop.start((Activity) mContext);
         } catch (Exception exception) {
             Toast.makeText(context, NOT_SUPPORT_CROP, Toast.LENGTH_SHORT).show();
         }
