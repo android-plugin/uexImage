@@ -19,7 +19,6 @@
 package org.zywx.wbpalmstar.plugin.ueximage;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -27,7 +26,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
@@ -51,6 +49,7 @@ import org.zywx.wbpalmstar.plugin.ueximage.util.CommonUtil;
 import org.zywx.wbpalmstar.plugin.ueximage.util.Constants;
 import org.zywx.wbpalmstar.plugin.ueximage.util.EUEXImageConfig;
 import org.zywx.wbpalmstar.plugin.ueximage.util.UEXImageUtil;
+import org.zywx.wbpalmstar.plugin.ueximage.widget.PhotoView;
 
 import java.io.File;
 import java.util.List;
@@ -255,9 +254,13 @@ public class ImagePreviewActivity extends Activity {
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            LayoutInflater inflater = (LayoutInflater) container.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View view = inflater.inflate(finder.getLayoutId("plugin_uex_image_view_pager_item"), null);
-            imageView = (ImageView) view.findViewById(finder.getId("image"));
+            final PhotoView imageView = new PhotoView(ImagePreviewActivity.this);
+            ViewPager.LayoutParams layoutParams=new ViewPager.LayoutParams();
+            layoutParams.height=container.getMeasuredHeight();
+            layoutParams.width=container.getMeasuredWidth();
+            imageView.setLayoutParams(layoutParams);
+            imageView.enable();
+            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
             //显示图片的配置
             DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder()
@@ -285,8 +288,8 @@ public class ImagePreviewActivity extends Activity {
                 }
             }
             imageView.setOnClickListener(imageClickListener);
-            container.addView(view);
-            return view;
+            container.addView(imageView);
+            return imageView;
         }
 
         @Override
