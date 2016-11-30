@@ -28,13 +28,10 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.ace.universalimageloader.core.DisplayImageOptions;
-import com.ace.universalimageloader.core.ImageLoader;
-import com.ace.universalimageloader.core.display.SimpleBitmapDisplayer;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.zywx.wbpalmstar.base.ACEImageLoader;
 import org.zywx.wbpalmstar.plugin.ueximage.model.PictureFolder;
 import org.zywx.wbpalmstar.plugin.ueximage.model.PictureInfo;
 
@@ -169,12 +166,6 @@ public class UEXImageUtil {
 
     //此处会将选择的图片先复制一份到指定位置，再返回选择的图片的基本信息。
     public JSONObject getChoosedPicInfo(Context context) {
-        DisplayImageOptions options = new DisplayImageOptions.Builder()
-                .cacheInMemory(false)
-                .cacheOnDisk(false)
-                .displayer(new SimpleBitmapDisplayer())
-                .considerExifParams(true)//考虑Exif旋转
-                .build();
         File f;
         JSONArray filePathArray = new JSONArray();
         FileOutputStream fos = null;
@@ -183,7 +174,7 @@ public class UEXImageUtil {
         JSONArray detailedInfoArray = new JSONArray();
         for (String picPath : checkedItems) {
             String orginPicPath = ImageFilePath.getPath(context, Uri.parse(picPath));
-            Bitmap bitmap = ImageLoader.getInstance().loadImageSync(picPath, options);
+            Bitmap bitmap = ACEImageLoader.getInstance().getBitmapSync(picPath);
             if (EUEXImageConfig.getInstance().getIsUsePng()) {
                 f = new File(Environment.getExternalStorageDirectory(),
                         File.separator + TEMP_PATH + File.separator + "temp_" + new Date().getTime() +".png");

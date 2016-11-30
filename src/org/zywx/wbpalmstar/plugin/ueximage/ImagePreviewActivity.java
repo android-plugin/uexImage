@@ -39,10 +39,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ace.universalimageloader.core.DisplayImageOptions;
-import com.ace.universalimageloader.core.ImageLoader;
 import com.ace.universalimageloader.core.assist.ImageScaleType;
 
 import org.json.JSONArray;
+import org.zywx.wbpalmstar.base.ACEImageLoader;
 import org.zywx.wbpalmstar.base.ResoureFinder;
 import org.zywx.wbpalmstar.plugin.ueximage.model.PictureInfo;
 import org.zywx.wbpalmstar.plugin.ueximage.util.CommonUtil;
@@ -199,7 +199,7 @@ public class ImagePreviewActivity extends Activity {
                     final String src = picList.get(picIndex).getSrc();
                     Bitmap bitmap;
                     if (src.substring(0, 4).equalsIgnoreCase(Constants.HTTP)) {
-                        bitmap = ImageLoader.getInstance().loadImageSync(src);
+                        bitmap = ACEImageLoader.getInstance().getBitmapSync(src);
                     } else {
                         bitmap = CommonUtil.getLocalImage(ImagePreviewActivity.this, src);
                     }
@@ -277,11 +277,11 @@ public class ImagePreviewActivity extends Activity {
             DisplayImageOptions options = builder.build();
             final String src = picList.get(position).getSrc();
             if (!isOpenBrowser) {
-                ImageLoader.getInstance().displayImage(src, imageView, options);
+                ACEImageLoader.getInstance().displayImageWithOptions(src, imageView, options);
             } else {//浏览图片：对于传入的图片的加载
                 if (src.substring(0,4).equalsIgnoreCase(Constants.HTTP)) {
                     //如果是从网上下载图片，需要将下载后的图片存到缓存中
-                    ImageLoader.getInstance().displayImage(src,imageView, options);
+                    ACEImageLoader.getInstance().displayImageWithOptions(src,imageView, options);
                 } else {
                     Bitmap bitmap= CommonUtil.getLocalImage(ImagePreviewActivity.this, src);
                     imageView.setImageBitmap(bitmap);

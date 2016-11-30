@@ -91,12 +91,10 @@ public class EUExImage extends EUExBase {
         if (!f.exists()) {
             f.mkdirs();
         }
-        CommonUtil.initImageLoader(context);
         uexImageUtil = UEXImageUtil.getInstance();
         finder = ResoureFinder.getInstance(context);
 
     }
-
     @Override
     protected boolean clean() {
         return false;

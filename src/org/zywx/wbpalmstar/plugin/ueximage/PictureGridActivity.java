@@ -39,15 +39,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ace.universalimageloader.core.DisplayImageOptions;
-import com.ace.universalimageloader.core.ImageLoader;
 import com.ace.universalimageloader.core.assist.ImageScaleType;
 import com.ace.universalimageloader.core.display.SimpleBitmapDisplayer;
-import com.ace.universalimageloader.core.imageaware.ImageAware;
-import com.ace.universalimageloader.core.imageaware.ImageViewAware;
-import com.ace.universalimageloader.core.listener.PauseOnScrollListener;
 import com.ace.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import org.json.JSONArray;
+import org.zywx.wbpalmstar.base.ACEImageLoader;
 import org.zywx.wbpalmstar.base.ResoureFinder;
 import org.zywx.wbpalmstar.plugin.ueximage.model.PictureInfo;
 import org.zywx.wbpalmstar.plugin.ueximage.util.CommonUtil;
@@ -107,7 +104,7 @@ public class PictureGridActivity extends Activity {
         btnFinishInTitle = (Button) findViewById(finder.getId("btn_finish_title"));
         gvPictures = (GridView) findViewById(finder.getId("gv_pictures"));
         //拖动下拉条和滑动过程中暂停加载
-        gvPictures.setOnScrollListener(new PauseOnScrollListener(ImageLoader.getInstance(), true, true));
+//        gvPictures.setOnScrollListener(new PauseOnScrollListener((ImageLoader)(ACEImageLoader.getInstance()), true, true));
         if(isOpenBrowser) {
             initViewForBrowser();
         } else {
@@ -237,9 +234,8 @@ public class PictureGridActivity extends Activity {
 
             final ViewHolder tempViewHolder = viewHolder;
             if (!isOpenBrowser) {
-                ImageAware imageAware = new ImageViewAware(viewHolder.imageView, false);
-                ImageLoader.getInstance().displayImage(pictureInfo.getSrc(), imageAware, options,
-                        loadingListener, null);
+                ACEImageLoader.getInstance().displayImageWithOptions(pictureInfo.getSrc(), viewHolder.imageView, options,
+                        loadingListener);
                 viewHolder.checkBox.setTag(pictureInfo.getSrc());
                 viewHolder.checkBox.setChecked(checkedItems.contains(pictureInfo.getSrc()));
             } else {//浏览图片：对于传入的图片的加载
@@ -248,9 +244,7 @@ public class PictureGridActivity extends Activity {
                     url = pictureInfo.getThumb();
                 }
                 if (url.substring(0,4).equalsIgnoreCase(Constants.HTTP)) {
-                    ImageAware imageAware = new ImageViewAware(viewHolder.imageView, false);
-                    ImageLoader.getInstance().displayImage(url, imageAware, options,
-                            null, null);
+                    ACEImageLoader.getInstance().displayImageWithOptions(url, viewHolder.imageView, options);
                 } else {
                     Bitmap bitmap= CommonUtil.getLocalImage(PictureGridActivity.this, url);
                     imageView.setImageBitmap(bitmap);

@@ -37,11 +37,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ace.universalimageloader.core.DisplayImageOptions;
-import com.ace.universalimageloader.core.ImageLoader;
 import com.ace.universalimageloader.core.display.SimpleBitmapDisplayer;
-import com.ace.universalimageloader.core.imageaware.ImageAware;
-import com.ace.universalimageloader.core.imageaware.ImageViewAware;
 
+import org.zywx.wbpalmstar.base.ACEImageLoader;
 import org.zywx.wbpalmstar.base.ResoureFinder;
 import org.zywx.wbpalmstar.plugin.ueximage.model.PictureFolder;
 import org.zywx.wbpalmstar.plugin.ueximage.util.Constants;
@@ -214,8 +212,7 @@ public class AlbumListActivity extends Activity implements Serializable {
             PictureFolder pictureFolder = folders.get(i);
             viewHolder.textView.setText(pictureFolder.getFolderName() + "(" + pictureFolder.getCount() + ")");
             if (pictureFolder.getCount() > 0) {
-                ImageAware imageAware = new ImageViewAware(viewHolder.imageView, false);
-                ImageLoader.getInstance().displayImage(pictureFolder.getFirstImagePath(), imageAware, options,null,null);
+                ACEImageLoader.getInstance().displayImageWithOptions(pictureFolder.getFirstImagePath(), viewHolder.imageView, options,null,null);
             }
             return convertView;
         }
