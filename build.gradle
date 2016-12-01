@@ -14,7 +14,7 @@ apply plugin: 'com.android.application'
 
 dependencies {
     compile fileTree(include: '*.jar', dir: 'libs')
-    compile 'org.appcan:engine:+:systemRelease@aar'
+    compile 'org.appcan:engine:4.0.1:systemRelease@aar'
 }
 
 
