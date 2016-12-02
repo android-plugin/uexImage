@@ -2,7 +2,7 @@
 <uexplugins>
     <plugin
         uexName="uexImage" version="4.0.4" build="24">
-        <info>24: 引入ACEImageLoader解决ImageLoader未配置导致的crash问题</info>
+        <info>24: 引入ACEImageLoader解决ImageLoader未配置导致的crash问题, 依赖4.0.1版本引擎</info>
         <info>23: 修复usePng 为true时 不能保存图片的bug</info>
         <build>22: 支持矩形任意区域裁剪和显示大图</build>
         <build>21: 图片按时间顺序排列，同时修复图片选取状态错误的bug</build>
