@@ -23,7 +23,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
@@ -44,6 +43,7 @@ import com.ace.universalimageloader.core.assist.ImageScaleType;
 import org.json.JSONArray;
 import org.zywx.wbpalmstar.base.ACEImageLoader;
 import org.zywx.wbpalmstar.base.ResoureFinder;
+import org.zywx.wbpalmstar.base.cache.DiskCache;
 import org.zywx.wbpalmstar.plugin.ueximage.model.PictureInfo;
 import org.zywx.wbpalmstar.plugin.ueximage.util.CommonUtil;
 import org.zywx.wbpalmstar.plugin.ueximage.util.Constants;
@@ -203,7 +203,7 @@ public class ImagePreviewActivity extends Activity {
                     } else {
                         bitmap = CommonUtil.getLocalImage(ImagePreviewActivity.this, src);
                     }
-                    File file = new File(Environment.getExternalStorageDirectory(),
+                    File file = new File(DiskCache.cacheFolder,
                             File.separator + UEXImageUtil.TEMP_PATH + File.separator + "uex_image_to_share.jpg");
                     if (bitmap == null) {
                         Toast.makeText(ImagePreviewActivity.this, "当前图片尚未加载完毕，请稍后重试", Toast.LENGTH_SHORT).show();

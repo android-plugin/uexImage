@@ -23,7 +23,6 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.media.ExifInterface;
 import android.net.Uri;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
@@ -32,6 +31,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.zywx.wbpalmstar.base.ACEImageLoader;
+import org.zywx.wbpalmstar.base.cache.DiskCache;
 import org.zywx.wbpalmstar.plugin.ueximage.model.PictureFolder;
 import org.zywx.wbpalmstar.plugin.ueximage.model.PictureInfo;
 
@@ -176,10 +176,10 @@ public class UEXImageUtil {
             String orginPicPath = ImageFilePath.getPath(context, Uri.parse(picPath));
             Bitmap bitmap = ACEImageLoader.getInstance().getBitmapSync(picPath);
             if (EUEXImageConfig.getInstance().getIsUsePng()) {
-                f = new File(Environment.getExternalStorageDirectory(),
+                f = new File(DiskCache.cacheFolder,
                         File.separator + TEMP_PATH + File.separator + "temp_" + new Date().getTime() +".png");
             } else {
-                f = new File(Environment.getExternalStorageDirectory(),
+                f = new File(DiskCache.cacheFolder,
                         File.separator + TEMP_PATH + File.separator + "temp_" + new Date().getTime() +".jpg");
             }
             try {

@@ -29,7 +29,6 @@ public class LabelViewContainer extends RelativeLayout{
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_UP:
-                System.out.println("up x:" + event.getX() + "    y:" + event.getY());
                 handleClick(event.getX(), event.getY());
                 break;
         }
@@ -51,7 +50,6 @@ public class LabelViewContainer extends RelativeLayout{
                 centerX = info.getRight() * getWidth();
             }
             float centerY = (info.getTop() + (info.getBottom()- info.getTop()) / 2)* getHeight();
-            System.out.println("center x:" + centerX + "   y:" + centerY);
             //扩大点击区域
             float left = centerX - offset;
             float right = centerX + offset;

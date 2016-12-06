@@ -41,6 +41,7 @@ import org.zywx.wbpalmstar.base.ACEImageLoader;
 import org.zywx.wbpalmstar.base.BDebug;
 import org.zywx.wbpalmstar.base.BUtility;
 import org.zywx.wbpalmstar.base.ResoureFinder;
+import org.zywx.wbpalmstar.base.cache.DiskCache;
 import org.zywx.wbpalmstar.engine.DataHelper;
 import org.zywx.wbpalmstar.engine.EBrowserView;
 import org.zywx.wbpalmstar.engine.universalex.EUExBase;
@@ -97,7 +98,7 @@ public class EUExImage extends EUExBase {
         super(context, eBrowserView);
         this.context = context;
         //创建缓存文件夹
-        File f = new File(Environment.getExternalStorageDirectory(),
+        File f = new File(DiskCache.cacheFolder,
                 File.separator + UEXImageUtil.TEMP_PATH);
         if (!f.exists()) {
             f.mkdirs();
@@ -451,7 +452,7 @@ public class EUExImage extends EUExBase {
                 fileName = ".jpg";
             }
             //为res对应的文件生成一个临时文件到系统中
-            File destFile = new File(Environment.getExternalStorageDirectory(),
+            File destFile = new File(DiskCache.cacheFolder,
                     File.separator + UEXImageUtil.TEMP_PATH + File.separator + "crop_res_temp" +fileName);
             try {
                 destFile.deleteOnExit();
@@ -487,7 +488,7 @@ public class EUExImage extends EUExBase {
                 fileName = "crop_temp_" + time + ".jpg";
             }
 
-            cropOutput = new File(Environment.getExternalStorageDirectory(),
+            cropOutput = new File(DiskCache.cacheFolder,
                     File.separator + UEXImageUtil.TEMP_PATH + File.separator + fileName);
             cropOutput.createNewFile();
             Uri destination = Uri.fromFile(cropOutput);
@@ -701,7 +702,7 @@ public class EUExImage extends EUExBase {
 
     public boolean clearOutputImages(String[] params) {
         JSONObject jsonResult = new JSONObject();
-        File directory = new File(Environment.getExternalStorageDirectory(),
+        File directory = new File(DiskCache.cacheFolder,
                 File.separator + UEXImageUtil.TEMP_PATH);
         for (File file : directory.listFiles()) {
             file.delete();

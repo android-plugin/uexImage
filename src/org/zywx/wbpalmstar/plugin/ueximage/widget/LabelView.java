@@ -22,10 +22,6 @@ public class LabelView extends LinearLayout {
     private int mLastX;
     private int mLastY;
     private RelativeLayout wraperView;
-    private int wraperViewLeft;
-    private int wraperViewTop;
-    private int wraperViewRight;
-    private int wraperViewBottom;
     private int width;
     private int height;
     private String id;
@@ -131,7 +127,6 @@ public class LabelView extends LinearLayout {
                     bottom = wraperView.getHeight();
                     top = bottom - height;
                 }
-                System.out.println("left:" + left + "    right:" + right);
                 layout(left, top, right, bottom);
                 break;
             case MotionEvent.ACTION_UP:
@@ -172,7 +167,6 @@ public class LabelView extends LinearLayout {
                         params.leftMargin = getLeft() - getWidth();
                     }
                 }
-                System.out.println("up left:" + getLeft() + "    right:" + getRight() + "    width:" + (getRight() - getLeft()) );
                 setLayoutParams(params);
                 break;
             default:
