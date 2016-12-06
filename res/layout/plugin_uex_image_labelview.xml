@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="wrap_content"
+              android:gravity="center_vertical"
+              android:layout_height="wrap_content">
+    <ImageView
+        android:id="@+id/iv_uexImage_labelView_delete_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:src="@drawable/plugin_uex_image_delete_left"/>
+    <View
+        android:id="@+id/uexImage_labelView_left_divider"
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="#3c3c3c"
+        android:visibility="gone"/>
+    <TextView
+        android:id="@+id/tv_uexImage_labelView_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:textSize="16sp"
+        android:textColor="@color/white"
+        android:background="@drawable/plugin_uex_image_tag_right"
+        android:singleLine="true"
+        android:text="今天中午吃点啥"/>
+    <View
+        android:id="@+id/uexImage_labelView_right_divider"
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="#3c3c3c">
+
+    </View>
+    <ImageView
+        android:id="@+id/iv_uexImage_labelView_delete_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/plugin_uex_image_delete_right"/>
+
+
+</LinearLayout>

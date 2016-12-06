@@ -8,5 +8,9 @@
         <method name="openCropper" />
         <method name="clearOutputImages" />
         <method name="saveToPhotoAlbum" />
+        <method name="openLabelViewContainer" />
+        <method name="addLabelView" />
+        <method name="getPicInfoWithLabelViews" />
+        <method name="showLabelViewPic" />
     </plugin>
 </uexplugins>
