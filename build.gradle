@@ -14,7 +14,8 @@ apply plugin: 'com.android.application'
 
 dependencies {
     compile fileTree(include: '*.jar', dir: 'libs')
-    compile 'org.appcan:engine:+:systemRelease@aar'
+    compile(name:'Engine-system-release-4.0.1', ext:"aar")
+//    compile 'org.appcan:engine:+:systemRelease@aar'
 }
 
 
@@ -61,4 +62,4 @@ android {
 
 }
 
-apply from: "https://raw.githubusercontent.com/android-plugin/gradle-plugin/master/buildPlugin.gradle"
+//apply from: "https://raw.githubusercontent.com/android-plugin/gradle-plugin/master/buildPlugin.gradle"
