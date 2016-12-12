@@ -110,6 +110,7 @@ public class PictureGridActivity extends Activity {
         } else {
             initViewForPicker();
         }
+        gvPictures.setSelection(picList.size());
     }
 
 
