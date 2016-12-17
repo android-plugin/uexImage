@@ -32,6 +32,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.zywx.wbpalmstar.base.ACEImageLoader;
+import org.zywx.wbpalmstar.base.cache.DiskCache;
 import org.zywx.wbpalmstar.plugin.ueximage.model.PictureFolder;
 import org.zywx.wbpalmstar.plugin.ueximage.model.PictureInfo;
 
@@ -164,8 +165,53 @@ public class UEXImageUtil {
         return checkedItems;
     }
 
+    private void cleanHistoryTempDir(){
+        deleteDirectory(Environment.getExternalStorageDirectory().getAbsolutePath()+File.separator + TEMP_PATH);
+    }
+
+    public boolean deleteDirectory(String filePath) {
+        boolean flag = false;
+        //如果filePath不以文件分隔符结尾，自动添加文件分隔符
+        if (!filePath.endsWith(File.separator)) {
+            filePath = filePath + File.separator;
+        }
+        File dirFile = new File(filePath);
+        if (!dirFile.exists() || !dirFile.isDirectory()) {
+            return false;
+        }
+        flag = true;
+        File[] files = dirFile.listFiles();
+        //遍历删除文件夹下的所有文件(包括子目录)
+        for (int i = 0; i < files.length; i++) {
+            if (files[i].isFile()) {
+                //删除子文件
+                flag = deleteFile(files[i].getAbsolutePath());
+                if (!flag) break;
+            } else {
+                //删除子目录
+                flag = deleteDirectory(files[i].getAbsolutePath());
+                if (!flag) break;
+            }
+        }
+        if (!flag) return false;
+        //删除当前空目录
+        return dirFile.delete();
+    }
+
+    public boolean deleteFile(String filePath) {
+        File file = new File(filePath);
+        if (file.isFile() && file.exists()) {
+            return file.delete();
+        }
+        return false;
+    }
+
     //此处会将选择的图片先复制一份到指定位置，再返回选择的图片的基本信息。
     public JSONObject getChoosedPicInfo(Context context) {
+
+        //删除之前创建的临时目录
+        cleanHistoryTempDir();
+
         File f;
         JSONArray filePathArray = new JSONArray();
         FileOutputStream fos = null;
@@ -176,10 +222,10 @@ public class UEXImageUtil {
             String orginPicPath = ImageFilePath.getPath(context, Uri.parse(picPath));
             Bitmap bitmap = ACEImageLoader.getInstance().getBitmapSync(picPath);
             if (EUEXImageConfig.getInstance().getIsUsePng()) {
-                f = new File(Environment.getExternalStorageDirectory(),
+                f = new File(DiskCache.cacheFolder,
                         File.separator + TEMP_PATH + File.separator + "temp_" + new Date().getTime() +".png");
             } else {
-                f = new File(Environment.getExternalStorageDirectory(),
+                f = new File(DiskCache.cacheFolder,
                         File.separator + TEMP_PATH + File.separator + "temp_" + new Date().getTime() +".jpg");
             }
             try {

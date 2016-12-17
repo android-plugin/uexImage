@@ -24,4 +24,5 @@ public class JsConst {
     public static final String CALLBACK_ON_CROPPER_CLOSED = "uexImage.onCropperClosed";
     public static final String CALLBACK_SAVE_TO_PHOTO_ALBUM = "uexImage.cbSaveToPhotoAlbum";
     public static final String CALLBACK_CLEAR_OUTPUT_IMAGES = "uexImage.cbClearOutputImages";
+    public static final String ON_LABEL_CLICKED = "uexImage.onLabelClicked";
 }
