@@ -433,7 +433,7 @@ public class UEXImageUtil {
     public static int getInSampleSize(double scale) {
         double log = Math.log(scale) / Math.log(2);
         double logCeil = Math.ceil(log);
-        return (int) Math.pow(2, logCeil);
+        return ((int) Math.pow(2, logCeil) + 1);
     }
 
     public static PicSizeVO getPicSizeVOList(int desLength) {
