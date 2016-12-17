@@ -2,11 +2,25 @@
 <resources>
     <string name="plugin_uex_image_choose">选择</string>
     <string name="plugin_uex_image_at_least_choose">请至少选择%s张图片</string>
+    <string name="plugin_uex_image_at_most_choose">最多选择%s张图片</string>
     <string name="plugin_uex_image_share">分享</string>
     <string name="plugin_uex_image_list">列表</string>
     <string name="plugin_uex_image_crop_cancel">取消</string>
     <string name="plugin_uex_image_crop_done">完成</string>
-    <string name="plugin_uex_image_crop_pick_error">无效的图片</string>
     <string name="plugin_uex_image_crop_saving">正在保存照片…</string>
     <string name="plugin_uex_image_crop_wait">请等待…</string>
+    <string name="plugin_uex_image_default_grid_browser_title">图片浏览</string>
+    <string name="plugin_uex_image_system_error">文件系统操作出错</string>
+    <string name="plugin_uex_image_same_name_file">系统相册中存在同名文件</string>
+    <string name="plugin_uex_image_json_format_error">json格式错误</string>
+    <string name="plugin_uex_image_not_support_crop">你的设备不支持剪切功能！</string>
+    <string name="plugin_uex_image_data_cannot_null">data不能为空</string>
+    <string name="plugin_uex_image_localPath_cannot_null">localPath不能为空</string>
+    <string name="plugin_uex_image_src_cannot_null">src不能为空</string>
+    <string name="plugin_uex_image_data_src_cannot_null">data中第%s个元素的src不能为空</string>
+    <string name="plugin_uex_image_quality_range">quality 只能在0-1之间</string>
+    <string name="plugin_uex_image_retry_load_image">当前图片尚未加载完毕，请稍后重试</string>
+    <string name="plugin_uex_image_image_error">图片操作失败，请重试</string>
+    <string name="plugin_uex_image_image_laoad_error">图片加载失败</string>
+
 </resources>

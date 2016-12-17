@@ -20,14 +20,15 @@ package org.zywx.wbpalmstar.plugin.ueximage;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -40,17 +41,20 @@ import org.json.JSONObject;
 import org.zywx.wbpalmstar.base.ACEImageLoader;
 import org.zywx.wbpalmstar.base.BDebug;
 import org.zywx.wbpalmstar.base.BUtility;
-import org.zywx.wbpalmstar.base.ResoureFinder;
-import org.zywx.wbpalmstar.base.cache.DiskCache;
 import org.zywx.wbpalmstar.engine.DataHelper;
 import org.zywx.wbpalmstar.engine.EBrowserView;
 import org.zywx.wbpalmstar.engine.universalex.EUExBase;
+import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
+import org.zywx.wbpalmstar.plugin.ueximage.ImageBaseView.ViewEvent;
 import org.zywx.wbpalmstar.plugin.ueximage.crop.Crop;
 import org.zywx.wbpalmstar.plugin.ueximage.model.LabelInfo;
 import org.zywx.wbpalmstar.plugin.ueximage.util.CommonUtil;
 import org.zywx.wbpalmstar.plugin.ueximage.util.Constants;
+import org.zywx.wbpalmstar.plugin.ueximage.util.DataParser;
 import org.zywx.wbpalmstar.plugin.ueximage.util.EUEXImageConfig;
 import org.zywx.wbpalmstar.plugin.ueximage.util.UEXImageUtil;
+import org.zywx.wbpalmstar.plugin.ueximage.vo.CompressImageVO;
+import org.zywx.wbpalmstar.plugin.ueximage.vo.ViewFrameVO;
 import org.zywx.wbpalmstar.plugin.ueximage.widget.LabelView;
 import org.zywx.wbpalmstar.plugin.ueximage.widget.LabelViewContainer;
 
@@ -60,58 +64,59 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class EUExImage extends EUExBase {
     private static final String TAG = "EUExImage";
 
     private double cropQuality = 0.5;
     private boolean cropUsePng = false;
-    //当前Android只支持方型裁剪, 即cropMode为1
-    //cropMode 为4: 矩型裁剪,比例为 4:3, cropMode为5: 矩形裁剪, 比例为16:9 cropMode 为6：自由缩放
+    // 当前Android只支持方型裁剪, 即cropMode为1
+    // cropMode 为4: 矩型裁剪,比例为 4:3, cropMode为5: 矩形裁剪, 比例为16:9 cropMode 为6：自由缩放
     private int cropMode = 1;
     private File cropOutput = null;
-
-    //裁剪操作的状态，1 代表成功， 2 代表失败，3代表用户取消。
-    private int cropStatus = 1;
-    RelativeLayout labelViewContainer;
-    public static final int REQUEST_CROP_IMAGE = 100;
-    public static final int REQUEST_IMAGE_PICKER = 101;
-    public static final int REQUEST_IMAGE_BROWSER = 102;
     private Context context;
     private UEXImageUtil uexImageUtil;
 
-    private ResoureFinder finder;
-    private final String FILE_SYSTEM_ERROR = "文件系统操作出错";
-    private final String SAME_FILE_IN_DCIM = "系统相册中存在同名文件";
-    private final String JSON_FORMAT_ERROR = "json格式错误";
-    private final String NOT_SUPPORT_CROP = "你的设备不支持剪切功能！";
-
-    //openPicker对应的回调函数
-    private String openPickerFuncId;
-    //openBrowser对应的回调函数
+    // openPicker对应的回调函数
+    private String openPickerFuncId; // openBrowser对应的回调函数
     private String openBrowserFuncId;
     private String openCropperId;
+    private String compressImageFunCbId = "";
+    private RelativeLayout labelViewContainer;
 
+    /**
+     * 保存添加到网页的view
+     */
+    private static ConcurrentHashMap<String, View> addToWebViewsMap = new ConcurrentHashMap<String, View>();
+    private ImageAgent mImageAgent = null;
 
     public EUExImage(Context context, EBrowserView eBrowserView) {
         super(context, eBrowserView);
         this.context = context;
-        //创建缓存文件夹
-        File f = new File(DiskCache.cacheFolder,
-                File.separator + UEXImageUtil.TEMP_PATH);
+        // 创建缓存文件夹
+        File f = new File(UEXImageUtil.getImageCacheDir(context));
         if (!f.exists()) {
             f.mkdirs();
         }
+        File noMediaFile = new File(UEXImageUtil.getImageCacheDir(context)
+                + File.separator + Constants.NO_MEDIA);
+        if (!noMediaFile.exists()) {
+            try {
+                noMediaFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         uexImageUtil = UEXImageUtil.getInstance();
-        finder = ResoureFinder.getInstance(context);
-
+        mImageAgent = ImageAgent.getInstance();
     }
+
     @Override
     protected boolean clean() {
         return false;
     }
-
 
     public void openPicker(String[] params) {
         if (params == null || params.length < 1) {
@@ -133,7 +138,7 @@ public class EUExImage extends EUExBase {
                 int max = jsonObject.getInt("max");
                 EUEXImageConfig.getInstance().setMaxImageCount(max);
             }
-            if (jsonObject.has("quality")){
+            if (jsonObject.has("quality")) {
                 double quality = jsonObject.getDouble("quality");
                 EUEXImageConfig.getInstance().setQuality(quality);
             }
@@ -143,19 +148,52 @@ public class EUExImage extends EUExBase {
             }
             if (jsonObject.has("detailedInfo")) {
                 Boolean detailedInfo = jsonObject.getBoolean("detailedInfo");
-                EUEXImageConfig.getInstance().setIsShowDetailedInfo(detailedInfo);
+                EUEXImageConfig.getInstance()
+                        .setIsShowDetailedInfo(detailedInfo);
             }
             EUEXImageConfig.getInstance().setIsOpenBrowser(false);
-            Intent intent = new Intent(context, AlbumListActivity.class);
-            startActivityForResult(intent, REQUEST_IMAGE_PICKER);
+            setUIConfigExtend(jsonObject);
+            View albumListView = new AlbumListView(mContext, this,
+                    Constants.REQUEST_IMAGE_PICKER, new ViewEvent() {
+
+                @Override
+                public void resultCallBack(int requestCode,
+                                           int resultCode) {
+                    callbackPickerResult(requestCode, resultCode);
+                }
+            });
+            addViewToCurrentWindow(albumListView, AlbumListView.TAG,
+                    UEXImageUtil.getFullScreenViewFrameVO(mContext, mBrwView));
         } catch (JSONException e) {
             if (BDebug.DEBUG) {
                 Log.i(TAG, e.getMessage());
             }
-            Toast.makeText(context, "JSON解析错误", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context,
+                    EUExUtil.getString("plugin_uex_image_json_format_error"),
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
+    private void setUIConfigExtend(JSONObject jsonObject) {
+        EUEXImageConfig config = EUEXImageConfig.getInstance();
+        if (jsonObject.has(Constants.UI_STYLE)) {
+            config.setUIStyle(jsonObject.optInt(Constants.UI_STYLE));
+        }
+        config.setPicPreviewFrame(
+                getViewFrameVO(jsonObject, Constants.VIEW_FRAME_PIC_PREVIEW));
+        config.setPicGridFrame(
+                getViewFrameVO(jsonObject, Constants.VIEW_FRAME_PIC_GRID));
+        if (Constants.UI_STYLE_NEW == config.getUIStyle()) {
+            if (jsonObject.has(Constants.GRID_VIEW_BACKGROUND)) {
+                config.setViewGridBackground(Color.parseColor(
+                        jsonObject.optString(Constants.GRID_VIEW_BACKGROUND)));
+            }
+            if (jsonObject.has(Constants.GRID_BROWSER_TITLE)) {
+                config.setGridBrowserTitle(
+                        jsonObject.optString(Constants.GRID_BROWSER_TITLE));
+            }
+        }
+    }
 
     public void openBrowser(String[] params) {
         if (params == null || params.length < 1) {
@@ -170,22 +208,30 @@ public class EUExImage extends EUExBase {
             JSONObject jsonObject = new JSONObject(json);
             EUEXImageConfig config = EUEXImageConfig.getInstance();
             if (!jsonObject.has("data")) {
-                Toast.makeText(context, "data不能为空", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,
+                        EUExUtil.getString("plugin_uex_image_data_cannot_null"),
+                        Toast.LENGTH_SHORT).show();
                 return;
             } else {
                 JSONArray data = jsonObject.getJSONArray("data");
-                for (int i = 0; i< data.length(); i ++) {
-                    if(data.get(i) instanceof  String) {
+                for (int i = 0; i < data.length(); i++) {
+                    if (data.get(i) instanceof String) {
                         String path = data.getString(i);
                         String realPath = BUtility.makeRealPath(
-                                BUtility.makeUrl(mBrwView.getCurrentUrl(), path),
+                                BUtility.makeUrl(mBrwView.getCurrentUrl(),
+                                        path),
                                 mBrwView.getCurrentWidget().m_widgetPath,
                                 mBrwView.getCurrentWidget().m_wgtType);
                         data.put(i, realPath);
                     } else {
                         JSONObject obj = data.getJSONObject(i);
                         if (!obj.has("src")) {
-                            Toast.makeText(context, "data中第"+ (i + 1)+"个元素的src不能为空", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context,
+                                    String.format(
+                                            EUExUtil.getString(
+                                                    "plugin_uex_image_data_src_cannot_null"),
+                                            (i + 1)),
+                                    Toast.LENGTH_SHORT).show();
                             return;
                         }
                         String src = obj.getString("src");
@@ -197,7 +243,8 @@ public class EUExImage extends EUExBase {
                         if (obj.has("thumb")) {
                             String thumb = obj.getString("thumb");
                             String thumbPath = BUtility.makeRealPath(
-                                    BUtility.makeUrl(mBrwView.getCurrentUrl(), thumb),
+                                    BUtility.makeUrl(mBrwView.getCurrentUrl(),
+                                            thumb),
                                     mBrwView.getCurrentWidget().m_widgetPath,
                                     mBrwView.getCurrentWidget().m_wgtType);
                             obj.put("thumb", thumbPath);
@@ -207,7 +254,8 @@ public class EUExImage extends EUExBase {
                 config.setDataArray(data);
             }
             if (jsonObject.has("displayActionButton")) {
-                boolean isDisplayActionButton = jsonObject.getBoolean("displayActionButton");
+                boolean isDisplayActionButton = jsonObject
+                        .getBoolean("displayActionButton");
                 config.setIsDisplayActionButton(isDisplayActionButton);
             }
             if (jsonObject.has("enableGrid")) {
@@ -218,11 +266,15 @@ public class EUExImage extends EUExBase {
                 boolean isStartOnGrid = jsonObject.getBoolean("startOnGrid");
                 config.setIsStartOnGrid(isStartOnGrid);
                 if (!config.isEnableGrid() && isStartOnGrid) {
-                    Toast.makeText(context, "startOnGrid为true时，enableGrid不能为false", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context,
+                            "startOnGrid为true时，enableGrid不能为false",
+                            Toast.LENGTH_SHORT).show();
                 }
             }
-            //Android不支持
-            //boolean isDisplayNavArrows = jsonObject.getBoolean("displayNavArrows");
+            // Android不支持
+            // boolean isDisplayNavArrows =
+            // jsonObject.getBoolean("displayNavArrows");
+
             if (jsonObject.has("startIndex")) {
                 int startIndex = jsonObject.getInt("startIndex");
                 if (startIndex < 0) {
@@ -230,24 +282,58 @@ public class EUExImage extends EUExBase {
                 }
                 config.setStartIndex(startIndex);
             }
-            JSONArray data = config.getDataArray();
-
+            setUIConfigExtend(jsonObject);
             config.setIsOpenBrowser(true);
-            Intent intent;
+            String viewTag = "";
+            ViewFrameVO viewFrameVO = null;
+            View imagePreviewView = null;
             if (config.isStartOnGrid()) {
-                intent = new Intent(context, PictureGridActivity.class);
+                viewTag = PictureGridView.TAG;
+                imagePreviewView = new PictureGridView(context, this, "",
+                        Constants.REQUEST_IMAGE_BROWSER, new ViewEvent() {
+                    @Override
+                    public void resultCallBack(int requestCode,
+                                               int resultCode) {
+                        callbackPickerResult(requestCode, resultCode);
+                    }
+                });
+                viewFrameVO = config.getPicGridFrame();
             } else {
-                intent = new Intent(context, ImagePreviewActivity.class);
+                viewTag = ImagePreviewView.TAG;
+                imagePreviewView = new ImagePreviewView(context, this, "",
+                        0, Constants.REQUEST_IMAGE_BROWSER, new ViewEvent() {
+                    @Override
+                    public void resultCallBack(int requestCode,
+                                               int resultCode) {
+                        callbackPickerResult(requestCode, resultCode);
+                    }
+                });
+                viewFrameVO = config.getPicPreviewFrame();
             }
-            startActivityForResult(intent, REQUEST_IMAGE_BROWSER );
+            addViewToCurrentWindow(imagePreviewView, viewTag, viewFrameVO);
         } catch (JSONException e) {
             e.printStackTrace();
-            Toast.makeText(context, "JSON解析错误", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context,
+                    EUExUtil.getString("plugin_uex_image_json_format_error"),
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
+    private ViewFrameVO getViewFrameVO(JSONObject jsonObject, String key) {
+        ViewFrameVO viewFrameVO = null;
+        if (jsonObject.has(key)) {
+            viewFrameVO = DataParser
+                    .viewFrameVOParser(jsonObject.optString(key));
+        }
+        if (null == viewFrameVO) {
+            viewFrameVO = UEXImageUtil.getFullScreenViewFrameVO(mContext,
+                    mBrwView);
+        }
+        return viewFrameVO;
+    }
+
     //打开一个可以添加Label的背景图片， 所有的Label都添加在这个图片上
-    public void openLabelViewContainer(String [] params) {
+    public void openLabelViewContainer(String[] params) {
         String json = params[0];
         try {
             JSONObject obj = new JSONObject(json);
@@ -270,8 +356,9 @@ public class EUExImage extends EUExBase {
             e.printStackTrace();
         }
     }
+
     //添加label
-    public void addLabelView(String [] params) {
+    public void addLabelView(String[] params) {
         if (labelViewContainer == null) {
             Log.i(TAG, "please call openLabelView method first");
             return;
@@ -314,23 +401,22 @@ public class EUExImage extends EUExBase {
     /**
      * 获取图片及label信息，数据格式如下:
      * {
-         "width": 600, // 外层图片（label 的载体）的宽度
-         "height": 333,  // 外层图片的高度
-         "labels": [     //所有的label
-             {
-             "id": "1",  //label id, 当用户点击图片时， 若点到了label所标识的热点，会触发onLabelClicked方法，该方法会返回id
-             "content": "content", //label内容
-             "left": "0.033", //label左侧距其外层图片左侧的距离和图片宽度的比值。
-             "right": "0.342", //label右侧距其外层图片左侧的距离和图片宽度的比值。
-             "top": "0.120", //label右侧距其外层图片顶部的距离和图片高度的比值。
-             "bottom": "0.276", //label底部距其外层图片顶部的距离和图片高度的比值。
-             "targetPointMode": 0  //label所指向的热点相对label的位置，0： 在label左侧， 1: 在label右侧
-             }
-         ]
-      }
-     *
+     * "width": 600, // 外层图片（label 的载体）的宽度
+     * "height": 333,  // 外层图片的高度
+     * "labels": [     //所有的label
+     * {
+     * "id": "1",  //label id, 当用户点击图片时， 若点到了label所标识的热点，会触发onLabelClicked方法，该方法会返回id
+     * "content": "content", //label内容
+     * "left": "0.033", //label左侧距其外层图片左侧的距离和图片宽度的比值。
+     * "right": "0.342", //label右侧距其外层图片左侧的距离和图片宽度的比值。
+     * "top": "0.120", //label右侧距其外层图片顶部的距离和图片高度的比值。
+     * "bottom": "0.276", //label底部距其外层图片顶部的距离和图片高度的比值。
+     * "targetPointMode": 0  //label所指向的热点相对label的位置，0： 在label左侧， 1: 在label右侧
+     * }
+     * ]
+     * }
      */
-    public JSONObject getPicInfoWithLabelViews(String [] params) {
+    public JSONObject getPicInfoWithLabelViews(String[] params) {
         if (labelViewContainer == null) {
             Log.i(TAG, "please call openLabelView method first");
             return null;
@@ -384,8 +470,9 @@ public class EUExImage extends EUExBase {
             String imagePath = obj.getString("image");
 
             String labels = obj.getString("labels");
-            List<LabelInfo> infoList = DataHelper.gson.fromJson(labels, new TypeToken<ArrayList<LabelInfo>>(){}.getType());
-            LabelViewContainer container =  new LabelViewContainer(mContext, infoList);
+            List<LabelInfo> infoList = DataHelper.gson.fromJson(labels, new TypeToken<ArrayList<LabelInfo>>() {
+            }.getType());
+            LabelViewContainer container = new LabelViewContainer(mContext, infoList);
             Bitmap bitmap = ACEImageLoader.getInstance().getBitmapSync(imagePath);
             BitmapDrawable drawable = new BitmapDrawable(bitmap);
             container.setBackgroundDrawable(drawable);
@@ -400,7 +487,6 @@ public class EUExImage extends EUExBase {
         }
     }
 
-
     public void openCropper(String[] params) {
         if (params == null || params.length < 1) {
             errorCallback(0, 0, "error params!");
@@ -414,8 +500,11 @@ public class EUExImage extends EUExBase {
         String srcPath = "";
         try {
             JSONObject jsonObject = new JSONObject(json);
-            if (!jsonObject.has("src") || TextUtils.isEmpty(jsonObject.getString("src"))) {
-                Toast.makeText(context, "src不能为空", Toast.LENGTH_SHORT).show();
+            if (!jsonObject.has("src")
+                    || TextUtils.isEmpty(jsonObject.getString("src"))) {
+                Toast.makeText(context,
+                        EUExUtil.getString("plugin_uex_image_src_cannot_null"),
+                        Toast.LENGTH_SHORT).show();
                 return;
             }
             src = jsonObject.getString("src");
@@ -426,7 +515,10 @@ public class EUExImage extends EUExBase {
             if (jsonObject.has("quality")) {
                 double qualityParam = jsonObject.getDouble("quality");
                 if (qualityParam < 0 || qualityParam > 1) {
-                    Toast.makeText(context, "quality 只能在0-1之间", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context,
+                            EUExUtil.getString(
+                                    "plugin_uex_image_quality_range"),
+                            Toast.LENGTH_SHORT).show();
                 } else {
                     cropQuality = qualityParam;
                 }
@@ -435,39 +527,46 @@ public class EUExImage extends EUExBase {
                 cropUsePng = jsonObject.getBoolean("usePng");
             }
             if (jsonObject.has("mode")) {
-                int i = jsonObject.optInt("mode", 1);
+                int i = jsonObject.getInt("mode");
                 cropMode = i;
             }
         } catch (JSONException e) {
             if (BDebug.DEBUG) {
                 Log.i(TAG, e.getMessage());
             }
-            Toast.makeText(context, "JSON解析错误", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context,
+                    EUExUtil.getString("plugin_uex_image_json_format_error"),
+                    Toast.LENGTH_SHORT).show();
         }
         File file;
-        //先将assets文件写入到临时文件夹中
+        // 先将assets文件写入到临时文件夹中
         if (src.startsWith(BUtility.F_Widget_RES_SCHEMA)) {
             String fileName = ".png";
             if (!src.endsWith("PNG") && !src.endsWith("png")) {
                 fileName = ".jpg";
             }
-            //为res对应的文件生成一个临时文件到系统中
-            File destFile = new File(DiskCache.cacheFolder,
-                    File.separator + UEXImageUtil.TEMP_PATH + File.separator + "crop_res_temp" +fileName);
+            // 为res对应的文件生成一个临时文件到系统中
+            File destFile = new File(UEXImageUtil.getImageCacheDir(mContext)
+                    + File.separator + "crop_res_temp" + fileName);
             try {
                 destFile.deleteOnExit();
                 destFile.createNewFile();
             } catch (IOException e) {
-                Toast.makeText(context, FILE_SYSTEM_ERROR, Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,
+                        EUExUtil.getString("plugin_uex_image_system_error"),
+                        Toast.LENGTH_SHORT).show();
                 return;
             }
-            if (srcPath.startsWith("/data")){
-                CommonUtil.copyFile(new File(srcPath),destFile);
-                file=destFile;
-            }else if(CommonUtil.saveFileFromAssetsToSystem(context, srcPath, destFile)) {
+            if (srcPath.startsWith("/data")) {
+                CommonUtil.copyFile(new File(srcPath), destFile);
+                file = destFile;
+            } else if (CommonUtil.saveFileFromAssetsToSystem(context, srcPath,
+                    destFile)) {
                 file = destFile;
             } else {
-                Toast.makeText(context, FILE_SYSTEM_ERROR, Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,
+                        EUExUtil.getString("plugin_uex_image_system_error"),
+                        Toast.LENGTH_SHORT).show();
                 return;
             }
         } else {
@@ -477,9 +576,24 @@ public class EUExImage extends EUExBase {
         performCrop(file);
     }
 
+    public void compressImage(String[] params) {
+        if (params.length >= 1) {
+            String imageVOStr = params[0];
+            if (2 == params.length) {
+                compressImageFunCbId = params[1];
+            }
+            CompressImageVO mCompressImageVO = DataHelper.gson
+                    .fromJson(imageVOStr, CompressImageVO.class);
+            mCompressImageVO.setSrcPath(BUtility
+                    .makeRealPath(mCompressImageVO.getSrcPath(), mBrwView));
+            if (mImageAgent != null) {
+                mImageAgent.compressImage(mContext, this, mCompressImageVO);
+            }
+        }
+    }
+
     private void performCrop(File imageFile) {
         try {
-
             String fileName = null;
             Long time = new Date().getTime();
             if (cropUsePng) {
@@ -488,12 +602,13 @@ public class EUExImage extends EUExBase {
                 fileName = "crop_temp_" + time + ".jpg";
             }
 
-            cropOutput = new File(DiskCache.cacheFolder,
-                    File.separator + UEXImageUtil.TEMP_PATH + File.separator + fileName);
+            cropOutput = new File(UEXImageUtil.getImageCacheDir(mContext)
+                    + File.separator + fileName);
             cropOutput.createNewFile();
             Uri destination = Uri.fromFile(cropOutput);
             registerActivityResult();
-            Crop crop = Crop.of(Uri.fromFile(imageFile), destination, cropQuality, cropUsePng);
+            Crop crop = Crop.of(Uri.fromFile(imageFile), destination,
+                    cropQuality, cropUsePng);
             if (cropMode < 4) {
                 crop.asSquare();
             } else if (cropMode == 4) {
@@ -502,15 +617,18 @@ public class EUExImage extends EUExBase {
                 crop.withAspect(16, 9);
             }
             crop.start((Activity) mContext);
+            Crop.of(Uri.fromFile(imageFile), destination, cropQuality,
+                    cropUsePng).start((Activity) mContext);
         } catch (Exception exception) {
-            Toast.makeText(context, NOT_SUPPORT_CROP, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context,
+                    EUExUtil.getString("plugin_uex_image_not_support_crop"),
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
     private void updateGallery(String filename) {
-        MediaScannerConnection.scanFile(context,
-                new String[]{filename}, null,
-                new MediaScannerConnection.OnScanCompletedListener() {
+        MediaScannerConnection.scanFile(context, new String[]{filename},
+                null, new MediaScannerConnection.OnScanCompletedListener() {
                     public void onScanCompleted(String path, Uri uri) {
                         if (BDebug.DEBUG) {
                             Log.i("ExternalStorage", "Scanned " + path + ":");
@@ -520,66 +638,100 @@ public class EUExImage extends EUExBase {
                 });
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        //裁剪图片
-        if (requestCode == Crop.REQUEST_CROP) {
-            cropCallBack(resultCode);
+    public void addViewToCurrentWindow(View view, String tag,
+                                       ViewFrameVO viewFrameVO) {
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+                viewFrameVO.width, viewFrameVO.height);
+        lp.leftMargin = viewFrameVO.x;
+        lp.topMargin = viewFrameVO.y;
+        if (addToWebViewsMap.get(tag) != null) {
+            removeViewFromCurWindow(tag);
         }
-        //选择图片
-        if (requestCode == REQUEST_IMAGE_PICKER) {
-            if (resultCode == Activity.RESULT_OK) {
-                JSONObject jsonObject= uexImageUtil.getChoosedPicInfo(context);
-                callBackPluginJs(JsConst.CALLBACK_ON_PICKER_CLOSED, jsonObject.toString());
-                if (openPickerFuncId != null) {
-                    callbackToJs(Integer.parseInt(openPickerFuncId), false, 0,jsonObject);
-                }
-            } else if (resultCode == Constants.OPERATION_CANCELLED) {
-                JSONObject jsonObject = new JSONObject();
-                try {
-                    jsonObject.put("isCancelled", true);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                callBackPluginJs(JsConst.CALLBACK_ON_PICKER_CLOSED, jsonObject.toString());
-                if (openPickerFuncId != null) {
-                    callbackToJs(Integer.parseInt(openPickerFuncId), false,-1, jsonObject);
-                }
-            }
-            uexImageUtil.resetData();
+        addViewToCurrentWindow(view, lp);
+        addToWebViewsMap.put(tag, view);
+    }
+
+    public void removeViewFromCurWindow(String viewTag) {
+        View removeView = addToWebViewsMap.get(viewTag);
+        if (removeView != null) {
+            removeViewFromCurrentWindow(removeView);
+            removeView.destroyDrawingCache();
+            addToWebViewsMap.remove(viewTag);
         }
-        //浏览图片
-        if (requestCode == REQUEST_IMAGE_BROWSER) {
-            callBackPluginJs(JsConst.CALLBACK_ON_BROWSER_CLOSED, "pic browser closed");
-            if(openBrowserFuncId != null) {
-                callbackToJs(Integer.parseInt(openBrowserFuncId), false);
+    }
+
+    public static void onActivityResume(Context context) {
+        Set<String> tagList = addToWebViewsMap.keySet();
+        for (String tag : tagList) {
+            if (!TextUtils.isEmpty(tag)) {
+                ((ImageBaseView) addToWebViewsMap.get(tag)).onResume();
             }
         }
     }
 
+    private void callbackPickerResult(int requestCode, int resultCode) {
+        switch (requestCode) {
+            case Constants.REQUEST_CROP:
+                cropCallBack(resultCode);
+                break;
+            case Constants.REQUEST_IMAGE_PICKER:
+                JSONObject jsonObject = null;
+                int errorCode = 0;
+                if (Constants.OPERATION_CONFIRMED == resultCode) {
+                    jsonObject = uexImageUtil.getChoosedPicInfo(context);
+                    errorCode = 0;
+                } else if (Constants.OPERATION_CANCELLED == resultCode) {
+                    jsonObject = new JSONObject();
+                    try {
+                        jsonObject.put("isCancelled", true);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    errorCode = -1;
+                }
+                callBackPluginJs(JsConst.CALLBACK_ON_PICKER_CLOSED,
+                        jsonObject.toString());
+                if (openPickerFuncId != null) {
+                    callbackToJs(Integer.parseInt(openPickerFuncId), false,
+                            errorCode, jsonObject);
+                }
+                uexImageUtil.resetData();
+                break;
+            case Constants.REQUEST_IMAGE_BROWSER:
+                callBackPluginJs(JsConst.CALLBACK_ON_BROWSER_CLOSED,
+                        "pic browser closed");
+                if (openBrowserFuncId != null) {
+                    callbackToJs(Integer.parseInt(openBrowserFuncId), false);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
     private void cropCallBack(int resultCode) {
-        //如果是用户取消，则删除这个临时文件
+        // 如果是用户取消，则删除这个临时文件
         if (cropOutput.length() == 0) {
             cropOutput.delete();
         }
         updateGallery(cropOutput.getAbsolutePath());
-        int error=0;
+        int error = 0;
         JSONObject result = new JSONObject();
         try {
             switch (Crop.cropStatus) {
                 case 1:
-                    error=0;
+                    error = 0;
                     result.put("isCancelled", false);
                     result.put("data", cropOutput.getAbsolutePath());
                     break;
                 case 2:
-                    error=1;
+                    error = 1;
                     result.put("isCancelled", false);
-                    result.put("data", "系统错误");
+                    result.put("data",
+                            EUExUtil.getString("plugin_uex_image_system_error"));
                     break;
                 case 3:
-                    error=-1;
+                    error = -1;
                     result.put("isCancelled", true);
                     break;
             }
@@ -588,7 +740,7 @@ public class EUExImage extends EUExBase {
         }
         callBackPluginJs(JsConst.CALLBACK_ON_CROPPER_CLOSED, result.toString());
         if (null != openCropperId) {
-            callbackToJs(Integer.parseInt(openCropperId), false,error, result);
+            callbackToJs(Integer.parseInt(openCropperId), false, error, result);
         }
     }
 
@@ -602,61 +754,81 @@ public class EUExImage extends EUExBase {
         if (params.length == 2) {
             funcId = params[1];
         }
-        //回调的结果
+        // 回调的结果
         JSONObject resultObject = new JSONObject();
         try {
             JSONObject jsonObject = new JSONObject(json);
-            if (!jsonObject.has("localPath") || TextUtils.isEmpty(jsonObject.getString("localPath"))) {
-                Toast.makeText(context, "localPath不能为空", Toast.LENGTH_SHORT).show();
+            if (!jsonObject.has("localPath")
+                    || TextUtils.isEmpty(jsonObject.getString("localPath"))) {
+                Toast.makeText(context,
+                        EUExUtil.getString(
+                                "plugin_uex_image_localPath_cannot_null"),
+                        Toast.LENGTH_SHORT).show();
                 return;
             }
             if (jsonObject.has("extraInfo")) {
-                resultObject.put("extraInfo", jsonObject.getString("extraInfo"));
+                resultObject.put("extraInfo",
+                        jsonObject.getString("extraInfo"));
             }
             String path = jsonObject.getString("localPath");
             String realPath = BUtility.makeRealPath(
                     BUtility.makeUrl(mBrwView.getCurrentUrl(), path),
                     mBrwView.getCurrentWidget().m_widgetPath,
                     mBrwView.getCurrentWidget().m_wgtType);
-            //如果传的是res,则会复制一份到相册
+            // 如果传的是res,则会复制一份到相册
             if (path.startsWith(BUtility.F_Widget_RES_SCHEMA)) {
-                //获取文件名
-                String fileName = path.replace(BUtility.F_Widget_RES_SCHEMA, "");
-                String dcimPath = Environment.getExternalStorageDirectory() + File.separator + Environment.DIRECTORY_DCIM + File.separator;
+                // 获取文件名
+                String fileName = path.replace(BUtility.F_Widget_RES_SCHEMA,
+                        "");
+                String dcimPath = Environment.getExternalStorageDirectory()
+                        + File.separator + Environment.DIRECTORY_DCIM
+                        + File.separator;
                 File file = new File(dcimPath, fileName);
                 if (file.exists()) {
                     resultObject.put("isSuccess", false);
-                    resultObject.put("errorStr", SAME_FILE_IN_DCIM);
-                    callBackPluginJs(JsConst.CALLBACK_SAVE_TO_PHOTO_ALBUM, resultObject.toString());
+                    resultObject.put("errorStr", EUExUtil
+                            .getString("plugin_uex_image_same_name_file"));
+                    callBackPluginJs(JsConst.CALLBACK_SAVE_TO_PHOTO_ALBUM,
+                            resultObject.toString());
                     if (null != funcId) {
-                        callbackToJs(Integer.parseInt(funcId), false,1, SAME_FILE_IN_DCIM);
+                        callbackToJs(Integer.parseInt(funcId), false, 1,
+                                EUExUtil.getString(
+                                        "plugin_uex_image_same_name_file"));
                     }
                     return;
                 }
                 file.createNewFile();
-                if (realPath.startsWith("/data")){
+                if (realPath.startsWith("/data")) {
                     CommonUtil.copyFile(new File(realPath), file);
                     resultObject.put("isSuccess", true);
                     updateGallery(file.getAbsolutePath());
-                } else if(CommonUtil.saveFileFromAssetsToSystem(context, realPath, file)) {
+                } else if (CommonUtil.saveFileFromAssetsToSystem(context,
+                        realPath, file)) {
                     resultObject.put("isSuccess", true);
                     updateGallery(file.getAbsolutePath());
                 } else {
                     resultObject.put("isSuccess", false);
-                    resultObject.put("errorStr", FILE_SYSTEM_ERROR);
+                    resultObject.put("errorStr", EUExUtil
+                            .getString("plugin_uex_image_system_error"));
                 }
-            } else {//如果傳的是別的路徑，也復制一份吧。
+            } else {// 如果傳的是別的路徑，也復制一份吧。
                 File fromFile = new File(realPath);
                 String fileName = fromFile.getName();
 
-                String dcimPath = Environment.getExternalStorageDirectory() + File.separator + Environment.DIRECTORY_DCIM + File.separator;
+                String dcimPath = Environment.getExternalStorageDirectory()
+                        + File.separator + Environment.DIRECTORY_DCIM
+                        + File.separator;
                 File destFile = new File(dcimPath, fileName);
                 if (destFile.exists()) {
                     resultObject.put("isSuccess", false);
-                    resultObject.put("errorStr", SAME_FILE_IN_DCIM);
-                    callBackPluginJs(JsConst.CALLBACK_SAVE_TO_PHOTO_ALBUM, resultObject.toString());
+                    resultObject.put("errorStr", EUExUtil
+                            .getString("plugin_uex_image_same_name_file"));
+                    callBackPluginJs(JsConst.CALLBACK_SAVE_TO_PHOTO_ALBUM,
+                            resultObject.toString());
                     if (null != funcId) {
-                        callbackToJs(Integer.parseInt(funcId), false, 1,SAME_FILE_IN_DCIM);
+                        callbackToJs(Integer.parseInt(funcId), false, 1,
+                                EUExUtil.getString(
+                                        "plugin_uex_image_same_name_file"));
                     }
                     return;
                 }
@@ -666,59 +838,78 @@ public class EUExImage extends EUExBase {
                     updateGallery(destFile.getAbsolutePath());
                 } else {
                     resultObject.put("isSuccess", false);
-                    resultObject.put("errorStr", FILE_SYSTEM_ERROR);
+                    resultObject.put("errorStr", EUExUtil
+                            .getString("plugin_uex_image_system_error"));
                 }
             }
-            callBackPluginJs(JsConst.CALLBACK_SAVE_TO_PHOTO_ALBUM, resultObject.toString());
+            callBackPluginJs(JsConst.CALLBACK_SAVE_TO_PHOTO_ALBUM,
+                    resultObject.toString());
             if (null != funcId) {
-                callbackToJs(Integer.parseInt(funcId), false, 0,"");
+                callbackToJs(Integer.parseInt(funcId), false, 0,
+                        EUExUtil.getString("plugin_uex_image_system_error"));
             }
         } catch (JSONException e) {
+            Log.i(TAG, e.getMessage());
             try {
                 resultObject.put("isSuccess", false);
-                resultObject.put("errorStr", JSON_FORMAT_ERROR);
+                resultObject.put("errorStr", EUExUtil
+                        .getString("plugin_uex_image_json_format_error"));
             } catch (JSONException e2) {
                 Log.i(TAG, e2.getMessage());
             }
-            callBackPluginJs(JsConst.CALLBACK_SAVE_TO_PHOTO_ALBUM, resultObject.toString());
+            callBackPluginJs(JsConst.CALLBACK_SAVE_TO_PHOTO_ALBUM,
+                    resultObject.toString());
             if (null != funcId) {
-                callbackToJs(Integer.parseInt(funcId), false, 1,JSON_FORMAT_ERROR);
+                callbackToJs(Integer.parseInt(funcId), false, 1, EUExUtil
+                        .getString("plugin_uex_image_json_format_error"));
             }
         } catch (IOException e) {
+            Log.i(TAG, e.getMessage());
             try {
                 resultObject.put("isSuccess", false);
-                resultObject.put("errorStr", FILE_SYSTEM_ERROR);
+                resultObject.put("errorStr",
+                        EUExUtil.getString("plugin_uex_image_system_error"));
             } catch (JSONException e2) {
                 Log.i(TAG, e2.getMessage());
             }
-            callBackPluginJs(JsConst.CALLBACK_SAVE_TO_PHOTO_ALBUM, resultObject.toString());
+            callBackPluginJs(JsConst.CALLBACK_SAVE_TO_PHOTO_ALBUM,
+                    resultObject.toString());
             if (null != funcId) {
-                callbackToJs(Integer.parseInt(funcId), false,1, FILE_SYSTEM_ERROR);
+                callbackToJs(Integer.parseInt(funcId), false, 1,
+                        EUExUtil.getString("plugin_uex_image_system_error"));
             }
         }
     }
 
-
-
-    public boolean clearOutputImages(String[] params) {
+    public void clearOutputImages(String[] params) {
         JSONObject jsonResult = new JSONObject();
-        File directory = new File(DiskCache.cacheFolder,
-                File.separator + UEXImageUtil.TEMP_PATH);
-        for (File file : directory.listFiles()) {
-            file.delete();
+        if (mImageAgent != null) {
+            mImageAgent.clearOutputImages(mContext);
         }
         try {
-            jsonResult.put("status", "ok");
+            jsonResult.put(Constants.JK_STATUSE, Constants.JK_OK);
         } catch (JSONException e) {
             Log.i(TAG, e.getMessage());
         }
-        callBackPluginJs(JsConst.CALLBACK_CLEAR_OUTPUT_IMAGES, jsonResult.toString());
-        return true;
+        callBackPluginJs(JsConst.CALLBACK_CLEAR_OUTPUT_IMAGES,
+                jsonResult.toString());
     }
 
-    public void callBackPluginJs(String methodName, String jsonData){
-        String js = SCRIPT_HEADER + "if(" + methodName + "){"
-                + methodName + "('" + jsonData + "');}";
+    public void onImageLongClick(String cbVO) {
+        callBackPluginJs(JsConst.CALLBACK_ON_IAMGE_LONG_CLICKED, cbVO);
+    }
+
+    public void cbCompressImage(JSONObject cbJson, int errorCode) {
+        callBackPluginJs(JsConst.CALLBACK_COMPRESS_IAMGE, cbJson.toString());
+        if (!TextUtils.isEmpty(compressImageFunCbId)) {
+            callbackToJs(Integer.parseInt(openPickerFuncId), false,
+                    errorCode, cbJson);
+        }
+    }
+
+    public void callBackPluginJs(String methodName, String jsonData) {
+        String js = SCRIPT_HEADER + "if(" + methodName + "){" + methodName
+                + "('" + jsonData + "');}";
         onCallback(js);
     }
 

@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-	<color name="plugin_uex_image_gray_3">#333333</color>
-	<color name="plugin_uex_image_gray_4">#2E3334</color>
-	<color name="plugin_uex_image_green_common">#15C7CB</color>
-	<color name="plugin_uex_image_green_1">#45C01A</color>
-	<color name="plugin_uex_image_green_2">#86D8FF</color>
-	<color name="plugin_uex_image_gray_9">#d9d9d9</color>
-	<color name="plugin_uex_image_black_1">#e0111222</color>
-	<color name="plugin_uex_image_crop_highlight">#f3f3f3</color>
 
-    <color name="crop__button_bar">#f3f3f3</color>
-    <color name="crop__button_text">#666666</color>
-    <color name="crop__selector_pressed">#1a000000</color>
-    <color name="crop__selector_focused">#77000000</color>
+    <color name="plugin_uex_image_gray_3">#333333</color>
+    <color name="plugin_uex_image_gray_4">#2E3334</color>
+    <color name="plugin_uex_image_green_common">#15C7CB</color>
+    <color name="plugin_uex_image_green_1">#45C01A</color>
+    <color name="plugin_uex_image_green_2">#86D8FF</color>
+    <color name="plugin_uex_image_gray_9">#d9d9d9</color>
+    <color name="plugin_uex_image_crop_button_bar">#f3f3f3</color>
+    <color name="plugin_uex_image_crop_button_text">#666666</color>
+    <color name="plugin_uex_image_crop_selector_pressed">#1a000000</color>
+    <color name="plugin_uex_image_crop_selector_focused">#77000000</color>
+    
+    <!--     20160804add -->
+    <color name="plugin_uex_image_grid_bg_colors">#FFFFFFFF</color>
 </resources>

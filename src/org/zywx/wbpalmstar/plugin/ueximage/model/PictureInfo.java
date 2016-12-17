@@ -26,7 +26,6 @@ public class PictureInfo {
     private String thumb;//缩略图URI或路径
     private String desc;
 	private long lastModified;
-
     private boolean showBigPic;
 
     public String getSrc() {

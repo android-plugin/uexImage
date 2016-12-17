@@ -1,22 +1,22 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_grid_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white"
-    tools:context="org.zywx.wbpalmstar.plugin.ueximage.PictureGridActivity">
+    android:background="@color/plugin_uex_image_grid_bg_colors"
+    tools:context="org.zywx.wbpalmstar.plugin.ueximage.PictureGridView">
     <include layout="@layout/plugin_uex_image_common_title" />
 
     <GridView
         android:id="@+id/gv_pictures"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dip"
-        android:layout_marginRight="10dip"
-        android:layout_marginTop="10dip"
-        android:horizontalSpacing="7.5dip"
-        android:numColumns="3"
-        android:verticalSpacing="7.5dip" />
-
+        android:listSelector="@null"
+        android:layout_marginTop="1dip"
+        android:fadingEdge="none"
+        android:horizontalSpacing="1dip"
+        android:verticalSpacing="1dip"
+        android:numColumns="3" />
 
 </LinearLayout>

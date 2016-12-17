@@ -64,7 +64,8 @@ public class CommonUtil {
         config.diskCacheSize(30 * 1024 * 1024);
         config.tasksProcessingOrder(QueueProcessingType.LIFO);
         //修改连接超时时间5秒，下载超时时间20秒
-        config.imageDownloader(new BaseImageDownloader(context, 5 * 1000, 20 * 1000));
+        config.imageDownloader(new BaseImageDownloader(
+                context.getApplicationContext(), 5 * 1000, 20 * 1000));
         // Initialize ImageLoader with configuration.
         ImageLoader.getInstance().init(config.build());
     }

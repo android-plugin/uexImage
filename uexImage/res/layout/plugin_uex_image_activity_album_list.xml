@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context="org.zywx.wbpalmstar.plugin.ueximage.AlbumListActivity">
+    tools:context="org.zywx.wbpalmstar.plugin.ueximage.AlbumListView">
     <include android:id="@+id/layout_title" layout="@layout/plugin_uex_image_common_title" />
     <ListView
         android:id="@+id/local_album_list"

@@ -9,7 +9,7 @@
         <item name="android:divider">@drawable/plugin_uex_image_crop_divider</item>
         <item name="android:showDividers" tools:ignore="NewApi">middle</item>
         <item name="android:dividerPadding" tools:ignore="NewApi">12dp</item>
-        <item name="android:background">@color/crop__button_bar</item>
+        <item name="android:background">@color/plugin_uex_image_crop_button_bar</item>
     </style>
 
     <style name="Crop.ActionButton">
@@ -26,7 +26,7 @@
         <item name="android:gravity">center_vertical</item>
         <item name="android:paddingRight">20dp</item> <!-- Offsets left drawable -->
         <item name="android:drawablePadding">8dp</item>
-        <item name="android:textColor">@color/crop__button_text</item>
+        <item name="android:textColor">@color/plugin_uex_image_crop_button_text</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">13sp</item>
     </style>
