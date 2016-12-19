@@ -71,10 +71,10 @@ public class ImageAgent {
                 bitmap = BitmapFactory.decodeFile(srcPath, opts);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 int quality = 100;
-                bitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
-                int fileLength = baos.toByteArray().length;
                 JSONObject cbJson = new JSONObject();
                 try {
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
+                    int fileLength = baos.toByteArray().length;
                     while (true) {
                         while ((fileLength > length) && (quality > 40)) {
                             baos.reset();

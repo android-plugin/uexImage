@@ -170,7 +170,15 @@ if (UNIT_TEST) {
                     desLength : 30*1024
             };
             var data = JSON.stringify(params);
-            uexImage.compressImage(data);
+            uexImage.compressImage(data, function(err,errStr){
+                if(1 == err) //成功
+                {
+                    alert(errStr);
+                } else if (0 == err) //失败
+                {
+                    alert("error");
+                }
+            });
         }
     };
 

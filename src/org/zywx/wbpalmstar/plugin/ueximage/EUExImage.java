@@ -902,8 +902,8 @@ public class EUExImage extends EUExBase {
     public void cbCompressImage(JSONObject cbJson, int errorCode) {
         callBackPluginJs(JsConst.CALLBACK_COMPRESS_IAMGE, cbJson.toString());
         if (!TextUtils.isEmpty(compressImageFunCbId)) {
-            callbackToJs(Integer.parseInt(openPickerFuncId), false,
-                    errorCode, cbJson);
+            callbackToJs(Integer.parseInt(compressImageFunCbId), false,
+                    errorCode, cbJson.toString());
         }
     }
 
