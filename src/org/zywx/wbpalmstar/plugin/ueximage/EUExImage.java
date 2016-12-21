@@ -38,6 +38,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.zywx.wbpalmstar.base.ACEImageLoader;
+import org.zywx.wbpalmstar.base.BConstant;
 import org.zywx.wbpalmstar.base.BDebug;
 import org.zywx.wbpalmstar.base.BUtility;
 import org.zywx.wbpalmstar.base.ResoureFinder;
@@ -97,6 +98,7 @@ public class EUExImage extends EUExBase {
     public EUExImage(Context context, EBrowserView eBrowserView) {
         super(context, eBrowserView);
         this.context = context;
+        DiskCache.initDiskCache(BConstant.app);
         //创建缓存文件夹
         File f = new File(DiskCache.cacheFolder,
                 File.separator + UEXImageUtil.TEMP_PATH);
