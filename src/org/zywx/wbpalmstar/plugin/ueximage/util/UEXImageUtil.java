@@ -229,6 +229,10 @@ public class UEXImageUtil {
                         File.separator + TEMP_PATH + File.separator + "temp_" + new Date().getTime() +".jpg");
             }
             try {
+                File parent=f.getParentFile();
+                if (!parent.exists()){
+                    parent.mkdirs();
+                }
                 f.createNewFile();
                 fos = new FileOutputStream(f);
                 if ((int)(EUEXImageConfig.getInstance().getQuality()) == 1) {
