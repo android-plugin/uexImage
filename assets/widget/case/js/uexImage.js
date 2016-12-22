@@ -12,19 +12,7 @@ if (UNIT_TEST) {
                 max: 3,
                 quality: 0.8,
                 detailedInfo: true,
-                "viewFramePicPreview":{   //位置、大小
-                    x:0,
-                    y:0,
-                    w:720, //w:1080,
-                    h:1137, //h:1767
-                },
-                "style" : 1,
-                "viewFramePicGrid":{   //位置、大小
-                    x:0,
-                    y:0,
-                    w:720, //w:1080,
-                    h:1137, //h:1767
-                }
+                "style" : 1
             }
             uexImage.openPicker(data, function (error, info) {
                 if (error == -1) {
@@ -66,6 +54,18 @@ if (UNIT_TEST) {
 			    "style" : 1,
                 "gridBackgroundColor" : "#4A88C1",  // style为1时生效
                 "gridBrowserTitle" : "图片浏览",
+                "viewFramePicPreview":{   //位置、大小
+                    x:0,
+                    y:0,
+                    w:720, //w:1080,
+                    h:1137, //h:1767
+                },
+                "viewFramePicGrid":{   //位置、大小
+                    x:0,
+                    y:0,
+                    w:720, //w:1080,
+                    h:1137, //h:1767
+                }
             };
             uexImage.openBrowser(data,function(){
                 UNIT_TEST.assert(true);

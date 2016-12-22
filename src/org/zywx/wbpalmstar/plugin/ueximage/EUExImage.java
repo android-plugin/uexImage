@@ -163,7 +163,7 @@ public class EUExImage extends EUExBase {
                 }
             });
             addViewToCurrentWindow(albumListView, AlbumListView.TAG,
-                    UEXImageUtil.getFullScreenViewFrameVO(mContext, mBrwView));
+                    EUEXImageConfig.getInstance().getPicGridFrame());
         } catch (JSONException e) {
             if (BDebug.DEBUG) {
                 Log.i(TAG, e.getMessage());
