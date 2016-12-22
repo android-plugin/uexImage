@@ -12,5 +12,6 @@
         <method name="addLabelView" />
         <method name="getPicInfoWithLabelViews" />
         <method name="showLabelViewPic" />
+        <method name="compressImage" />
     </plugin>
 </uexplugins>

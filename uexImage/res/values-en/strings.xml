@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="plugin_uex_image_choose">Choose</string>
+    <string name="plugin_uex_image_at_least_choose">At least %s photos</string>
+    <string name="plugin_uex_image_at_most_choose">At most %s photos</string>
+    <string name="plugin_uex_image_share">Share</string>
+    <string name="plugin_uex_image_list">List</string>
+    <string name="plugin_uex_image_crop_cancel">Cancel</string>
+    <string name="plugin_uex_image_crop_done">Finish</string>
+    <string name="plugin_uex_image_crop_saving">Save photos...</string>
+    <string name="plugin_uex_image_crop_wait">Please wait...</string>
+    <string name="plugin_uex_image_default_grid_browser_title">Image Browse</string>
+    <string name="plugin_uex_image_system_error">System error</string>
+    <string name="plugin_uex_image_same_name_file">There is a same name file in the system album</string>
+    <string name="plugin_uex_image_json_format_error">Json format error</string>
+    <string name="plugin_uex_image_not_support_crop">Device not support crop!</string>
+    <string name="plugin_uex_image_data_cannot_null">Data can not be empty.</string>
+    <string name="plugin_uex_image_localPath_cannot_null">LocalPath can not be empty.</string>
+    <string name="plugin_uex_image_src_cannot_null">Src can not be empty.</string>
+    <string name="plugin_uex_image_data_src_cannot_null">The src of %s element can not be empty in data.</string>
+    <string name="plugin_uex_image_quality_range">quality shoud be between 0-1.</string>
+    <string name="plugin_uex_image_retry_load_image">The current picture has not been loaded, Please try again later.</string>
+    <string name="plugin_uex_image_image_error">Operation failed，Please try again.</string>
+    <string name="plugin_uex_image_image_laoad_error">Image loading failed.</string>
+    
+</resources>

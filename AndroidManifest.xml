@@ -42,18 +42,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".AlbumListActivity"
-            android:theme="@style/plugin_uex_image_appTheme" >
-        </activity>
-        <activity
-            android:name=".PictureGridActivity"
-            android:theme="@style/plugin_uex_image_appTheme" >
-        </activity>
-        <activity
-            android:name=".ImagePreviewActivity"
-            android:theme="@style/plugin_uex_image_appTheme" >
-        </activity>
         <activity android:name=".crop.CropImageActivity"/>
     </application>
 

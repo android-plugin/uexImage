@@ -35,6 +35,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import org.zywx.wbpalmstar.base.ResoureFinder;
+import org.zywx.wbpalmstar.plugin.ueximage.util.Constants;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -409,8 +410,7 @@ public class CropImageActivity extends MonitoredActivity {
             if (!cropUsePng) {
                 CropUtil.copyExifRotation(
                         CropUtil.getFromMediaUri(this, getContentResolver(), sourceUri),
-                        CropUtil.getFromMediaUri(this, getContentResolver(), saveUri)
-                );
+                        CropUtil.getFromMediaUri(this, getContentResolver(), saveUri));
             }
             setResultUri(saveUri);
         }
@@ -448,7 +448,8 @@ public class CropImageActivity extends MonitoredActivity {
     }
 
     private void setResultException(Throwable throwable) {
-        setResult(Crop.RESULT_ERROR, new Intent().putExtra(Crop.Extra.ERROR, throwable));
+        setResult(Constants.RESULT_ERROR,
+                new Intent().putExtra(Crop.Extra.ERROR, throwable));
     }
 
 }
