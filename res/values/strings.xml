@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
+
+    <string name="app_name">Image</string>
+
     <string name="plugin_uex_image_choose">选择</string>
     <string name="plugin_uex_image_at_least_choose">请至少选择%s张图片</string>
     <string name="plugin_uex_image_at_most_choose">最多选择%s张图片</string>

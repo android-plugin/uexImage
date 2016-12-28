@@ -30,10 +30,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import org.zywx.wbpalmstar.base.BDebug;
 import org.zywx.wbpalmstar.base.ResoureFinder;
 import org.zywx.wbpalmstar.plugin.ueximage.util.Constants;
 
@@ -152,10 +154,10 @@ public class CropImageActivity extends MonitoredActivity {
                 option.inSampleSize = sampleSize;
                 rotateBitmap = new RotateBitmap(BitmapFactory.decodeStream(is, null, option), exifRotation);
             } catch (IOException e) {
-                Log.e("Error reading image: " + e.getMessage(), e);
+                BDebug.e("Error reading image: " , e.getMessage());
                 setResultException(e);
             } catch (OutOfMemoryError e) {
-                Log.e("OOM reading image: " + e.getMessage(), e);
+                BDebug.e("OOM reading image: " , e.getMessage());
                 setResultException(e);
             } finally {
                 CropUtil.closeSilently(is);
@@ -368,10 +370,10 @@ public class CropImageActivity extends MonitoredActivity {
             }
 
         } catch (IOException e) {
-            Log.e("Error cropping image: " + e.getMessage(), e);
+            BDebug.e("Error cropping image: " ,e.getMessage());
             setResultException(e);
         } catch (OutOfMemoryError e) {
-            Log.e("OOM cropping image: " + e.getMessage(), e);
+            BDebug.e("OOM cropping image: " , e.getMessage());
             setResultException(e);
         } finally {
             CropUtil.closeSilently(is);
@@ -402,7 +404,7 @@ public class CropImageActivity extends MonitoredActivity {
                 Crop.cropStatus = 1; //成功
             } catch (IOException e) {
                 setResultException(e);
-                Log.e("Cannot open file: " + saveUri, e);
+                BDebug.e("Cannot open file: " ,saveUri);
                 Crop.cropStatus = 2; //出错
             } finally {
                 CropUtil.closeSilently(outputStream);
