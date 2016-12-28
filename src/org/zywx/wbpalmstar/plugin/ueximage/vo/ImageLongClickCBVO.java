@@ -11,13 +11,4 @@ public class ImageLongClickCBVO {
         this.imagePath = imagePath;
     }
 
-    public String toStr() {
-        JSONObject json = new JSONObject();
-        try {
-            json.put(Constants.LONG_CLICK_CB_IMAGE_PATH, imagePath);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return json.toString();
-    }
 }

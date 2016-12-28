@@ -47,6 +47,7 @@ import org.json.JSONArray;
 import org.zywx.wbpalmstar.base.ACEImageLoader;
 import org.zywx.wbpalmstar.base.BDebug;
 import org.zywx.wbpalmstar.base.BUtility;
+import org.zywx.wbpalmstar.engine.DataHelper;
 import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
 import org.zywx.wbpalmstar.plugin.ueximage.model.PictureInfo;
 import org.zywx.wbpalmstar.plugin.ueximage.util.CommonUtil;
@@ -172,7 +173,7 @@ public class ImagePreviewView extends ImageBaseView {
                 public boolean onLongClick(View v) {
                     ImageLongClickCBVO cbVO = new ImageLongClickCBVO();
                     cbVO.setImagePath(src);
-                    mEUExImage.onImageLongClick(cbVO.toStr());
+                    mEUExImage.onImageLongClick(DataHelper.gson.toJson(cbVO));
                     return false;
                 }
             });
