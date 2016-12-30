@@ -28,7 +28,7 @@ public class PictureInfo {
 	private long lastModified;
     private boolean showBigPic;
 
-    public int progress=0;
+    public int progress=-1;
 
     public String getSrc() {
         return src;
