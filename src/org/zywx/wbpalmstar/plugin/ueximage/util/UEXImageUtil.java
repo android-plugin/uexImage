@@ -326,8 +326,8 @@ public class UEXImageUtil {
                     if (jsonObject.has("desc") && !TextUtils.isEmpty(jsonObject.getString("desc"))) {
                         picInfo.setDesc(jsonObject.getString("desc"));
                     }
-                    if (jsonObject.has("detailInfo")) {
-                        picInfo.setDetailInfo(jsonObject.getJSONObject("detailInfo"));
+                    if (jsonObject.has("detail_info")) {
+                        picInfo.setDetailInfo(jsonObject.getJSONObject("detail_info"));
                     }
                 }
                 imageDataList.add(picInfo);

@@ -145,6 +145,8 @@ public class EUExImage extends EUExBase {
         try {
             JSONObject jsonObject = new JSONObject(json);
             EUEXImageConfig config = EUEXImageConfig.getInstance();
+            boolean isShowDetail = jsonObject.optBoolean("isShowDetail");
+            config.setShowDetail(isShowDetail);
             if (!jsonObject.has("data")) {
                 Toast.makeText(context, "data不能为空", Toast.LENGTH_SHORT).show();
                 return;
@@ -181,8 +183,11 @@ public class EUExImage extends EUExBase {
                         obj.put("title", obj.optString("title"));
                         obj.put("desc", obj.optString("desc"));
                         if (obj.has("detailInfo")) {
-                            JSONObject detailInfo = obj.optJSONObject("detailInfo");
-                            obj.put("detailInfo", detailInfo);
+                            String info = obj.optString("detailInfo");
+                            if(!TextUtils.isEmpty(info) && !info.equals("null")){
+                                obj.put("detail_info", new JSONObject(info));
+                            }
+
                         }
                     }
                 }

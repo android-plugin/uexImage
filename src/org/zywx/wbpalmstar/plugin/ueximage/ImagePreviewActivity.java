@@ -339,11 +339,17 @@ public class ImagePreviewActivity extends Activity {
                 }
             }
             //如果没有传信息
-            if (detailInfo == null) {
-                swipeLayout.addDrag(SwipeLayout.DragEdge.Bottom, detail);
+            if(!EUEXImageConfig.getInstance().isShowDetail()){
                 container.addView(view);
                 return view;
+            }else{
+                if (detailInfo == null) {
+                    swipeLayout.addDrag(SwipeLayout.DragEdge.Bottom, detail);
+                    container.addView(view);
+                    return view;
+                }
             }
+
 
             Iterator iterator = detailInfo.keys();
             while (iterator.hasNext()) {

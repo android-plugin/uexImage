@@ -26,6 +26,8 @@ import org.json.JSONArray;
  */
 public class EUEXImageConfig {
     private volatile static EUEXImageConfig instance = null;
+    private boolean isShowDetail;
+
     public static EUEXImageConfig getInstance() {
         if (instance == null) {
             synchronized(CommonUtil.class) {
@@ -162,5 +164,13 @@ public class EUEXImageConfig {
 
     public void setIsOpenBrowser(boolean isOpenBrowser) {
         this.isOpenBrowser = isOpenBrowser;
+    }
+
+    public boolean isShowDetail() {
+        return isShowDetail;
+    }
+
+    public void setShowDetail(boolean isShowDetail) {
+        this.isShowDetail = isShowDetail;
     }
 }
