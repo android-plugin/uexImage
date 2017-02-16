@@ -166,7 +166,7 @@ if (UNIT_TEST) {
         },
         "compressImage":function () {
             var params = {
-                    srcPath : "/storage/emulated/0/DCIM/Camera/IMG_20161010_093830.jpg",
+                    srcPath : "wgts://Image/IMG_20161010_093830.jpg", //支持协议路径res:// 、wgt://、 wgts://、 file:// 等
                     desLength : 30*1024
             };
             var data = JSON.stringify(params);
@@ -179,6 +179,7 @@ if (UNIT_TEST) {
                     alert("error");
                 }
             });
+            UNIT_TEST.assert(true);
         }
     };
 
