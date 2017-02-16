@@ -2,47 +2,8 @@
 <uexplugins>
     <plugin
         uexName="uexImage" version="4.0.6" build="26">
-        <info>26:16.更改插件缓存图片路径；修改插件选择图片时，不显示缓存图片。
-            17.修复显示大图出错的问题。
-            18.修复压缩图片在主线程执行引起应用卡死的问题。
-            19.修复显示文件夹列表OOM的问题。</info>
-        <build>26:9.修复不选图片按完成键无提示的问题。
-            10.修复插件Touch事件透传的网页的问题。
-            11.添加图片压缩接口compressImage。
-            12.修复压缩回调路径无扩展名的问题。
-            13.修复不传参全屏模式时不适配x5内核问题
-            14.优化对网页scale的处理逻辑。</build>
-        <build>26:1.根据微信样式优化UI效果;添加长按图片的回调。
-            2.修复插件包资源引起的打不开界面的问题。
-            5.插件支持国际化。
-            6.修复插件崩溃、拦截返回键等问题。
-            7.修复单图浏览背景色偶尔半透明的问题,以及picker功能的回调、完成、关闭界面等顺序逻辑，修复个别手机选图崩溃问题。
-            8.修复大图选择时点击图片中心会触发完成操作的bug</build>
-        <build>25: (依赖引擎4.0.1)图片自动滚动到最新</build>
-        <build>24: 引入ACEImageLoader解决ImageLoader未配置导致的crash问题, 依赖4.0.1版本引擎</build>
-        <build>23: 修复usePng 为true时 不能保存图片的bug</build>
-        <build>22: 支持矩形任意区域裁剪和显示大图</build>
-        <build>21: 图片按时间顺序排列，同时修复图片选取状态错误的bug</build>
-        <build>20: 图片预览时支持隐藏或显示标题和尾部</build>
-        <build>19:支持function传入</build>
-        <build>18:修改库的引入方式，移除aar</build>
-        <build>17:引入第三方裁剪库，解决方形裁剪问题</build>
-        <build>16:当进行图片方形裁剪时，固定图片的尺寸</build>
-        <build>15:优化选择图片时quality为1时的处理逻辑，防止图片质量会有细微差别</build>
-        <build>14:修复三星等机型Exif导致图片显示方向不正确的问题</build>
-        <build>13:优化图片选择器按照图片修改时间排序</build>
-        <build>12:更换图片加载中资源文件</build>
-        <build>11:优化图片剪裁功能，优化图片选择器倒序加载图片</build>
-        <build>10:针对保存图片到相册接口，修复开启增量更新时的res协议路径的bug</build>
-        <build>9:修复开启增量更新时的res协议路径的bug</build>
-        <build>8:修复单张图片在图片浏览器上title不正确的问题，优化裁剪后图片的命名</build>
-        <build>7:修复在华为GEM-730L上裁剪图片时显示为圆形的问题</build>
-        <build>6:优化图片目录加载慢，内存占用高，图片预览时的屏幕适配问题</build>
-        <build>5:更换头部的UI背景</build>
-        <build>4:修复在华为机型的图片裁剪闪退的问题，与iOS同步图片剪裁器</build>
-        <build>3:修复在某些机型上图片裁剪失败的问题</build>
-        <build>2:修复图片压缩质量错误问题</build>
-        <build>1:去掉插件中的ActivityGroup,配合引擎升级</build>
+        <info>26:(依赖引擎4.0.1)openCropper支持不传src,网络图片显示进度</info>
+        <build>25:(依赖引擎4.0.1)图片自动滚动到最新</build>
         <build>0:图片插件</build>
     </plugin>
 </uexplugins>

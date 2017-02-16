@@ -140,7 +140,7 @@ public class UEXImageUtil {
             String folderName = parentFile.getName();
             String dirPath = parentFile.getAbsolutePath();
             // 判断大图是否存在
-            if (file.exists()) {
+            if (file.exists()&&parentFile.exists()) {
                 // 判断文件夹是否已经存在
                 if (tempDir.contains(dirPath)) {
                     continue;

@@ -20,26 +20,27 @@ package org.zywx.wbpalmstar.plugin.ueximage;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Handler;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-
 import com.google.gson.reflect.TypeToken;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.zywx.wbpalmstar.base.ACEImageLoader;
-import org.zywx.wbpalmstar.base.BConstant;
 import org.zywx.wbpalmstar.base.BDebug;
 import org.zywx.wbpalmstar.base.BUtility;
 import org.zywx.wbpalmstar.engine.DataHelper;
@@ -55,6 +56,7 @@ import org.zywx.wbpalmstar.plugin.ueximage.util.DataParser;
 import org.zywx.wbpalmstar.plugin.ueximage.util.EUEXImageConfig;
 import org.zywx.wbpalmstar.plugin.ueximage.util.UEXImageUtil;
 import org.zywx.wbpalmstar.plugin.ueximage.vo.CompressImageVO;
+import org.zywx.wbpalmstar.plugin.ueximage.vo.OpenCropperVO;
 import org.zywx.wbpalmstar.plugin.ueximage.vo.ViewFrameVO;
 import org.zywx.wbpalmstar.plugin.ueximage.widget.LabelView;
 import org.zywx.wbpalmstar.plugin.ueximage.widget.LabelViewContainer;
@@ -70,7 +72,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class EUExImage extends EUExBase {
     private static final String TAG = "EUExImage";
-
+    private static final int REQUEST_CHOOSE_IMAGE=100;
     private double cropQuality = 0.5;
     private boolean cropUsePng = false;
     // 当前Android只支持方型裁剪, 即cropMode为1
@@ -86,6 +88,8 @@ public class EUExImage extends EUExBase {
     private String openCropperId;
     private String compressImageFunCbId = "";
     private RelativeLayout labelViewContainer;
+
+    private OpenCropperVO tempOpenCropperVO;//临时保存crop相关参数
 
     /**
      * 保存添加到网页的view
@@ -497,84 +501,76 @@ public class EUExImage extends EUExBase {
         if (params.length == 2) {
             openCropperId = params[1];
         }
-        String src = "";
-        String srcPath = "";
-        try {
-            JSONObject jsonObject = new JSONObject(json);
-            if (!jsonObject.has("src")
-                    || TextUtils.isEmpty(jsonObject.getString("src"))) {
-                Toast.makeText(context,
-                        EUExUtil.getString("plugin_uex_image_src_cannot_null"),
-                        Toast.LENGTH_SHORT).show();
-                return;
-            }
-            src = jsonObject.getString("src");
-            srcPath = BUtility.makeRealPath(
-                    BUtility.makeUrl(mBrwView.getCurrentUrl(), src),
-                    mBrwView.getCurrentWidget().m_widgetPath,
-                    mBrwView.getCurrentWidget().m_wgtType);
-            if (jsonObject.has("quality")) {
-                double qualityParam = jsonObject.getDouble("quality");
-                if (qualityParam < 0 || qualityParam > 1) {
-                    Toast.makeText(context,
-                            EUExUtil.getString(
-                                    "plugin_uex_image_quality_range"),
-                            Toast.LENGTH_SHORT).show();
-                } else {
-                    cropQuality = qualityParam;
-                }
-            }
-            if (jsonObject.has("usePng")) {
-                cropUsePng = jsonObject.getBoolean("usePng");
-            }
-            if (jsonObject.has("mode")) {
-                int i = jsonObject.getInt("mode");
-                cropMode = i;
-            }
-        } catch (JSONException e) {
-            if (BDebug.DEBUG) {
-                Log.i(TAG, e.getMessage());
-            }
-            Toast.makeText(context,
-                    EUExUtil.getString("plugin_uex_image_json_format_error"),
-                    Toast.LENGTH_SHORT).show();
+        OpenCropperVO openCropperVO=DataHelper.gson.fromJson(json,OpenCropperVO.class);
+        if (!TextUtils.isEmpty(openCropperVO.src)){
+            //开始裁剪
+            cropImage(openCropperVO);
+        }else{
+            //选取照片后裁剪
+            tempOpenCropperVO=openCropperVO;
+            chooseImageInGallery();
         }
-        File file;
-        // 先将assets文件写入到临时文件夹中
-        if (src.startsWith(BUtility.F_Widget_RES_SCHEMA)) {
-            String fileName = ".png";
-            if (!src.endsWith("PNG") && !src.endsWith("png")) {
-                fileName = ".jpg";
-            }
-            // 为res对应的文件生成一个临时文件到系统中
-            File destFile = new File(UEXImageUtil.getImageCacheDir(mContext)
-                    + File.separator + "crop_res_temp" + fileName);
-            try {
-                destFile.deleteOnExit();
-                destFile.createNewFile();
-            } catch (IOException e) {
+
+    }
+
+    private void cropImage(OpenCropperVO cropperVO) {
+        String src = cropperVO.src;
+        String srcPath = BUtility.getRealPathWithCopyRes(mBrwView,src);
+        if (cropperVO.quality!=0) {
+            double qualityParam = cropperVO.quality;
+            if (qualityParam < 0 || qualityParam > 1) {
                 Toast.makeText(context,
-                        EUExUtil.getString("plugin_uex_image_system_error"),
+                        EUExUtil.getString(
+                                "plugin_uex_image_quality_range"),
                         Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (srcPath.startsWith("/data")) {
-                CommonUtil.copyFile(new File(srcPath), destFile);
-                file = destFile;
-            } else if (CommonUtil.saveFileFromAssetsToSystem(context, srcPath,
-                    destFile)) {
-                file = destFile;
             } else {
-                Toast.makeText(context,
-                        EUExUtil.getString("plugin_uex_image_system_error"),
-                        Toast.LENGTH_SHORT).show();
-                return;
+                cropQuality = qualityParam;
             }
-        } else {
-            file = new File(srcPath);
         }
+        cropUsePng = cropperVO.usePng;
+        cropMode = cropperVO.mode;
+        File file = new File(srcPath);
         updateGallery(file.getAbsolutePath());
         performCrop(file);
+    }
+
+    private void chooseImageInGallery(){
+        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, REQUEST_CHOOSE_IMAGE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        BDebug.d("requestCode",requestCode);
+        if (requestCode==REQUEST_CHOOSE_IMAGE){
+            if (resultCode==Activity.RESULT_OK){
+                Uri selectedImage = data.getData();
+                String[] filePathColumn = { MediaStore.Images.Media.DATA };
+                Cursor cursor = mContext.getContentResolver().query(selectedImage,
+                        filePathColumn, null, null, null);
+                cursor.moveToFirst();
+
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                String picturePath = cursor.getString(columnIndex);
+                cursor.close();
+                tempOpenCropperVO.src=picturePath;
+
+                //引擎对onActivityResult 处理有点问题，此处用handler 异步处理来绕过
+                new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        cropImage(tempOpenCropperVO);
+                    }
+                });
+            }else{
+                if (!TextUtils.isEmpty(openCropperId)) {
+                    callbackToJs(Integer.parseInt(openCropperId), false, -1, "用户取消选择图片");
+                }
+            }
+        }else if (requestCode == Constants.REQUEST_CROP) {
+            cropCallBack(resultCode);
+        }
+        super.onActivityResult(requestCode,resultCode,data);
     }
 
     public void compressImage(String[] params) {
@@ -618,8 +614,6 @@ public class EUExImage extends EUExBase {
                 crop.withAspect(16, 9);
             }
             crop.start((Activity) mContext);
-            Crop.of(Uri.fromFile(imageFile), destination, cropQuality,
-                    cropUsePng).start((Activity) mContext);
         } catch (Exception exception) {
             Toast.makeText(context,
                     EUExUtil.getString("plugin_uex_image_not_support_crop"),

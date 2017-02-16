@@ -26,6 +26,7 @@ import android.os.Handler;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import org.zywx.wbpalmstar.base.BDebug;
 
 import java.io.Closeable;
 import java.io.File;
@@ -67,7 +68,7 @@ class CropUtil {
                     return ExifInterface.ORIENTATION_UNDEFINED;
             }
         } catch (IOException e) {
-            Log.e("Error getting Exif data", e);
+            BDebug.e("Error getting Exif data", e.getMessage());
             return 0;
         }
     }
@@ -81,7 +82,7 @@ class CropUtil {
             exifDest.saveAttributes();
             return true;
         } catch (IOException e) {
-            Log.e("Error copying Exif data", e);
+            BDebug.e("Error copying Exif data", e);
             return false;
         }
     }

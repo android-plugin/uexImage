@@ -41,12 +41,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ace.universalimageloader.core.DisplayImageOptions;
+import com.ace.universalimageloader.core.ImageLoader;
+import com.ace.universalimageloader.core.assist.FailReason;
 import com.ace.universalimageloader.core.assist.ImageScaleType;
+import com.ace.universalimageloader.core.listener.ImageLoadingProgressListener;
+import com.ace.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import org.json.JSONArray;
 import org.zywx.wbpalmstar.base.ACEImageLoader;
 import org.zywx.wbpalmstar.base.BDebug;
 import org.zywx.wbpalmstar.base.BUtility;
+import org.zywx.wbpalmstar.engine.DataHelper;
 import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
 import org.zywx.wbpalmstar.plugin.ueximage.model.PictureInfo;
 import org.zywx.wbpalmstar.plugin.ueximage.util.CommonUtil;
@@ -54,6 +59,7 @@ import org.zywx.wbpalmstar.plugin.ueximage.util.Constants;
 import org.zywx.wbpalmstar.plugin.ueximage.util.EUEXImageConfig;
 import org.zywx.wbpalmstar.plugin.ueximage.util.UEXImageUtil;
 import org.zywx.wbpalmstar.plugin.ueximage.vo.ImageLongClickCBVO;
+import org.zywx.wbpalmstar.plugin.ueximage.widget.CirclePgBar;
 import org.zywx.wbpalmstar.plugin.ueximage.widget.PhotoView;
 
 import java.io.File;
@@ -84,6 +90,9 @@ public class ImagePreviewView extends ImageBaseView {
     private AlphaAnimation fadeInAnim;
     private AlphaAnimation fadeOutAnim;
     private ImageBaseView mImagePreviewActivity = null;
+
+    private CirclePgBar mProgressView;
+
     /** *单张浏览模式下，3s没有任何操作，隐藏切换到Grid浏览模式的ImageView */
     private static Handler hideIvToGridHandler = new Handler() {
         @Override
@@ -128,7 +137,7 @@ public class ImagePreviewView extends ImageBaseView {
         }
 
         @Override
-        public Object instantiateItem(ViewGroup container, int position) {
+        public Object instantiateItem(ViewGroup container, final int position) {
 
             final PhotoView imageView = new PhotoView(mContext);
             ViewPager.LayoutParams layoutParams = new ViewPager.LayoutParams();
@@ -149,6 +158,7 @@ public class ImagePreviewView extends ImageBaseView {
                 builder.imageScaleType(ImageScaleType.EXACTLY);
                 builder.bitmapConfig(Bitmap.Config.RGB_565);
             }
+            builder.cacheOnDisk(true);
             DisplayImageOptions options = builder.build();
             final String src = picList.get(position).getSrc();
             if (!isOpenBrowser) {
@@ -157,7 +167,39 @@ public class ImagePreviewView extends ImageBaseView {
             } else {// 浏览图片：对于传入的图片的加载
                 if (src.substring(0, 4).equalsIgnoreCase(Constants.HTTP)) {
                     // 如果是从网上下载图片，需要将下载后的图片存到缓存中
-                    ACEImageLoader.getInstance().displayImageWithOptions(src,
+                    ACEImageLoader.getInstance();
+                    ImageLoader.getInstance().displayImage(src, imageView, options, new SimpleImageLoadingListener() {
+                        @Override
+                        public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                            super.onLoadingComplete(imageUri, view, loadedImage);
+                            picList.get(position).progress=-1;
+                        }
+
+                        @Override
+                        public void onLoadingCancelled(String imageUri, View view) {
+                            super.onLoadingCancelled(imageUri, view);
+                            picList.get(position).progress=-1;
+                        }
+
+                        @Override
+                        public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+                            super.onLoadingFailed(imageUri, view, failReason);
+                            picList.get(position).progress=-1;
+                        }
+                    }, new ImageLoadingProgressListener() {
+                        @Override
+                        public void onProgressUpdate(String s, View view, int current, int total) {
+                            int progress=current*100/total;
+                            picList.get(position).progress=progress;
+                            BDebug.d(progress);
+                            if (viewPager.getCurrentItem()==position&&progress!=100) {
+                                showProgress(progress);
+                            }else{
+                                cancelProgress();
+                            }
+                        }
+                    });
+                       ACEImageLoader.getInstance().displayImageWithOptions(src,
                             imageView, options);
                 } else {
                     Bitmap bitmap = CommonUtil
@@ -165,14 +207,14 @@ public class ImagePreviewView extends ImageBaseView {
                     imageView.setImageBitmap(bitmap);
                 }
             }
-            imageView.setOnClickListener(imageClickListener);
+             imageView.setOnClickListener(imageClickListener);
             imageView.setOnLongClickListener(new OnLongClickListener() {
 
                 @Override
                 public boolean onLongClick(View v) {
                     ImageLongClickCBVO cbVO = new ImageLongClickCBVO();
                     cbVO.setImagePath(src);
-                    mEUExImage.onImageLongClick(cbVO.toStr());
+                    mEUExImage.onImageLongClick(DataHelper.gson.toJson(cbVO));
                     return false;
                 }
             });
@@ -208,6 +250,28 @@ public class ImagePreviewView extends ImageBaseView {
             }
         }
     };
+
+    private void showProgress(int progress){
+        if (progress==-1){
+            cancelProgress();
+            return;
+        }
+        if (mProgressView==null){
+            mProgressView=new CirclePgBar(mContext);
+            RelativeLayout.LayoutParams layoutParams=new RelativeLayout.LayoutParams(EUExUtil.dipToPixels(60), EUExUtil
+                    .dipToPixels(60));
+            layoutParams.addRule(CENTER_IN_PARENT,TRUE);
+            addView(mProgressView,layoutParams);
+        }
+        mProgressView.setProgress(progress);
+    }
+
+    private void cancelProgress(){
+        if (mProgressView!=null){
+            removeView(mProgressView);
+            mProgressView=null;
+        }
+    }
 
     /**
      * @param context
@@ -514,6 +578,7 @@ public class ImagePreviewView extends ImageBaseView {
                         checkedItems.contains(picList.get(i).getSrc()));
             }
             setImageTitle();
+            showProgress(picList.get(i).progress);
         }
 
         @Override
