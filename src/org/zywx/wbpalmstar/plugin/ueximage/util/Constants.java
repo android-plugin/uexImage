@@ -92,6 +92,6 @@ public class Constants {
     // 图片临时保存的位置
     public static final String TEMP_PATH = "uex_image_temp";
     public static final String NO_MEDIA = ".nomedia";
-    public static final int ERROR_CODE_SUCCESS = 1;
-    public static final int ERROR_CODE_FAIL = 0;
+    public static final int ERROR_CODE_SUCCESS = 0;
+    public static final int ERROR_CODE_FAIL = 1;
 }
