@@ -379,7 +379,7 @@ public class UEXImageUtil {
     private static float getWebScale(EBrowserView mBrwView) {
         float scale = 1.0f;
         try {
-            Method gatScale = EBrowserView.class.getMethod("getCustomScale",
+            Method gatScale = EBrowserView.class.getMethod("getScaleWrap",
                     new Class[0]);
             try {
                 scale = (Float) gatScale.invoke(mBrwView, new Object[]{});
