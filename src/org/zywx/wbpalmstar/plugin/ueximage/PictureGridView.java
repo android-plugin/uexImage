@@ -36,8 +36,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ace.universalimageloader.core.DisplayImageOptions;
+import com.ace.universalimageloader.core.ImageLoader;
 import com.ace.universalimageloader.core.assist.ImageScaleType;
 import com.ace.universalimageloader.core.display.SimpleBitmapDisplayer;
+import com.ace.universalimageloader.core.imageaware.ImageAware;
+import com.ace.universalimageloader.core.imageaware.ImageViewAware;
 import com.ace.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import org.json.JSONArray;
@@ -250,11 +253,11 @@ public class PictureGridView extends ImageBaseView {
                 viewHolder = (ViewHolder) convertView.getTag();
             }
             final ImageView imageView = viewHolder.imageView;
+            ImageAware imageAware = new ImageViewAware(imageView, false);
             PictureInfo pictureInfo = paths.get(i);
-            final ViewHolder tempViewHolder = viewHolder;
             if (!isOpenBrowser) {
-                ACEImageLoader.getInstance().displayImageWithOptions(
-                        pictureInfo.getSrc(), viewHolder.imageView, options,
+                ImageLoader.getInstance().displayImage(
+                        pictureInfo.getSrc(), imageAware, options,
                         loadingListener);
                 viewHolder.checkBox.setTag(pictureInfo.getSrc());
                 viewHolder.checkBox.setChecked(
@@ -265,8 +268,8 @@ public class PictureGridView extends ImageBaseView {
                     url = pictureInfo.getThumb();
                 }
                 if (url.substring(0, 4).equalsIgnoreCase(Constants.HTTP)) {
-                    ACEImageLoader.getInstance().displayImageWithOptions(url,
-                            viewHolder.imageView, options);
+                    ImageLoader.getInstance().displayImage(url,
+                            imageAware, options);
                 } else {
                     Bitmap bitmap = CommonUtil
                             .getLocalImage(mContext, url);
