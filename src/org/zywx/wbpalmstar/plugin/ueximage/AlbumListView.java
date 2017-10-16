@@ -31,8 +31,11 @@ import org.zywx.wbpalmstar.plugin.ueximage.util.EUEXImageConfig;
 import org.zywx.wbpalmstar.plugin.ueximage.util.UEXImageUtil;
 
 import com.ace.universalimageloader.core.DisplayImageOptions;
+import com.ace.universalimageloader.core.ImageLoader;
 import com.ace.universalimageloader.core.assist.ImageScaleType;
 import com.ace.universalimageloader.core.display.SimpleBitmapDisplayer;
+import com.ace.universalimageloader.core.imageaware.ImageAware;
+import com.ace.universalimageloader.core.imageaware.ImageViewAware;
 
 import android.app.Activity;
 import android.content.Context;
@@ -247,9 +250,11 @@ public class AlbumListView extends ImageBaseView implements Serializable {
             viewHolder.textView.setText(pictureFolder.getFolderName() + "("
                     + pictureFolder.getCount() + ")");
             if (pictureFolder.getCount() > 0) {
-                ACEImageLoader.getInstance().displayImageWithOptions(
-                        pictureFolder.getFirstImagePath(), viewHolder.imageView,
-                        options, null, null);
+                ImageAware imageAware = new ImageViewAware(viewHolder.imageView,
+                        false);
+                ImageLoader.getInstance().displayImage(
+                        pictureFolder.getFirstImagePath(), imageAware, options,
+                        null, null);
             }
             return convertView;
         }

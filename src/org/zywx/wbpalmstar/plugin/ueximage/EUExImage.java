@@ -114,6 +114,7 @@ public class EUExImage extends EUExBase {
                 e.printStackTrace();
             }
         }
+        CommonUtil.initImageLoader(context);
         uexImageUtil = UEXImageUtil.getInstance();
         mImageAgent = ImageAgent.getInstance();
     }

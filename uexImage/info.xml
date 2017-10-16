@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
     <plugin
-        uexName="uexImage" version="4.0.7" build="27">
-        <info>27:修复样式错乱的问题</info>
+        uexName="uexImage" version="4.0.8" build="28">
+        <info>28:修复图片列表内存溢出问题</info>
+        <build>27:修复样式错乱的问题</build>
         <build>26:(依赖引擎4.0.1)openCropper支持不传src,网络图片显示进度</build>
         <build>25:(依赖引擎4.0.1)图片自动滚动到最新</build>
         <build>0:图片插件</build>
