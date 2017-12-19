@@ -66,11 +66,11 @@ public class ImageBaseView extends RelativeLayout {
      *            添加默认值Activity.RESULT_CANCELED。
      */
     protected void finish(String viewTag, int resultCode) {
-        if (mViewEvent != null) {
-            mViewEvent.resultCallBack(mRequestCode, resultCode);
-        }
         if (mEUExImage != null) {
             mEUExImage.removeViewFromCurWindow(viewTag);
+        }
+        if (mViewEvent != null) {
+            mViewEvent.resultCallBack(mRequestCode, resultCode);
         }
     }
 
