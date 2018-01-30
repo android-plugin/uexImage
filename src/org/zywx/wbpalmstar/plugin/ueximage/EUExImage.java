@@ -776,6 +776,7 @@ public class EUExImage extends EUExBase {
                 // 获取文件名
                 String fileName = path.replace(BUtility.F_Widget_RES_SCHEMA,
                         "");
+                fileName = System.currentTimeMillis() + fileName;//文件名加时间戳前缀，防止重名文件无法加入相册
                 String dcimPath = Environment.getExternalStorageDirectory()
                         + File.separator + Environment.DIRECTORY_DCIM
                         + File.separator;
@@ -810,6 +811,7 @@ public class EUExImage extends EUExBase {
             } else {// 如果傳的是別的路徑，也復制一份吧。
                 File fromFile = new File(realPath);
                 String fileName = fromFile.getName();
+                fileName = System.currentTimeMillis() + fileName;//文件名加时间戳前缀，防止重名文件无法加入相册
 
                 String dcimPath = Environment.getExternalStorageDirectory()
                         + File.separator + Environment.DIRECTORY_DCIM
