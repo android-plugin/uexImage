@@ -63,8 +63,16 @@ public class ImageAgent {
                 if (picW <= desW && picH <= desH) {
                     size = 1;
                 } else {
-                    double scale = (picW >= picH) ? (picW / desW)
-                            : (picH / desH);
+                    double scale;
+                    if(desH>desW) {
+                        scale = (picW >= picH) ? (picW / desH)
+                                : (picH / desH);
+                    }else {
+                        scale = (picW >= picH) ? (picW / desW)
+                                : (picH / desW);
+                    }
+//                    scale = (picW >= picH) ? (picW / desW)
+//                                : (picH / desH);
                     size = UEXImageUtil.getInSampleSize(scale);
                 }
                 opts.inSampleSize = size;

@@ -455,9 +455,20 @@ public class UEXImageUtil {
                 mPicSizeVO = new PicSizeVO(Constants.HEIGHT_100K,
                         Constants.WIDTH_100K);
                 break;
+            case Constants.DES_FILE_LENGTH_200K:
+                mPicSizeVO = new PicSizeVO(Constants.HEIGHT_200K,
+                        Constants.WIDTH_200K);
+                break;
+            case Constants.DES_FILE_LENGTH_300K:
+                mPicSizeVO = new PicSizeVO(Constants.HEIGHT_300K,
+                        Constants.WIDTH_300K);
+                break;
+            case Constants.DES_FILE_LENGTH_500K:
+                mPicSizeVO = new PicSizeVO(Constants.HEIGHT_500K,
+                        Constants.WIDTH_500K);
             default:
-                mPicSizeVO = new PicSizeVO(Constants.HEIGHT_30K,
-                        Constants.WIDTH_30K);
+                mPicSizeVO = new PicSizeVO(Constants.HEIGHT_300K,
+                        Constants.WIDTH_300K);
                 break;
         }
         return mPicSizeVO;
