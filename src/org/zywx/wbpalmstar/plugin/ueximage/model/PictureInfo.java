@@ -27,8 +27,15 @@ public class PictureInfo {
     private String desc;
 	private long lastModified;
     private boolean showBigPic;
-
     public int progress=-1;
+
+    public int getProgress() {
+        return progress;
+    }
+
+    public void setProgress(int progress) {
+        this.progress = progress;
+    }
 
     public String getSrc() {
         return src;

@@ -36,7 +36,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+
 import com.google.gson.reflect.TypeToken;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,6 +51,8 @@ import org.zywx.wbpalmstar.engine.universalex.EUExBase;
 import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
 import org.zywx.wbpalmstar.plugin.ueximage.ImageBaseView.ViewEvent;
 import org.zywx.wbpalmstar.plugin.ueximage.crop.Crop;
+import org.zywx.wbpalmstar.plugin.ueximage.deletebrowser.PreviewDetailActivity;
+import org.zywx.wbpalmstar.plugin.ueximage.deletebrowser.Previewdelete;
 import org.zywx.wbpalmstar.plugin.ueximage.model.LabelInfo;
 import org.zywx.wbpalmstar.plugin.ueximage.util.CommonUtil;
 import org.zywx.wbpalmstar.plugin.ueximage.util.Constants;
@@ -90,16 +94,21 @@ public class EUExImage extends EUExBase {
     private RelativeLayout labelViewContainer;
 
     private OpenCropperVO tempOpenCropperVO;//临时保存crop相关参数
+    private boolean browse;
 
     /**
      * 保存添加到网页的view
      */
     private static ConcurrentHashMap<String, View> addToWebViewsMap = new ConcurrentHashMap<String, View>();
     private ImageAgent mImageAgent = null;
+    public static  Previewdelete previewdelete;
+
 
     public EUExImage(Context context, EBrowserView eBrowserView) {
         super(context, eBrowserView);
         this.context = context;
+        initDelete();
+
         // 创建缓存文件夹
         File f = new File(UEXImageUtil.getImageCacheDir(context));
         if (!f.exists()) {
@@ -117,6 +126,8 @@ public class EUExImage extends EUExBase {
         CommonUtil.initImageLoader(context);
         uexImageUtil = UEXImageUtil.getInstance();
         mImageAgent = ImageAgent.getInstance();
+
+
     }
 
     @Override
@@ -159,6 +170,7 @@ public class EUExImage extends EUExBase {
             }
             EUEXImageConfig.getInstance().setIsOpenBrowser(false);
             setUIConfigExtend(jsonObject);
+
             View albumListView = new AlbumListView(mContext, this,
                     Constants.REQUEST_IMAGE_PICKER, new ViewEvent() {
 
@@ -178,6 +190,7 @@ public class EUExImage extends EUExBase {
                     EUExUtil.getString("plugin_uex_image_json_format_error"),
                     Toast.LENGTH_SHORT).show();
         }
+
     }
 
     private void setUIConfigExtend(JSONObject jsonObject) {
@@ -301,20 +314,31 @@ public class EUExImage extends EUExBase {
                     public void resultCallBack(int requestCode,
                                                int resultCode) {
                         callbackPickerResult(requestCode, resultCode);
+
                     }
                 });
                 viewFrameVO = config.getPicGridFrame();
             } else {
-                viewTag = ImagePreviewView.TAG;
-                imagePreviewView = new ImagePreviewView(context, this, "",
-                        0, Constants.REQUEST_IMAGE_BROWSER, new ViewEvent() {
-                    @Override
-                    public void resultCallBack(int requestCode,
-                                               int resultCode) {
-                        callbackPickerResult(requestCode, resultCode);
+                if (jsonObject.has("judgeDelete")){
+                    String judge = jsonObject.getString("judgeDelete");
+                    if (judge.equals("1")){
+                        Intent intent=new Intent(mContext, PreviewDetailActivity.class);
+                        startActivity(intent);
                     }
-                });
-                viewFrameVO = config.getPicPreviewFrame();
+                }else {
+                    viewTag = ImagePreviewView.TAG;
+                    imagePreviewView = new ImagePreviewView(context, this, "",
+                            0, Constants.REQUEST_IMAGE_BROWSER, new ViewEvent() {
+                        @Override
+                        public void resultCallBack(int requestCode,
+                                                   int resultCode) {
+                            callbackPickerResult(requestCode, resultCode);
+                        }
+                    });
+                    viewFrameVO = config.getPicPreviewFrame();
+                }
+
+
             }
             addViewToCurrentWindow(imagePreviewView, viewTag, viewFrameVO);
         } catch (JSONException e) {
@@ -499,13 +523,14 @@ public class EUExImage extends EUExBase {
             return;
         }
         String json = params[0];
+
         if (params.length == 2) {
             openCropperId = params[1];
         }
         OpenCropperVO openCropperVO=DataHelper.gson.fromJson(json,OpenCropperVO.class);
         if (!TextUtils.isEmpty(openCropperVO.src)){
             //开始裁剪
-            cropImage(openCropperVO);
+          cropImage(openCropperVO);
         }else{
             //选取照片后裁剪
             tempOpenCropperVO=openCropperVO;
@@ -513,6 +538,8 @@ public class EUExImage extends EUExBase {
         }
 
     }
+
+
 
     private void cropImage(OpenCropperVO cropperVO) {
         String src = cropperVO.src;
@@ -533,7 +560,13 @@ public class EUExImage extends EUExBase {
         File file = new File(srcPath);
         updateGallery(file.getAbsolutePath());
         performCrop(file);
+
     }
+
+
+
+
+
 
     private void chooseImageInGallery(){
         Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -595,11 +628,10 @@ public class EUExImage extends EUExBase {
             String fileName = null;
             Long time = new Date().getTime();
             if (cropUsePng) {
-                fileName = "crop_temp_" + time + ".png";
+           fileName = "crop_temp_" + time + ".png";
             } else {
                 fileName = "crop_temp_" + time + ".jpg";
             }
-
             cropOutput = new File(UEXImageUtil.getImageCacheDir(mContext)
                     + File.separator + fileName);
             cropOutput.createNewFile();
@@ -614,6 +646,7 @@ public class EUExImage extends EUExBase {
             } else if (cropMode == 5) {
                 crop.withAspect(16, 9);
             }
+
             crop.start((Activity) mContext);
         } catch (Exception exception) {
             Toast.makeText(context,
@@ -910,5 +943,23 @@ public class EUExImage extends EUExBase {
                 + "('" + jsonData + "');}";
         onCallback(js);
     }
+
+          public  void  initDelete(){
+//        if (previewdelete !=null){
+//            return;
+//        }
+         previewdelete = new Previewdelete() {
+                @Override
+              public void cbDelete(String str) {
+                    callBackPluginJs(JsConst.PREVIEW_DELETE,str);
+                }
+            };
+
+    }
+
+
+
+
+
 
 }

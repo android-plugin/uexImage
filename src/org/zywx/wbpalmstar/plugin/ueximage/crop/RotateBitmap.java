@@ -59,7 +59,7 @@ class RotateBitmap {
             int cy = bitmap.getHeight() / 2;
             matrix.preTranslate(-cx, -cy);
             matrix.postRotate(rotation);
-            matrix.postTranslate(getWidth() / 2, getHeight() / 2);
+            matrix.postTranslate(getWidth() / 2  , getHeight()/ 2);
         }
         return matrix;
     }

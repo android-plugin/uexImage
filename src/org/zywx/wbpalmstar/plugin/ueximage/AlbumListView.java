@@ -18,28 +18,10 @@
  */
 package org.zywx.wbpalmstar.plugin.ueximage;
 
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
-import org.zywx.wbpalmstar.base.ACEImageLoader;
-import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
-import org.zywx.wbpalmstar.plugin.ueximage.model.PictureFolder;
-import org.zywx.wbpalmstar.plugin.ueximage.util.Constants;
-import org.zywx.wbpalmstar.plugin.ueximage.util.EUEXImageConfig;
-import org.zywx.wbpalmstar.plugin.ueximage.util.UEXImageUtil;
-
-import com.ace.universalimageloader.core.DisplayImageOptions;
-import com.ace.universalimageloader.core.ImageLoader;
-import com.ace.universalimageloader.core.assist.ImageScaleType;
-import com.ace.universalimageloader.core.display.SimpleBitmapDisplayer;
-import com.ace.universalimageloader.core.imageaware.ImageAware;
-import com.ace.universalimageloader.core.imageaware.ImageViewAware;
-
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,6 +34,24 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.ace.universalimageloader.core.DisplayImageOptions;
+import com.ace.universalimageloader.core.ImageLoader;
+import com.ace.universalimageloader.core.assist.ImageScaleType;
+import com.ace.universalimageloader.core.display.SimpleBitmapDisplayer;
+import com.ace.universalimageloader.core.imageaware.ImageAware;
+import com.ace.universalimageloader.core.imageaware.ImageViewAware;
+
+import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
+import org.zywx.wbpalmstar.plugin.ueximage.model.PictureFolder;
+import org.zywx.wbpalmstar.plugin.ueximage.util.Constants;
+import org.zywx.wbpalmstar.plugin.ueximage.util.EUEXImageConfig;
+import org.zywx.wbpalmstar.plugin.ueximage.util.UEXImageUtil;
+
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class AlbumListView extends ImageBaseView implements Serializable {
 
@@ -104,6 +104,7 @@ public class AlbumListView extends ImageBaseView implements Serializable {
                         startPictureGridView(context, mEuExImage,
                                 pictureFolders.get(i).getFolderPath(),
                                 Constants.REQUEST_IMAGE_PICKER);
+                        Log.e("111","www");
                     }
                 });
     }

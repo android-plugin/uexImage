@@ -1,0 +1,56 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+      <android.support.v4.view.ViewPager
+          android:id="@+id/viewpager"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:background="#000000"
+          />
+
+      <include android:id="@+id/title_layout" layout="@layout/plugin_uex_image_common_title" />
+      <RelativeLayout
+          android:id="@+id/rl_bottom"
+          android:layout_alignParentBottom="true"
+          android:layout_width="match_parent"
+          android:layout_height="45dp"
+          android:background="#2E3334"
+          android:gravity="center_vertical"
+          >
+            <TextView
+                android:id="@+id/tv_to_grid"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="列表"
+                android:textSize="18sp"
+                android:textColor="#ffffff"
+                android:layout_marginLeft="16dp"
+                android:layout_alignBaseline="@+id/checkbox"
+
+                />
+            <CheckBox
+                android:id="@+id/checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/plugin_uex_image_picker_checkbox"
+                android:button="@null"
+                android:checked="false"
+                android:focusable="false"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@+id/tv_checkbox"
+                />
+            <TextView
+                android:id="@+id/tv_checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="选择"
+                android:textSize="18sp"
+                android:textColor="#ffffff"
+                android:layout_marginRight="10dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignBaseline="@id/checkbox"
+                />
+
+      </RelativeLayout>
+</RelativeLayout>

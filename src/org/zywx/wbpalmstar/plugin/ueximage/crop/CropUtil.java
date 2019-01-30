@@ -26,6 +26,8 @@ import android.os.Handler;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Log;
+
 import org.zywx.wbpalmstar.base.BDebug;
 
 import java.io.Closeable;
@@ -38,10 +40,12 @@ import java.io.IOException;
 /*
  * Modified from original in AOSP.
  */
-class CropUtil {
+ public class CropUtil {
 
     private static final String SCHEME_FILE = "file";
     private static final String SCHEME_CONTENT = "content";
+
+
 
     public static void closeSilently(Closeable c) {
         if (c == null) return;
@@ -55,9 +59,11 @@ class CropUtil {
     public static int getExifRotation(File imageFile) {
         if (imageFile == null) return 0;
         try {
-            ExifInterface exif = new ExifInterface(imageFile.getAbsolutePath());
+             ExifInterface exif = new ExifInterface(imageFile.getAbsolutePath());
+            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+            Log.i("tag", "读取角度-" + orientation);
             // We only recognize a subset of orientation tag values
-            switch (exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED)) {
+            switch (orientation) {
                 case ExifInterface.ORIENTATION_ROTATE_90:
                     return 90;
                 case ExifInterface.ORIENTATION_ROTATE_180:
@@ -65,13 +71,16 @@ class CropUtil {
                 case ExifInterface.ORIENTATION_ROTATE_270:
                     return 270;
                 default:
-                    return ExifInterface.ORIENTATION_UNDEFINED;
+                  return ExifInterface.ORIENTATION_UNDEFINED;
             }
         } catch (IOException e) {
             BDebug.e("Error getting Exif data", e.getMessage());
             return 0;
         }
+
     }
+
+
 
     public static boolean copyExifRotation(File sourceFile, File destFile) {
         if (sourceFile == null || destFile == null) return false;

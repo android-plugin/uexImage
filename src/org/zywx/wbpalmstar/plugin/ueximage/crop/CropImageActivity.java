@@ -30,7 +30,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -75,6 +74,7 @@ public class CropImageActivity extends MonitoredActivity {
     private double cropQuality;
     private boolean cropUsePng;
     private ResoureFinder finder;
+
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -139,10 +139,11 @@ public class CropImageActivity extends MonitoredActivity {
             cropQuality = extras.getDouble(Crop.Extra.QUALITY);
             cropUsePng = extras.getBoolean(Crop.Extra.USE_PNG);
 
-
         }
 
         sourceUri = intent.getData();
+
+
         if (sourceUri != null) {
             exifRotation = CropUtil.getExifRotation(CropUtil.getFromMediaUri(this, getContentResolver(), sourceUri));
 
@@ -152,7 +153,7 @@ public class CropImageActivity extends MonitoredActivity {
                 is = getContentResolver().openInputStream(sourceUri);
                 BitmapFactory.Options option = new BitmapFactory.Options();
                 option.inSampleSize = sampleSize;
-                rotateBitmap = new RotateBitmap(BitmapFactory.decodeStream(is, null, option), exifRotation);
+                rotateBitmap = new RotateBitmap( BitmapFactory.decodeStream(is, null, option), exifRotation);
             } catch (IOException e) {
                 BDebug.e("Error reading image: " , e.getMessage());
                 setResultException(e);
