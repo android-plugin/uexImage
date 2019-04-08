@@ -163,7 +163,7 @@ public class ImagePreviewView extends ImageBaseView {
             final String src = picList.get(position).getSrc();
             if (!isOpenBrowser) {
                 ACEImageLoader.getInstance().displayImageWithOptions(src,
-                        imageView, options);
+                        imageView, true);
             } else {// 浏览图片：对于传入的图片的加载
                 if (src.substring(0, 4).equalsIgnoreCase(Constants.HTTP)) {
                     // 如果是从网上下载图片，需要将下载后的图片存到缓存中
@@ -200,7 +200,7 @@ public class ImagePreviewView extends ImageBaseView {
                         }
                     });
                        ACEImageLoader.getInstance().displayImageWithOptions(src,
-                            imageView, options);
+                            imageView, true);
                 } else {
                     Bitmap bitmap = CommonUtil
                             .getLocalImage(mContext, src);
