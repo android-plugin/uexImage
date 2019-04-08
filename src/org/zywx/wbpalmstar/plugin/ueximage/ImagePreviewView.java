@@ -470,6 +470,7 @@ public class ImagePreviewView extends ImageBaseView {
                             shareIntent.putExtra(Intent.EXTRA_STREAM,
                                     Uri.fromFile(file));
                             shareIntent.setType("image/*");
+                            context.startActivity(Intent.createChooser(shareIntent, "分享到"));
                         } else {
                             Toast.makeText(context,
                                     EUExUtil.getString(

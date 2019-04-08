@@ -62,4 +62,6 @@ android {
 
 }
 
-apply from: "https://raw.githubusercontent.com/android-plugin/gradle-plugin/master/buildPlugin.gradle"
+
+//apply from: "https://raw.githubusercontent.com/android-plugin/gradle-plugin/master/buildPlugin.gradle"
+apply from: "buildPlugin.gradle"
