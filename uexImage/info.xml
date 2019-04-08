@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
     <plugin
-        uexName="uexImage" version="4.0.12" build="30">
-        <info>32:修改openBrowser接口分享没有反应问题</info>
-        <build>31:修改compressImage逻辑，图片压缩过于模糊</build>
+        uexName="uexImage" version="4.0.14" build="34">
+        <info>34:修改openBrowser接口分享没有反应问题</info>
+        <build>33:修改compressImage逻辑，图片压缩过于模糊</build>
+        <build>32:查看图片旋转角度不对问题</build>
+        <build>31:发表工作圈,上传多张图片,无法删除,也无法预览大图</build>
         <build>30:修改saveToPhotoAlbum逻辑，使文件名加时间戳防止文件重名而保存失败</build>
         <build>29:修复7.0以上版本影响键盘弹出问题</build>
         <build>28:修复图片列表内存溢出问题</build>

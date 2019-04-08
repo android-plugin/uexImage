@@ -138,8 +138,7 @@ public class ImagePreviewView extends ImageBaseView {
 
         @Override
         public Object instantiateItem(ViewGroup container, final int position) {
-
-            final PhotoView imageView = new PhotoView(mContext);
+            PhotoView imageView = new PhotoView(mContext);
             ViewPager.LayoutParams layoutParams = new ViewPager.LayoutParams();
             layoutParams.height = container.getMeasuredHeight();
             layoutParams.width = container.getMeasuredWidth();
@@ -331,9 +330,16 @@ public class ImagePreviewView extends ImageBaseView {
             picList = uexImageUtil.transformData(imageDataArray);
             picIndex = EUEXImageConfig.getInstance().getStartIndex();
         } else {
-            picIndex = index;
-            checkedItems = uexImageUtil.getCheckedItems();
-            picList = uexImageUtil.getCurrentPicList();
+//            if (index==0&& TextUtils.isEmpty(folder)){
+//                JSONArray imageDataArray = EUEXImageConfig.getInstance()
+//                        .getDataArray();
+//                picList = uexImageUtil.transformData(imageDataArray);
+//                picIndex = EUEXImageConfig.getInstance().getStartIndex();
+//            }else {
+                picIndex = index;
+                checkedItems = uexImageUtil.getCheckedItems();
+                picList = uexImageUtil.getCurrentPicList();
+//            }
         }
     }
 
@@ -349,6 +355,7 @@ public class ImagePreviewView extends ImageBaseView {
                 finish(TAG, Constants.OPERATION_CANCELLED);
             }
         });
+
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(picIndex);
         viewPager.setOnPageChangeListener(onPageChangeListener);
@@ -379,7 +386,10 @@ public class ImagePreviewView extends ImageBaseView {
                 }
             }
         });
+
     }
+
+
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
@@ -416,13 +426,12 @@ public class ImagePreviewView extends ImageBaseView {
     }
 
     private void initViewForBrowser(final Context context) {
-
         ivGoBack.setVisibility(View.INVISIBLE);
+        ivGoBack.setVisibility(View.VISIBLE);
         tvCheckbox = (TextView) findViewById(
                 EUExUtil.getResIdID("tv_checkbox"));
         cbChoose.setVisibility(View.INVISIBLE);
         tvCheckbox.setVisibility(View.INVISIBLE);
-
         switch (EUEXImageConfig.getInstance().getUIStyle()) {
         case Constants.UI_STYLE_OLD:
             tvShare = (TextView) findViewById(EUExUtil.getResIdID("tv_share"));
@@ -499,6 +508,7 @@ public class ImagePreviewView extends ImageBaseView {
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(picIndex);
         viewPager.setOnPageChangeListener(onPageChangeListener);
+
     }
 
     private void showIvToGridDelayed() {

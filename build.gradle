@@ -14,8 +14,10 @@ apply plugin: 'com.android.application'
 
 dependencies {
     compile fileTree(include: '*.jar', dir: 'libs')
-    compile(name:'engine-4.0.0-systemRelease', ext:"aar")
-//    compile 'org.appcan:engine:+:systemRelease@aar'
+//    compile(name:'Engine-system-release-4.0.1', ext:"aar")
+    compile 'org.appcan:engine:+:systemRelease@aar'
+
+
 }
 
 
@@ -23,9 +25,9 @@ repositories {
     flatDir {
         dirs 'libs'
     }
-//    maven {
-//        url 'https://raw.githubusercontent.com/android-plugin/mvn-repo/master/'
-//    }
+    maven {
+        url 'https://raw.githubusercontent.com/android-plugin/mvn-repo/master/'
+    }
 }
 
 android {
@@ -62,6 +64,4 @@ android {
 
 }
 
-
-//apply from: "https://raw.githubusercontent.com/android-plugin/gradle-plugin/master/buildPlugin.gradle"
-apply from: "buildPlugin.gradle"
+apply from: "https://raw.githubusercontent.com/android-plugin/gradle-plugin/master/buildPlugin.gradle"

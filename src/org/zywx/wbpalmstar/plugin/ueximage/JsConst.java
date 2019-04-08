@@ -27,4 +27,7 @@ public class JsConst {
     public static final String CALLBACK_ON_IAMGE_LONG_CLICKED = "uexImage.onImageLongClicked";
     public static final String CALLBACK_COMPRESS_IAMGE = "uexImage.cbCompressImage";
     public static final String ON_LABEL_CLICKED = "uexImage.onLabelClicked";
+    public static final String PREVIEW_DELETE="uexImage.cbDelete";
+
+
 }

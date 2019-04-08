@@ -24,16 +24,17 @@
         android:textSize="18sp"
         android:textColor="#ffffff"
         android:layout_centerInParent="true"/>
+
     <Button
         android:id="@+id/btn_finish_title"
         android:layout_width="wrap_content"
         android:layout_height="35dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/plugin_uex_image_border_round_corner"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:background="@drawable/plugin_uex_image_border_round_corner"
-        android:textColor="#ffffff"
         android:text="完成"
-        android:textSize="16sp"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"/>
+        android:textColor="#ffffff"
+        android:textSize="16sp" />
 </RelativeLayout>

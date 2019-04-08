@@ -22,6 +22,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
@@ -35,7 +37,6 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.zywx.wbpalmstar.base.ACEImageLoader;
 import org.zywx.wbpalmstar.engine.EBrowserView;
 import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
 import org.zywx.wbpalmstar.plugin.ueximage.model.PictureFolder;
@@ -78,6 +79,7 @@ public class UEXImageUtil {
     // 当前正在操作的图片集合
     private List<PictureInfo> currentPicList = new ArrayList<PictureInfo>();
     private static String imageCacheDir = "";
+    private Bitmap bitmap;
 
     private UEXImageUtil() {
     }
@@ -238,7 +240,32 @@ public class UEXImageUtil {
                         UEXImageUtil.getImageCacheDir(context) + File.separator
                                 + "temp_" + new Date().getTime() + ".jpg");
             }
+
             try {
+                int angle = 0;
+                File file = new File(orginPicPath);
+                ExifInterface exif = new ExifInterface(file.getAbsolutePath());
+                int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+                Log.i("tag", "读取角度-" + orientation);
+                switch (orientation){
+                    case ExifInterface.ORIENTATION_ROTATE_90:
+                        angle = 90;
+                        break;
+                    case ExifInterface.ORIENTATION_ROTATE_180:
+                        angle = 180;
+                        break;
+                    case ExifInterface.ORIENTATION_ROTATE_270:
+                        angle = 180;
+                        break;
+                    default:
+                        angle = ExifInterface.ORIENTATION_UNDEFINED;
+                        break;
+                }
+                Matrix matrix = new Matrix();
+                matrix.postRotate(angle);
+                Bitmap bitmap2 = BitmapFactory.decodeFile(orginPicPath);
+                Bitmap resizedBitmap = Bitmap.createBitmap(bitmap2, 0, 0,
+                        bitmap2.getWidth(), bitmap2.getHeight(), matrix, true);
                 File parent=f.getParentFile();
                 if (!parent.exists()){
                     parent.mkdirs();
@@ -253,16 +280,16 @@ public class UEXImageUtil {
                         fos.write(buffer, 0, byteRead);
                     }
                 } else {
-                    Bitmap bitmap = ACEImageLoader.getInstance()
-                            .getBitmapSync(picPath);
+                    //   ACEImageLoader.getInstance() .getBitmapSync(picPath)
+                   Bitmap bitmap = resizedBitmap;
                     if (bitmap != null) {
                         if (EUEXImageConfig.getInstance().getIsUsePng()) {
                             bitmap.compress(Bitmap.CompressFormat.PNG, 100,
                                     fos);
                         } else {
+                            //(int)EUEXImageConfig.getInstance().getQuality()
                             bitmap.compress(Bitmap.CompressFormat.JPEG,
-                                    (int) (EUEXImageConfig.getInstance()
-                                            .getQuality() * 100),
+                                    (1*100),
                                     fos);
                         }
                     } else {
@@ -277,7 +304,7 @@ public class UEXImageUtil {
                 filePathArray.put(f.getAbsolutePath());
                 if (EUEXImageConfig.getInstance().isShowDetailedInfo()) {
                     JSONObject detailedInfo = getExifData(orginPicPath,
-                            f.getAbsolutePath());
+                            String.valueOf(f.getAbsolutePath()));
                     detailedInfoArray.put(detailedInfo);
                 }
             } catch (IOException e) {
