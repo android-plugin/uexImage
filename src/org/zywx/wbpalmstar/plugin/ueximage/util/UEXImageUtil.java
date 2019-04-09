@@ -20,6 +20,7 @@ package org.zywx.wbpalmstar.plugin.ueximage.util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -446,11 +447,18 @@ public class UEXImageUtil {
         viewFrameVO.width = (int) (contextView.getMeasuredWidth() / nowScale);
         /** 去掉状态栏的高度 */
         viewFrameVO.height = (int) Math.ceil(
-                (contextView.getMeasuredHeight() - getStatusBarHeight(context))
+                (contextView.getMeasuredHeight() - getStatusBarHeight(context)-getNavigationBarHeight(context))
                         / nowScale);
         return viewFrameVO;
     }
-
+    /**获取导航栏的高度 */
+    private static int getNavigationBarHeight(Context context) {
+        Resources resources = context.getResources();
+        int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
+        int height = resources.getDimensionPixelSize(resourceId);
+        Log.v("dbw", "Navi height:" + height);
+        return height;
+    }
     private static int getStatusBarHeight(Context context) {
         int result = 0;
         int resourceId = context.getResources()

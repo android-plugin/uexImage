@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
     <plugin
-        uexName="uexImage" version="4.0.14" build="34">
-        <info>34:修改openBrowser接口分享没有反应问题</info>
+        uexName="uexImage" version="4.0.15" build="34">
+        <info>35:修改openBrowser接口部分手机上因为导航栏的导致显示不全和返回没反应</info>
+        <build>34:修改openBrowser接口分享没有反应问题</build>
         <build>33:修改compressImage逻辑，图片压缩过于模糊</build>
         <build>32:查看图片旋转角度不对问题</build>
         <build>31:发表工作圈,上传多张图片,无法删除,也无法预览大图</build>

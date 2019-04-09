@@ -428,6 +428,12 @@ public class ImagePreviewView extends ImageBaseView {
     private void initViewForBrowser(final Context context) {
         ivGoBack.setVisibility(View.INVISIBLE);
         ivGoBack.setVisibility(View.VISIBLE);
+        ivGoBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish(TAG, Constants.OPERATION_CANCELLED);
+            }
+        });
         tvCheckbox = (TextView) findViewById(
                 EUExUtil.getResIdID("tv_checkbox"));
         cbChoose.setVisibility(View.INVISIBLE);
