@@ -120,6 +120,8 @@ public class UEXImageUtil {
         if (pictureFolderList.size() > 0) {
             return;
         }
+        //初始化时候重置图片总数
+        TOTAL_COUNT=0;
         String[] STORE_IMAGES = {MediaStore.Images.Media._ID,
                 MediaStore.Images.Media.DATA,
                 MediaStore.Images.Media.ORIENTATION};
@@ -306,6 +308,7 @@ public class UEXImageUtil {
                 if (EUEXImageConfig.getInstance().isShowDetailedInfo()) {
                     JSONObject detailedInfo = getExifData(orginPicPath,
                             String.valueOf(f.getAbsolutePath()));
+                    detailedInfo.put("orginPicPath",orginPicPath);
                     detailedInfoArray.put(detailedInfo);
                 }
             } catch (IOException e) {

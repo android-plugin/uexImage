@@ -35,7 +35,6 @@
             android:name="org.zywx.wbpalmstar.engine.LoadingActivity"
             android:configChanges="keyboardHidden|orientation"
             android:launchMode="standard"
-            android:screenOrientation="portrait"
             android:theme="@style/browser_loading_theme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
