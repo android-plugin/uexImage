@@ -162,7 +162,7 @@ public class ImagePreviewView extends ImageBaseView {
             final String src = picList.get(position).getSrc();
             if (!isOpenBrowser) {
                 ACEImageLoader.getInstance().displayImageWithOptions(src,
-                        imageView, options);
+                        imageView, true);
             } else {// 浏览图片：对于传入的图片的加载
                 if (src.substring(0, 4).equalsIgnoreCase(Constants.HTTP)) {
                     // 如果是从网上下载图片，需要将下载后的图片存到缓存中
@@ -199,7 +199,7 @@ public class ImagePreviewView extends ImageBaseView {
                         }
                     });
                        ACEImageLoader.getInstance().displayImageWithOptions(src,
-                            imageView, options);
+                            imageView, true);
                 } else {
                     Bitmap bitmap = CommonUtil
                             .getLocalImage(mContext, src);
@@ -428,6 +428,12 @@ public class ImagePreviewView extends ImageBaseView {
     private void initViewForBrowser(final Context context) {
         ivGoBack.setVisibility(View.INVISIBLE);
         ivGoBack.setVisibility(View.VISIBLE);
+        ivGoBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish(TAG, Constants.OPERATION_CANCELLED);
+            }
+        });
         tvCheckbox = (TextView) findViewById(
                 EUExUtil.getResIdID("tv_checkbox"));
         cbChoose.setVisibility(View.INVISIBLE);
@@ -479,6 +485,7 @@ public class ImagePreviewView extends ImageBaseView {
                             shareIntent.putExtra(Intent.EXTRA_STREAM,
                                     Uri.fromFile(file));
                             shareIntent.setType("image/*");
+                            context.startActivity(Intent.createChooser(shareIntent, "分享到"));
                         } else {
                             Toast.makeText(context,
                                     EUExUtil.getString(

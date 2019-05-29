@@ -20,6 +20,7 @@ package org.zywx.wbpalmstar.plugin.ueximage.util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -119,6 +120,8 @@ public class UEXImageUtil {
         if (pictureFolderList.size() > 0) {
             return;
         }
+        //初始化时候重置图片总数
+        TOTAL_COUNT=0;
         String[] STORE_IMAGES = {MediaStore.Images.Media._ID,
                 MediaStore.Images.Media.DATA,
                 MediaStore.Images.Media.ORIENTATION};
@@ -305,6 +308,7 @@ public class UEXImageUtil {
                 if (EUEXImageConfig.getInstance().isShowDetailedInfo()) {
                     JSONObject detailedInfo = getExifData(orginPicPath,
                             String.valueOf(f.getAbsolutePath()));
+                    detailedInfo.put("orginPicPath",orginPicPath);
                     detailedInfoArray.put(detailedInfo);
                 }
             } catch (IOException e) {
@@ -446,11 +450,18 @@ public class UEXImageUtil {
         viewFrameVO.width = (int) (contextView.getMeasuredWidth() / nowScale);
         /** 去掉状态栏的高度 */
         viewFrameVO.height = (int) Math.ceil(
-                (contextView.getMeasuredHeight() - getStatusBarHeight(context))
+                (contextView.getMeasuredHeight() - getStatusBarHeight(context)-getNavigationBarHeight(context))
                         / nowScale);
         return viewFrameVO;
     }
-
+    /**获取导航栏的高度 */
+    private static int getNavigationBarHeight(Context context) {
+        Resources resources = context.getResources();
+        int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
+        int height = resources.getDimensionPixelSize(resourceId);
+        Log.v("dbw", "Navi height:" + height);
+        return height;
+    }
     private static int getStatusBarHeight(Context context) {
         int result = 0;
         int resourceId = context.getResources()
@@ -482,9 +493,20 @@ public class UEXImageUtil {
                 mPicSizeVO = new PicSizeVO(Constants.HEIGHT_100K,
                         Constants.WIDTH_100K);
                 break;
+            case Constants.DES_FILE_LENGTH_200K:
+                mPicSizeVO = new PicSizeVO(Constants.HEIGHT_200K,
+                        Constants.WIDTH_200K);
+                break;
+            case Constants.DES_FILE_LENGTH_300K:
+                mPicSizeVO = new PicSizeVO(Constants.HEIGHT_300K,
+                        Constants.WIDTH_300K);
+                break;
+            case Constants.DES_FILE_LENGTH_500K:
+                mPicSizeVO = new PicSizeVO(Constants.HEIGHT_500K,
+                        Constants.WIDTH_500K);
             default:
-                mPicSizeVO = new PicSizeVO(Constants.HEIGHT_30K,
-                        Constants.WIDTH_30K);
+                mPicSizeVO = new PicSizeVO(Constants.HEIGHT_300K,
+                        Constants.WIDTH_300K);
                 break;
         }
         return mPicSizeVO;

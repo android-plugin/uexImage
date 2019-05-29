@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
     <plugin
-        uexName="uexImage" version="4.0.12" build="32">
-        <info>32:查看图片旋转角度不对问题</info>
+        uexName="uexImage" version="4.0.17" build="37">
+        <info>37:修改openPicker接口选择图片,选择图片最大数不受限制时候出现图片数量叠加</info>
+        <build>36:修改openPicker接口选择图片后，增加orginPicPath字段给前端区分是否选择的同一张图片</build>
+        <build>35:修改openBrowser接口部分手机上因为导航栏的导致显示不全和返回没反应</build>
+        <build>34:修改openBrowser接口分享没有反应问题</build>
+        <build>33:修改compressImage逻辑，图片压缩过于模糊</build>
+        <build>32:查看图片旋转角度不对问题</build>
         <build>31:发表工作圈,上传多张图片,无法删除,也无法预览大图</build>
         <build>30:修改saveToPhotoAlbum逻辑，使文件名加时间戳防止文件重名而保存失败</build>
         <build>29:修复7.0以上版本影响键盘弹出问题</build>

@@ -78,8 +78,17 @@ public class Constants {
     public static final int HEIGHT_30K = 480;
     public static final int WIDTH_30K = 800;
     public static final int DES_FILE_LENGTH_100K = 100 * 1024;
+    public static final int DES_FILE_LENGTH_200K = 200 * 1024;
+    public static final int DES_FILE_LENGTH_300K = 300 * 1024;
+    public static final int DES_FILE_LENGTH_500K = 500 * 1024;
     public static final int HEIGHT_100K = 720;
     public static final int WIDTH_100K = 1080;
+    public static final int HEIGHT_200K = 880;
+    public static final int WIDTH_200K = 1240;
+    public static final int HEIGHT_300K = 1080;
+    public static final int WIDTH_300K = 1560;
+    public static final int HEIGHT_500K = 1240;
+    public static final int WIDTH_500K = 1920;
     public static final String SRC_PATH = "srcPath";
     public static final String DES_PATH = "desPath";
     public static final String DES_LENGTH = "desLength";
