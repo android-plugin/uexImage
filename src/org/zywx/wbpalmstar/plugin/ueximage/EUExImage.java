@@ -670,7 +670,7 @@ public class EUExImage extends EUExBase {
     public void addViewToCurrentWindow(View view, String tag,
                                        ViewFrameVO viewFrameVO) {
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
-                viewFrameVO.width, viewFrameVO.height);
+                viewFrameVO.width, ViewGroup.LayoutParams.MATCH_PARENT);
         lp.leftMargin = viewFrameVO.x;
         lp.topMargin = viewFrameVO.y;
         if (addToWebViewsMap.get(tag) != null) {
