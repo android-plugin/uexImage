@@ -21,6 +21,7 @@ package org.zywx.wbpalmstar.plugin.ueximage.util;
 import android.graphics.Color;
 
 import org.json.JSONArray;
+import org.zywx.wbpalmstar.base.BDebug;
 import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
 import org.zywx.wbpalmstar.plugin.ueximage.vo.ViewFrameVO;
 
@@ -28,6 +29,8 @@ import org.zywx.wbpalmstar.plugin.ueximage.vo.ViewFrameVO;
  * Created by Fred on 2015/10/17.
  */
 public class EUEXImageConfig {
+    private static final String TAG = "EUEXImageConfig";
+    
     private volatile static EUEXImageConfig instance = null;
     public static EUEXImageConfig getInstance() {
         if (instance == null) {
@@ -198,6 +201,7 @@ public class EUEXImageConfig {
 
     public void setPicGridFrame(ViewFrameVO viewFrameVO) {
         this.picGridFrame = viewFrameVO;
+        BDebug.d(TAG, viewFrameVO);
     }
 
     public int getViewGridBackground() {

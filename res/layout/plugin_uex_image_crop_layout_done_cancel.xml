@@ -1,17 +1,31 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/Crop.DoneCancelBar">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/plugin_uex_image_crop_button_bar"
+    android:orientation="vertical">
 
-    <FrameLayout
-        android:id="@+id/btn_cancel"
-        style="@style/Crop.ActionButton">
-        <TextView style="@style/Crop.ActionButtonText.Cancel" />
-    </FrameLayout>
+    <LinearLayout
+        android:id="@+id/ll_status_bar_place_holder"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:visibility="gone"
+        android:orientation="vertical">
+    </LinearLayout>
 
-    <FrameLayout
-        android:id="@+id/btn_done"
-        style="@style/Crop.ActionButton">
-        <TextView style="@style/Crop.ActionButtonText.Done" />
-    </FrameLayout>
+    <LinearLayout
+        style="@style/Crop.DoneCancelBar">
+        <FrameLayout
+            android:id="@+id/btn_cancel"
+            style="@style/Crop.ActionButton">
+            <TextView style="@style/Crop.ActionButtonText.Cancel" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/btn_done"
+            style="@style/Crop.ActionButton">
+            <TextView style="@style/Crop.ActionButtonText.Done" />
+        </FrameLayout>
+    </LinearLayout>
 
 </LinearLayout>
 <!-- From: file:/D:/workspace/android-crop/lib/src/main/res/layout/plugin_uex_image_crop_layout_done_cancelyout_done_cancel.xml -->
