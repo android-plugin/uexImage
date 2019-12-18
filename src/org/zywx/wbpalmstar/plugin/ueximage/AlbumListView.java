@@ -79,7 +79,14 @@ public class AlbumListView extends ImageBaseView implements Serializable {
                 EUExUtil.getResLayoutID("plugin_uex_image_activity_album_list"),
                 this, true);
         uexImageUtil = UEXImageUtil.getInstance();
-
+        if (UEXImageUtil.isTranslucentStatusBar((Activity)context)){
+            // 用于设置沉浸式状态栏的占位空间
+            View statusBarPlaceHolderLayout = findViewById(EUExUtil.getResIdID("ll_status_bar_place_holder"));
+            statusBarPlaceHolderLayout.setVisibility(View.VISIBLE);
+            ViewGroup.LayoutParams lp = statusBarPlaceHolderLayout.getLayoutParams();
+            lp.height = UEXImageUtil.getStatusBarHeight(context);
+            statusBarPlaceHolderLayout.setLayoutParams(lp);
+        }
         ivLeftTitle = (ImageView) findViewById(
                 EUExUtil.getResIdID("iv_left_on_title"));
         btnRightTitle = (Button) findViewById(

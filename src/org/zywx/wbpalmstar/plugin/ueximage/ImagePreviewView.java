@@ -18,6 +18,7 @@
  */
 package org.zywx.wbpalmstar.plugin.ueximage;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -85,7 +86,7 @@ public class ImagePreviewView extends ImageBaseView {
     private TextView tvToGrid;
     /** * 切换到Grid浏览模式 */
     private static ImageView ivToGrid;
-    private RelativeLayout rlTitle;
+    private View rlTitle;
     private RelativeLayout rlBottom;
     private AlphaAnimation fadeInAnim;
     private AlphaAnimation fadeOutAnim;
@@ -299,7 +300,7 @@ public class ImagePreviewView extends ImageBaseView {
                         this, true);
         uexImageUtil = UEXImageUtil.getInstance();
         isOpenBrowser = EUEXImageConfig.getInstance().getIsOpenBrowser();
-        rlTitle = (RelativeLayout) findViewById(
+        rlTitle = findViewById(
                 EUExUtil.getResIdID("title_layout"));
         ivGoBack = (ImageView) findViewById(
                 EUExUtil.getResIdID("iv_left_on_title"));
@@ -313,7 +314,14 @@ public class ImagePreviewView extends ImageBaseView {
                 EUExUtil.getResIdID("rl_bottom"));
         rlTitle.setAlpha(0.9f);
         rlBottom.setAlpha(0.9f);
-
+        if (UEXImageUtil.isTranslucentStatusBar((Activity)context)){
+            // 用于设置沉浸式状态栏的占位空间
+            View statusBarPlaceHolderLayout = findViewById(EUExUtil.getResIdID("ll_status_bar_place_holder"));
+            statusBarPlaceHolderLayout.setVisibility(View.VISIBLE);
+            ViewGroup.LayoutParams lp = statusBarPlaceHolderLayout.getLayoutParams();
+            lp.height = UEXImageUtil.getStatusBarHeight(context);
+            statusBarPlaceHolderLayout.setLayoutParams(lp);
+        }
         initData(folderName, picIndex);
         if (isOpenBrowser) {
             initViewForBrowser(context);

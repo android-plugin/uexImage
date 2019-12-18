@@ -18,6 +18,7 @@
  */
 package org.zywx.wbpalmstar.plugin.ueximage;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -103,6 +104,14 @@ public class PictureGridView extends ImageBaseView {
                     EUExUtil.getResIdID("layout_grid_view"));
             rootView.setBackgroundColor(
                     EUEXImageConfig.getInstance().getViewGridBackground());
+        }
+        if (UEXImageUtil.isTranslucentStatusBar((Activity)context)){
+            // 用于设置沉浸式状态栏的占位空间
+            View statusBarPlaceHolderLayout = findViewById(EUExUtil.getResIdID("ll_status_bar_place_holder"));
+            statusBarPlaceHolderLayout.setVisibility(View.VISIBLE);
+            ViewGroup.LayoutParams lp = statusBarPlaceHolderLayout.getLayoutParams();
+            lp.height = UEXImageUtil.getStatusBarHeight(context);
+            statusBarPlaceHolderLayout.setLayoutParams(lp);
         }
         uexImageUtil = UEXImageUtil.getInstance();
         folderPath = folder;

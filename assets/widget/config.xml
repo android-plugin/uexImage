@@ -11,9 +11,11 @@
 	<showmyspace>false</showmyspace>
 	<obfuscation>false</obfuscation>
 	<bgcolor>#fefefe</bgcolor>
-	<orientation>1</orientation>
-	<debug enable="true"/>
-<partobfuscation>false</partobfuscation>
+	<orientation>1</orientation>//
+	<debug>true</debug>
+	<statusbar color="#00000000"/>
+	<statusfontblack>false</statusfontblack>
+	<partobfuscation>false</partobfuscation>
 <webapp/>
 <config desc="uexALiBaiChuan" type="URLSCHEME"> 
     <urlScheme name="uexALiBaiChuan" schemes="['tbopen23368914']"/> 

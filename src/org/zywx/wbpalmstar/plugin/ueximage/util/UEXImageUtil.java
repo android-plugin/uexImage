@@ -33,17 +33,20 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.zywx.wbpalmstar.base.BDebug;
 import org.zywx.wbpalmstar.engine.EBrowserView;
 import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
 import org.zywx.wbpalmstar.plugin.ueximage.model.PictureFolder;
 import org.zywx.wbpalmstar.plugin.ueximage.model.PictureInfo;
 import org.zywx.wbpalmstar.plugin.ueximage.vo.PicSizeVO;
 import org.zywx.wbpalmstar.plugin.ueximage.vo.ViewFrameVO;
+import org.zywx.wbpalmstar.widgetone.dataservice.WWidgetData;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -449,20 +452,34 @@ public class UEXImageUtil {
         viewFrameVO.y = 0;
         viewFrameVO.width = (int) (contextView.getMeasuredWidth() / nowScale);
         /** 去掉状态栏的高度 */
+        int measuredHeight = contextView.getMeasuredHeight();
+        int statusBarHeight = getStatusBarHeight(context);
+        int navigationBarHeight = getNavigationBarHeight(context);
+        BDebug.d(TAG, "measuredHeight = " + measuredHeight
+                + " statusBarHeight = " + statusBarHeight
+                + " navigationBarHeight = " + navigationBarHeight);
         viewFrameVO.height = (int) Math.ceil(
                 (contextView.getMeasuredHeight() - getStatusBarHeight(context)-getNavigationBarHeight(context))
                         / nowScale);
         return viewFrameVO;
     }
+
     /**获取导航栏的高度 */
-    private static int getNavigationBarHeight(Context context) {
+    public static int getNavigationBarHeight(Context context) {
         Resources resources = context.getResources();
         int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
         int height = resources.getDimensionPixelSize(resourceId);
         Log.v("dbw", "Navi height:" + height);
         return height;
     }
-    private static int getStatusBarHeight(Context context) {
+
+    /**
+     * 获取状态栏高度
+     *
+     * @param context
+     * @return
+     */
+    public static int getStatusBarHeight(Context context) {
         int result = 0;
         int resourceId = context.getResources()
                 .getIdentifier("status_bar_height", "dimen", "android");
@@ -470,6 +487,38 @@ public class UEXImageUtil {
             result = context.getResources().getDimensionPixelSize(resourceId);
         }
         return result;
+    }
+
+    /**
+     * 判断是否是沉浸式状态栏
+     *
+     * @param activity
+     * @return
+     */
+    public static boolean isTranslucentStatusBar(Activity activity){
+        boolean isTranslucentStatusBar = false;
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                // 如果activity的windowflag中存在透明状态栏的配置，并且config.xml中也配置了statusbar为透明。则认为是沉浸式状态栏
+                isTranslucentStatusBar = hasFlag(activity, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS) && isEngineConfigStatusBarTranlucent();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return isTranslucentStatusBar;
+    }
+
+    /**
+     * 判断config.xml中是否设置了沉浸式状态栏
+     *
+     * @return
+     */
+    public static boolean isEngineConfigStatusBarTranlucent(){
+        return WWidgetData.sStatusBarColor == 0;
+    }
+
+    private static boolean hasFlag(Activity activity, int flag) {
+        return (activity.getWindow().getAttributes().flags & flag) == flag;
     }
 
     public static int getInSampleSize(double scale) {

@@ -42,10 +42,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="org.zywx.wbpalmstar.plugin.ueximage.crop.CropImageActivity"
+        <activity
+            android:name="org.zywx.wbpalmstar.plugin.ueximage.crop.CropImageActivity"
+            android:exported="false"
             />
-        <activity android:name="org.zywx.wbpalmstar.plugin.ueximage.deletebrowser.PreviewDetailActivity"
-            android:theme="@style/plugin_uex_image_appTheme" />
+        <activity
+            android:name="org.zywx.wbpalmstar.plugin.ueximage.deletebrowser.PreviewDetailActivity"
+            android:theme="@style/plugin_uex_image_appTheme"
+            android:exported="false"/>
     </application>
 
 </manifest>

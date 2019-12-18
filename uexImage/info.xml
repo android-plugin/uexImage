@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
     <plugin
-        uexName="uexImage" version="4.0.19" build="39">
-        <info>39:升级glide依赖库至4.9.0</info>
+        uexName="uexImage" version="4.0.20" build="40">
+        <info>40:修复配置了沉浸式状态栏情况下的界面适配问题</info>
+        <build>39:升级glide依赖库至4.9.0</build>
         <build>38:修改部分手机打开相册显示高度显示不全</build>
         <build>37:修改openPicker接口选择图片,选择图片最大数不受限制时候出现图片数量叠加</build>
         <build>36:修改openPicker接口选择图片后，增加orginPicPath字段给前端区分是否选择的同一张图片</build>
