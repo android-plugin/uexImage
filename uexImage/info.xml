@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
     <plugin
-        uexName="uexImage" version="4.0.20" build="40">
-        <info>40:修复配置了沉浸式状态栏情况下的界面适配问题</info>
+        uexName="uexImage" version="4.0.22" build="2020111901">
+        <info>22:修复某些机型上会获取到一些错误的路径导致解析失败闪退的问题</info>
+        <build>41:glide依赖库离线包使用新规则统一命名，防止与其他插件冲突</build>
+        <build>40:修复配置了沉浸式状态栏情况下的界面适配问题</build>
         <build>39:升级glide依赖库至4.9.0</build>
         <build>38:修改部分手机打开相册显示高度显示不全</build>
         <build>37:修改openPicker接口选择图片,选择图片最大数不受限制时候出现图片数量叠加</build>
