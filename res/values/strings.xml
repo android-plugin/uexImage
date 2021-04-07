@@ -25,5 +25,7 @@
     <string name="plugin_uex_image_retry_load_image">当前图片尚未加载完毕，请稍后重试</string>
     <string name="plugin_uex_image_image_error">图片操作失败，请重试</string>
     <string name="plugin_uex_image_image_laoad_error">图片加载失败</string>
+    <string name="plugin_uex_image_storage_permission_request_hint">选取图片需要请求媒体文件访问的权限，请允许后继续</string>
+    <string name="plugin_uex_image_storage_permission_denied_hint">未获得媒体文件访问的权限，功能运行可能会存在异常</string>
 
 </resources>

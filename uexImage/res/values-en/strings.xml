@@ -22,5 +22,7 @@
     <string name="plugin_uex_image_retry_load_image">The current picture has not been loaded, Please try again later.</string>
     <string name="plugin_uex_image_image_error">Operation failed，Please try again.</string>
     <string name="plugin_uex_image_image_laoad_error">Image loading failed.</string>
+    <string name="plugin_uex_image_storage_permission_request_hint">Image Picker requires storage permission. Please grant it to continue.</string>
+    <string name="plugin_uex_image_storage_permission_denied_hint">Storage permission missing. Function may occur exception.</string>
     
 </resources>
