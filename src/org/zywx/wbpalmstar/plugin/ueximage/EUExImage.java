@@ -18,9 +18,11 @@
  */
 package org.zywx.wbpalmstar.plugin.ueximage;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -30,6 +32,8 @@ import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -77,6 +81,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class EUExImage extends EUExBase {
     private static final String TAG = "EUExImage";
     private static final int REQUEST_CHOOSE_IMAGE=100;
+    private static final int REQUEST_PERMISSION_OPEN_PICKER = 201;
+    private static final int REQUEST_PERMISSION_OPEN_BROWSER = 202;
+    private static final int REQUEST_PERMISSION_OPEN_CROPPER = 203;
     private double cropQuality = 0.5;
     private boolean cropUsePng = false;
     // 当前Android只支持方型裁剪, 即cropMode为1
@@ -95,6 +102,10 @@ public class EUExImage extends EUExBase {
 
     private OpenCropperVO tempOpenCropperVO;//临时保存crop相关参数
     private boolean browse;
+
+    private String[] openPickerParams; // 临时保存请求权限之前的openPicker参数
+    private String[] openBrowserParams; // 临时保存请求权限之前的openBrowser参数
+    private String[] openCropperParams; // 临时保存请求权限之前的openCropper参数
 
     /**
      * 保存添加到网页的view
@@ -131,11 +142,62 @@ public class EUExImage extends EUExBase {
     }
 
     @Override
+    public void onRequestPermissionResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
+        super.onRequestPermissionResult(requestCode, permissions, grantResults);
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                handleRequestPermissionResult(requestCode, permissions, grantResults);
+            }
+        });
+    }
+
+    private void handleRequestPermissionResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_PERMISSION_OPEN_PICKER){
+            if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED){
+                BDebug.e(TAG, "onRequestPermissionResult REQUEST_PERMISSION_OPEN_PICKER NOT GRANTED.");
+                Toast.makeText(mContext, EUExUtil.getString("plugin_uex_image_storage_permission_denied_hint"), Toast.LENGTH_SHORT).show();
+            }
+            // 无论如何都会启动picker操作，但是没有权限的话，显示出来的图片不全
+            openPickerAction(openPickerParams);
+        }else if (requestCode == REQUEST_PERMISSION_OPEN_BROWSER){
+            if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED){
+                BDebug.e(TAG, "onRequestPermissionResult REQUEST_PERMISSION_OPEN_BROWSER NOT GRANTED.");
+                Toast.makeText(mContext, EUExUtil.getString("plugin_uex_image_storage_permission_denied_hint"), Toast.LENGTH_SHORT).show();
+            }
+            // 无论如何都会启动browser操作，但是没有权限的话，显示出来的图片不全
+            openBrowserAction(openBrowserParams);
+        }else if (requestCode == REQUEST_PERMISSION_OPEN_CROPPER){
+            if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED){
+                BDebug.e(TAG, "onRequestPermissionResult REQUEST_PERMISSION_OPEN_CROPPER NOT GRANTED.");
+                Toast.makeText(mContext, EUExUtil.getString("plugin_uex_image_storage_permission_denied_hint"), Toast.LENGTH_SHORT).show();
+            }
+            // 无论如何都会启动cropper操作
+            openCropperAction(openCropperParams);
+        }
+    }
+
+    @Override
     protected boolean clean() {
         return false;
     }
 
-    public void openPicker(String[] params) {
+    public void openPicker(String[] params){
+        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
+            openPickerAction(params);
+        }else{
+            openPickerParams = params;
+            requsetPerssions(Manifest.permission.READ_EXTERNAL_STORAGE, EUExUtil.getString("plugin_uex_image_storage_permission_request_hint"), REQUEST_PERMISSION_OPEN_PICKER);
+        }
+    }
+
+    /**
+     *
+     * 内部方法，openPicker检查权限后的操作
+     *
+     * @param params
+     */
+    private void openPickerAction(String[] params) {
         if (params == null || params.length < 1) {
             errorCallback(0, 0, "error params!");
             return;
@@ -214,7 +276,16 @@ public class EUExImage extends EUExBase {
         }
     }
 
-    public void openBrowser(String[] params) {
+    public void openBrowser(String[] params){
+        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
+            openBrowserAction(params);
+        }else{
+            openBrowserParams = params;
+            requsetPerssions(Manifest.permission.READ_EXTERNAL_STORAGE, EUExUtil.getString("plugin_uex_image_storage_permission_request_hint"), REQUEST_PERMISSION_OPEN_BROWSER);
+        }
+    }
+
+    private void openBrowserAction(String[] params) {
         if (params == null || params.length < 1) {
             errorCallback(0, 0, "error params!");
             return;
@@ -517,7 +588,16 @@ public class EUExImage extends EUExBase {
         }
     }
 
-    public void openCropper(String[] params) {
+    public void openCropper(String[] params){
+        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
+            openCropperAction(params);
+        }else{
+            openCropperParams = params;
+            requsetPerssions(Manifest.permission.WRITE_EXTERNAL_STORAGE, EUExUtil.getString("plugin_uex_image_storage_permission_request_hint"), REQUEST_PERMISSION_OPEN_CROPPER);
+        }
+    }
+
+    private void openCropperAction(String[] params) {
         if (params == null || params.length < 1) {
             errorCallback(0, 0, "error params!");
             return;
@@ -530,7 +610,7 @@ public class EUExImage extends EUExBase {
         OpenCropperVO openCropperVO=DataHelper.gson.fromJson(json,OpenCropperVO.class);
         if (!TextUtils.isEmpty(openCropperVO.src)){
             //开始裁剪
-          cropImage(openCropperVO);
+            cropImage(openCropperVO);
         }else{
             //选取照片后裁剪
             tempOpenCropperVO=openCropperVO;
