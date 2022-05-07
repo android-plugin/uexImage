@@ -145,10 +145,11 @@ public class UEXImageUtil {
             File file = new File(path);
             // 获取目录名
             File parentFile = file.getParentFile();
-            String folderName = parentFile.getName();
-            String dirPath = parentFile.getAbsolutePath();
             // 判断大图是否存在
-            if (file.exists()&&parentFile.exists()) {
+            // note: 某vivo手机相册获取到了一个path只是一个文件名的图片，导致parentFile为null，暂时不明原因，但是这种照片显然是无法处理的，找不到此路径，因此此处做一个保护，防止闪退，保证逻辑正常进行。
+            if (file.exists() && parentFile != null && parentFile.exists()) {
+                String folderName = parentFile.getName();
+                String dirPath = parentFile.getAbsolutePath();
                 // 判断文件夹是否已经存在
                 if (tempDir.contains(dirPath)) {
                     continue;
@@ -170,6 +171,8 @@ public class UEXImageUtil {
                 TOTAL_COUNT = TOTAL_COUNT + picCount;
                 pictureFolder.setCount(picCount);
                 pictureFolderList.add(pictureFolder);
+            }else{
+                BDebug.e(TAG, "initAlbumList got an error path: " + path);
             }
         }
         cursor.close();

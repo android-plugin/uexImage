@@ -32,6 +32,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -90,10 +91,21 @@ public class CropImageActivity extends MonitoredActivity {
 
         loadInput();
         if (rotateBitmap == null) {
+            setResult(RESULT_CANCELED);
             finish();
             return;
         }
         startCrop();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK){
+            // 拦截返回键，不做处理
+            return true;
+        }else{
+            return super.onKeyDown(keyCode, event);
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
