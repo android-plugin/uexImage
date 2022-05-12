@@ -47,6 +47,7 @@ import com.ace.universalimageloader.core.assist.FailReason;
 import com.ace.universalimageloader.core.assist.ImageScaleType;
 import com.ace.universalimageloader.core.listener.ImageLoadingProgressListener;
 import com.ace.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.bumptech.glide.Glide;
 
 import org.json.JSONArray;
 import org.zywx.wbpalmstar.base.ACEImageLoader;
@@ -162,8 +163,11 @@ public class ImagePreviewView extends ImageBaseView {
             DisplayImageOptions options = builder.build();
             final String src = picList.get(position).getSrc();
             if (!isOpenBrowser) {
-                ACEImageLoader.getInstance().displayImageWithOptions(src,
-                        imageView, true);
+//                ACEImageLoader.getInstance().displayImageWithOptions(src,
+//                        imageView, true);
+                Glide.with(mContext)
+                        .load(src)
+                        .into(imageView);
             } else {// 浏览图片：对于传入的图片的加载
                 if (src.substring(0, 4).equalsIgnoreCase(Constants.HTTP)) {
                     // 如果是从网上下载图片，需要将下载后的图片存到缓存中
@@ -199,8 +203,8 @@ public class ImagePreviewView extends ImageBaseView {
                             }
                         }
                     });
-                       ACEImageLoader.getInstance().displayImageWithOptions(src,
-                            imageView, true);
+//                       ACEImageLoader.getInstance().displayImageWithOptions(src,
+//                            imageView, true);
                 } else {
                     Bitmap bitmap = CommonUtil
                             .getLocalImage(mContext, src);
