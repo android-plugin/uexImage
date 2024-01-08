@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <uexplugins>
     <plugin
-        uexName="uexImage" version="4.3.24" build="2022051301">
-        <info>24:修复大图预览时exif信息处理有问题导致图片有时方向不对的问题</info>
+        uexName="uexImage" version="4.6.25" build="2023010801">
+        <info>25:适配4.6，4.7引擎，兼容target30的存储权限变更问题</info>
+        <build>24:修复大图预览时exif信息处理有问题导致图片有时方向不对的问题</build>
         <build>23:适配4.6引擎中存储权限不是必需的情况下，增加主动申请权限的逻辑</build>
         <build>22:修复某些机型上会获取到一些错误的路径导致解析失败闪退的问题</build>
         <build>41:glide依赖库离线包使用新规则统一命名，防止与其他插件冲突</build>
