@@ -40,6 +40,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.zywx.wbpalmstar.base.BDebug;
+import org.zywx.wbpalmstar.base.BUtility;
 import org.zywx.wbpalmstar.engine.EBrowserView;
 import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
 import org.zywx.wbpalmstar.plugin.ueximage.model.PictureFolder;
@@ -136,6 +137,7 @@ public class UEXImageUtil {
                 MediaStore.Images.Media.DATE_TAKEN + " DESC"); // 根据时间升序
         if (cursor == null)
             return;
+        // 遍历图片，找到他们所有的父级目录，去重，得到选图的目录列表
         while (cursor.moveToNext()) {
             int id = cursor.getInt(0);// 大图ID
             String path = cursor.getString(1);// 大图路径
@@ -310,10 +312,15 @@ public class UEXImageUtil {
                 }
 
                 fos.flush();
-                filePathArray.put(f.getAbsolutePath());
+                // target30需要进行兼容处理，路径转换，以便引擎页面展示图片
+                String outputFilePath =  f.getAbsolutePath();
+                // 转换为content://路径
+                Uri outputFileUri = BUtility.getUriForFileWithFileProvider(context, outputFilePath);
+                outputFilePath = outputFileUri.toString();
+                filePathArray.put(outputFilePath);
                 if (EUEXImageConfig.getInstance().isShowDetailedInfo()) {
-                    JSONObject detailedInfo = getExifData(orginPicPath,
-                            String.valueOf(f.getAbsolutePath()));
+                    JSONObject detailedInfo = getExifData(orginPicPath);
+                    detailedInfo.put("localPath", f.getAbsolutePath());
                     detailedInfo.put("orginPicPath",orginPicPath);
                     detailedInfoArray.put(detailedInfo);
                 }
@@ -346,13 +353,12 @@ public class UEXImageUtil {
 
     }
 
-    private JSONObject getExifData(String orginPicPath, String tempPath)
+    private JSONObject getExifData(String orginPicPath)
             throws IOException, JSONException {
         ExifInterface exif = new ExifInterface(orginPicPath);
         float[] latLong = new float[2];
         exif.getLatLong(latLong);
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("localPath", tempPath);
         if (latLong[0] > 0 && latLong[1] > 0) {
             jsonObject.put("latitude", latLong[0]);
             jsonObject.put("longitude", latLong[1]);
