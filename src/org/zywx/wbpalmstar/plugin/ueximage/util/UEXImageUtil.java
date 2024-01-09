@@ -40,7 +40,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.zywx.wbpalmstar.base.BDebug;
-import org.zywx.wbpalmstar.base.BUtility;
 import org.zywx.wbpalmstar.engine.EBrowserView;
 import org.zywx.wbpalmstar.engine.universalex.EUExUtil;
 import org.zywx.wbpalmstar.plugin.ueximage.model.PictureFolder;
@@ -239,6 +238,7 @@ public class UEXImageUtil {
         FileInputStream in = null;
         JSONObject result = new JSONObject();
         JSONArray detailedInfoArray = new JSONArray();
+        JSONArray realDetailedInfoArray = new JSONArray();
         for (String picPath : checkedItems) {
             String orginPicPath = ImageFilePath.getPath(context,
                     Uri.parse(picPath));
@@ -315,14 +315,22 @@ public class UEXImageUtil {
                 // target30需要进行兼容处理，路径转换，以便引擎页面展示图片
                 String outputFilePath =  f.getAbsolutePath();
                 // 转换为content://路径
-                Uri outputFileUri = BUtility.getUriForFileWithFileProvider(context, outputFilePath);
-                outputFilePath = outputFileUri.toString();
+                outputFilePath = CommonUtil.getContentUriString(context, outputFilePath);
                 filePathArray.put(outputFilePath);
                 if (EUEXImageConfig.getInstance().isShowDetailedInfo()) {
+                    // 转换路径支持webview展示
                     JSONObject detailedInfo = getExifData(orginPicPath);
-                    detailedInfo.put("localPath", f.getAbsolutePath());
-                    detailedInfo.put("orginPicPath",orginPicPath);
+                    String outputLocalPath = f.getAbsolutePath();
+                    outputLocalPath = CommonUtil.getContentUriString(context, outputLocalPath);
+                    detailedInfo.put("localPath", outputLocalPath);
+                    String outputOriginPicPath = CommonUtil.getContentUriString(context, orginPicPath);
+                    detailedInfo.put("orginPicPath",outputOriginPicPath);
                     detailedInfoArray.put(detailedInfo);
+                    // 真实路径
+                    JSONObject realDetailedInfo = new JSONObject(detailedInfo.toString());
+                    realDetailedInfo.put("localPath", f.getAbsolutePath());
+                    realDetailedInfo.put("orginPicPath",orginPicPath);
+                    realDetailedInfoArray.put(realDetailedInfo);
                 }
             } catch (IOException e) {
                 Log.i(TAG, "file copy error");
@@ -345,7 +353,10 @@ public class UEXImageUtil {
         try {
             result.put("isCancelled", false);
             result.put("data", filePathArray);
+            // 可用于显示在webview中的路径
             result.put("detailedImageInfo", detailedInfoArray);
+            // 图片真实路径信息
+            result.put("realDetailedImageInfo", realDetailedInfoArray);
         } catch (JSONException e) {
             e.printStackTrace();
         }
