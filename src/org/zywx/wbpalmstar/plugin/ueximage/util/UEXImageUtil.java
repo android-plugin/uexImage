@@ -136,6 +136,7 @@ public class UEXImageUtil {
                 MediaStore.Images.Media.DATE_TAKEN + " DESC"); // 根据时间升序
         if (cursor == null)
             return;
+        // 遍历图片，找到他们所有的父级目录，去重，得到选图的目录列表
         while (cursor.moveToNext()) {
             int id = cursor.getInt(0);// 大图ID
             String path = cursor.getString(1);// 大图路径
@@ -237,6 +238,7 @@ public class UEXImageUtil {
         FileInputStream in = null;
         JSONObject result = new JSONObject();
         JSONArray detailedInfoArray = new JSONArray();
+        JSONArray realDetailedInfoArray = new JSONArray();
         for (String picPath : checkedItems) {
             String orginPicPath = ImageFilePath.getPath(context,
                     Uri.parse(picPath));
@@ -310,12 +312,25 @@ public class UEXImageUtil {
                 }
 
                 fos.flush();
-                filePathArray.put(f.getAbsolutePath());
+                // target30需要进行兼容处理，路径转换，以便引擎页面展示图片
+                String outputFilePath =  f.getAbsolutePath();
+                // 转换为content://路径
+                outputFilePath = CommonUtil.getContentUriString(context, outputFilePath);
+                filePathArray.put(outputFilePath);
                 if (EUEXImageConfig.getInstance().isShowDetailedInfo()) {
-                    JSONObject detailedInfo = getExifData(orginPicPath,
-                            String.valueOf(f.getAbsolutePath()));
-                    detailedInfo.put("orginPicPath",orginPicPath);
+                    // 转换路径支持webview展示
+                    JSONObject detailedInfo = getExifData(orginPicPath);
+                    String outputLocalPath = f.getAbsolutePath();
+                    outputLocalPath = CommonUtil.getContentUriString(context, outputLocalPath);
+                    detailedInfo.put("localPath", outputLocalPath);
+                    String outputOriginPicPath = CommonUtil.getContentUriString(context, orginPicPath);
+                    detailedInfo.put("orginPicPath",outputOriginPicPath);
                     detailedInfoArray.put(detailedInfo);
+                    // 真实路径
+                    JSONObject realDetailedInfo = new JSONObject(detailedInfo.toString());
+                    realDetailedInfo.put("localPath", f.getAbsolutePath());
+                    realDetailedInfo.put("orginPicPath",orginPicPath);
+                    realDetailedInfoArray.put(realDetailedInfo);
                 }
             } catch (IOException e) {
                 Log.i(TAG, "file copy error");
@@ -338,7 +353,10 @@ public class UEXImageUtil {
         try {
             result.put("isCancelled", false);
             result.put("data", filePathArray);
+            // 可用于显示在webview中的路径
             result.put("detailedImageInfo", detailedInfoArray);
+            // 图片真实路径信息
+            result.put("realDetailedImageInfo", realDetailedInfoArray);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -346,13 +364,12 @@ public class UEXImageUtil {
 
     }
 
-    private JSONObject getExifData(String orginPicPath, String tempPath)
+    private JSONObject getExifData(String orginPicPath)
             throws IOException, JSONException {
         ExifInterface exif = new ExifInterface(orginPicPath);
         float[] latLong = new float[2];
         exif.getLatLong(latLong);
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("localPath", tempPath);
         if (latLong[0] > 0 && latLong[1] > 0) {
             jsonObject.put("latitude", latLong[0]);
             jsonObject.put("longitude", latLong[1]);

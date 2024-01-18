@@ -23,6 +23,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.provider.MediaStore;
 
 import com.ace.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
@@ -260,5 +261,13 @@ public class CommonUtil {
                 || fileName.endsWith(".PNG") || fileName.endsWith(".JPEG")
                 || fileName.endsWith(".bmp") || fileName.endsWith(".gif")
                 || fileName.endsWith(".webp");
+    }
+
+    public static String getContentUriString(Context context, String originFilePath) {
+        Uri outputFileUri = BUtility.getUriForFileWithFileProvider(context, originFilePath);
+        if  (outputFileUri == null) {
+            return null;
+        }
+        return outputFileUri.toString();
     }
 }

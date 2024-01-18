@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="target-densitydpi=device-dpi,width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="./css/index-test.css">
+    <title>uexImage插件测试</title>
+    <script type="text/javascript">
+
+        function putResult(result) {
+          var newImg = document.createElement("img");
+          newImg.style = "width:100px;height:100px;margin:10px;";
+          newImg.src = result;
+          window.document.getElementById("resultImg").appendChild(newImg);
+        }
+        
+        var uexImageCase = {
+            "openPicker": function () {
+                var data = {
+                    min: 2,
+                    max: 3,
+                    quality: 0.8,
+                    detailedInfo: true,
+                    "style" : 1
+                }
+                uexImage.openPicker(data, function (error, info) {
+                    if (error == -1) {
+                        console.log("取消操作");
+                    } else if (error == 0) {
+                        console.log(info.data);
+                        info.data.forEach(item => {
+                            putResult(item);
+                        })
+                        if (info.detailedImageInfo) {
+                            console.log(JSON.stringify(info.detailedImageInfo));
+                        }
+                        console.log("已获取图片选择");
+                    } else {
+                        console.log("error:" + error);
+                    }
+                });
+            },
+            "openBrowser":function () {
+                var data ={
+                    displayActionButton:true,
+                    displayNavArrows:true,
+                    enableGrid:true,
+                    startIndex:2,
+                    data:["res://photo1.jpg",
+                        {
+                            src:"res://photo2.jpg",
+                            thumb:"res://photo2t.jpg",
+                            showBigPic: true
+                        },
+                        {
+                            src:"res://photo3.jpg",
+                            thumb:"res://photo3t.jpg",
+                            desc:"22222222222222"
+                        },
+                        {
+                            src:"http://pic.fxxz.com/up/2016-5/201654940195240.jpg",
+                            thumb:"res://photo4t.jpg",
+                            desc:"22222222222222"
+                        }],
+                    "style" : 1,
+                    "gridBackgroundColor" : "#4A88C1",  // style为1时生效
+                    "gridBrowserTitle" : "图片浏览",
+                    "viewFramePicPreview":{   //位置、大小
+                        x:0,
+                        y:0,
+                        w:720, //w:1080,
+                        h:1137, //h:1767
+                    },
+                    "viewFramePicGrid":{   //位置、大小
+                        x:0,
+                        y:0,
+                        w:720, //w:1080,
+                        h:1137, //h:1767
+                    }
+                };
+                uexImage.openBrowser(data,function(){
+                    UNIT_TEST.assert(true);
+                });
+            },
+            "openCropper":function () {
+                var data={
+                    src:"res://photo4.jpg",
+                    mode:2
+                };
+                uexImage.openCropper(data,function(error,info){
+                    if(error==-1){
+                        UNIT_TEST.log("操作取消");
+                        UNIT_TEST.assert(true);
+                    }else if(error==0) {
+                        UNIT_TEST.log(info.data);
+                        UNIT_TEST.assert(true);
+                    }
+                });
+            },
+        }
+
+
+    </script>
+</head>
+
+<body>
+    <div class="tit">uexImage插件测试</div>
+    <div class="conbor">
+        <div class="consj">
+            
+            <input class="btn" type="button" value="openPicker" onClick="uexImageCase.openPicker();">
+            <input class="btn" type="button" value="openBrowser" onClick="uexImageCase.openBrowser();">
+            <input class="btn" type="button" value="openCropper" onClick="uexImageCase.openCropper();">
+
+        </div>
+        <div id="resultImg">
+
+        </div>
+    </div>
+</body>
+
+</html>
